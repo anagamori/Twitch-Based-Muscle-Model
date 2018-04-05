@@ -6,7 +6,7 @@
 % Ojbective: find twitch amplitudes for each motor unit
 %
 %--------------------------------------------------------------------------
-function output = twitchBasedMuscleModel_FCR()
+function output = twitchBasedMuscleModel_FCR(amplitude)
 
 %--------------------------------------------------------------------------
 alpha = 3.1*pi/180;
@@ -83,7 +83,7 @@ U_eff = 0;
 Fs = 1000;
 time = 0:1/Fs:10;
 
-amp = 1;
+amp = amplitude;
 U = [zeros(1,1*Fs) (amp/2)*(0:1/Fs:2) amp*ones(1,length(time)-3*Fs-1)];
 
 
