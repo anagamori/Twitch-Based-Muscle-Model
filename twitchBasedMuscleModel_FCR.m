@@ -6,9 +6,7 @@
 % Ojbective: find twitch amplitudes for each motor unit
 %
 %--------------------------------------------------------------------------
-close all
-clear all
-clc
+function output = twitchBasedMuscleModel_FCR()
 
 %--------------------------------------------------------------------------
 alpha = 3.1*pi/180;
@@ -100,7 +98,7 @@ force = zeros(N_MU,length(time));
 Force = zeros(1,length(time));
 U_eff_vec = zeros(1,length(time));
 
-tic 
+tic
 for t = 1:length(time)
     if U(t) >= U_eff
         T_U = 0.03;
@@ -116,7 +114,7 @@ for t = 1:length(time)
     
     %----------------------------------------------------------------------
     for n = 1:N_MU
-        FR(n) = g_e.*(U_eff - U_th(n)) + MFR_MU(n);        
+        FR(n) = g_e.*(U_eff - U_th(n)) + MFR_MU(n);
         if FR(n) < MFR_MU(n)
             FR(n) = 0;
         elseif FR(n) > PFR_MU(n)
@@ -249,263 +247,260 @@ for t = 1:length(time)
     U_eff_vec(t) = U_eff;
 end
 
-toc 
+toc
 
-mean_Force = mean(Force(5*Fs+1:end))
-SD_Force = std(Force(5*Fs+1:end))
-CoV_Force = SD_Force/mean_Force
-figure(1)
-plot(time,Force)
-hold on
-
+output.Force = force;
+output.SpikeTrain = spike_train;
 
 %%
-function [twitch,T1,T2_temp] = twitch_function(Af,Lce,CT,RT,Fs)
-T1 = CT*Lce^2+CT*Af;
-T2_temp = (RT + RT*Af)/Lce;
-T2 = T2_temp/1.68;
-t_twitch = 0:1/Fs:2;
-f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
-f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
+    function [twitch,T1,T2_temp] = twitch_function(Af,Lce,CT,RT,Fs)
+        T1 = CT*Lce^2+CT*Af;
+        T2_temp = (RT + RT*Af)/Lce;
+        T2 = T2_temp/1.68;
+        t_twitch = 0:1/Fs:2;
+        f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
+        f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
+        
+        twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
+        twitch = twitch(1:length(t_twitch));
+        
+    end
 
-twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
-twitch = twitch(1:length(t_twitch));
+    function Af = Af_slow_function(f_env,L,Y)
+        a_f = 0.56;
+        n_f0 = 2.1;
+        n_f1 = 5;
+        n_f = n_f0 + n_f1*(1/L-1);
+        Af = 1 - exp(-(Y*f_env/(a_f*n_f))^n_f);
+    end
 
-end
+    function Af = Af_fast_function(f_env,L,S)
+        a_f = 0.56;
+        n_f0 = 2.1;
+        n_f1 = 3.3;
+        n_f = n_f0 + n_f1*(1/L-1);
+        Af = 1 - exp(-(S*f_env/(a_f*n_f))^n_f);
+        
+    end
 
-function Af = Af_slow_function(f_env,L,Y)
-a_f = 0.56;
-n_f0 = 2.1;
-n_f1 = 5;
-n_f = n_f0 + n_f1*(1/L-1);
-Af = 1 - exp(-(Y*f_env/(a_f*n_f))^n_f);
-end
+    function FF = Af_slow_correction_function(f_env,L,Y)
+        a_f = 0.56;
+        n_f0 = 2.1;
+        n_f1 = 5;
+        n_f = n_f0 + n_f1*(1/L-1);
+        FF = 1 - exp(-(Y*f_env/(a_f*n_f))^n_f);
+        offset = 0.375*L - 0.1775;
+        alpha_FF = 1-offset;
+        FF = FF*alpha_FF+offset;
+        FF = FF/f_env;
+        if FF > 1
+            FF = 1;
+        end
+    end
 
-function Af = Af_fast_function(f_env,L,S)
-a_f = 0.56;
-n_f0 = 2.1;
-n_f1 = 3.3;
-n_f = n_f0 + n_f1*(1/L-1);
-Af = 1 - exp(-(S*f_env/(a_f*n_f))^n_f);
+    function FF = Af_fast_correction_function(f_env,L,S)
+        a_f = 0.56;
+        n_f0 = 2.1;
+        n_f1 = 3.3;
+        n_f = n_f0 + n_f1*(1/L-1);
+        FF = 1 - exp(-(S*f_env/(a_f*n_f))^n_f);
+        offset = 0.375*L - 0.1775;
+        alpha_FF = 1-offset;
+        FF = FF*alpha_FF+offset;
+        FF = FF/f_env;
+        if FF > 1
+            FF = 1;
+        end
+    end
 
-end
+    function Y = yield_function(Y,Vce,Fs)
+        c_y = 0.35;
+        V_y = 0.1;
+        T_y = 0.2;
+        
+        Y_dot = (1-c_y*(1-exp(-abs(Vce)/V_y))-Y)/T_y;
+        Y = Y_dot*1/Fs + Y;
+    end
 
-function FF = Af_slow_correction_function(f_env,L,Y)
-a_f = 0.56;
-n_f0 = 2.1;
-n_f1 = 5;
-n_f = n_f0 + n_f1*(1/L-1);
-FF = 1 - exp(-(Y*f_env/(a_f*n_f))^n_f);
-offset = 0.375*L - 0.1775;
-alpha = 1-offset;
-FF = FF*alpha+offset;
-FF = FF/f_env;
-if FF > 1
-    FF = 1;
-end
-end
+    function S = sag_function(S,f_eff,Fs)
+        if f_eff < 0.1
+            a_s = 1.76;
+        else
+            a_s = 0.96;
+        end
+        T_s = 0.043;
+        S_dot = (a_s-S)/T_s;
+        S = S_dot*1/Fs + S;
+    end
 
-function FF = Af_fast_correction_function(f_env,L,S)
-a_f = 0.56;
-n_f0 = 2.1;
-n_f1 = 3.3;
-n_f = n_f0 + n_f1*(1/L-1);
-FF = 1 - exp(-(S*f_env/(a_f*n_f))^n_f);
-offset = 0.375*L - 0.1775;
-alpha = 1-offset;
-FF = FF*alpha+offset;
-FF = FF/f_env;
-if FF > 1
-    FF = 1;
-end
-end
+    function FL = FL_slow_function(L)
+        %---------------------------
+        % force length (F-L) relationship for slow-tiwtch fiber
+        % input: normalized muscle length and velocity
+        % output: F-L factor (0-1)
+        %---------------------------
+        beta = 2.3;
+        omega = 1.12;
+        rho = 1.62;
+        
+        FL = exp(-abs((L^beta - 1)/omega)^rho);
+    end
 
-function Y = yield_function(Y,Vce,Fs)
-c_y = 0.35;
-V_y = 0.1;
-T_y = 0.2;
+    function FL = FL_fast_function(L)
+        %---------------------------
+        % force length (F-L) relationship for fast-twitch fiber
+        % input: normalized muscle length and velocity
+        % output: F-L factor (0-1)
+        %---------------------------
+        beta = 1.55;
+        omega = 0.75;
+        rho = 2.12;
+        
+        FL = exp(-abs((L^beta - 1)/omega)^rho);
+    end
 
-Y_dot = (1-c_y*(1-exp(-abs(Vce)/V_y))-Y)/T_y;
-Y = Y_dot*1/Fs + Y;
-end
+    function FVcon = FV_con_slow_function(L,V)
+        %---------------------------
+        % concentric force velocity (F-V) relationship for slow-twitch fiber
+        % input: normalized muscle length and velocity
+        % output: F-V factor (0-1)
+        %---------------------------
+        Vmax = -7.88;
+        cv0 = 5.88;
+        cv1 = 0;
+        
+        FVcon = (Vmax - V)/(Vmax + (cv0 + cv1*L)*V);
+    end
 
-function S = sag_function(S,f_eff,Fs)
-if f_eff < 0.1
-    a_s = 1.76;
-else
-    a_s = 0.96;
-end
-T_s = 0.043;
-S_dot = (a_s-S)/T_s;
-S = S_dot*1/Fs + S;
-end
+    function FVcon = FV_con_fast_function(L,V)
+        %---------------------------
+        % concentric force velocity (F-V) relationship for fast-twitch fiber
+        % input: normalized muscle length and velocity
+        % output: F-V factor (0-1)
+        %---------------------------
+        Vmax = -9.15;
+        cv0 = -5.7;
+        cv1 = 9.18;
+        
+        FVcon = (Vmax - V)/(Vmax + (cv0 + cv1*L)*V);
+    end
 
-function FL = FL_slow_function(L)
-%---------------------------
-% force length (F-L) relationship for slow-tiwtch fiber
-% input: normalized muscle length and velocity
-% output: F-L factor (0-1)
-%---------------------------
-beta = 2.3;
-omega = 1.12;
-rho = 1.62;
+    function FVecc = FV_ecc_slow_function(L,V)
+        %---------------------------
+        % eccentric force velocity (F-V) relationship for slow-twitch fiber
+        % input: normalized muscle length and velocity
+        % output: F-V factor (0-1)
+        %---------------------------
+        av0 = -4.7;
+        av1 = 8.41;
+        av2 = -5.34;
+        bv = 0.35;
+        FVecc = (bv - (av0 + av1*L + av2*L^2)*V)/(bv+V);
+    end
 
-FL = exp(-abs((L^beta - 1)/omega)^rho);
-end
+    function FVecc = FV_ecc_fast_function(L,V)
+        %---------------------------
+        % eccentric force velocity (F-V) relationship for fast-twitch fiber
+        % input: normalized muscle length and velocity
+        % output: F-V factor (0-1)
+        %---------------------------
+        av0 = -1.53;
+        av1 = 0;
+        av2 = 0;
+        bv = 0.69;
+        FVecc = (bv - (av0 + av1*L + av2*L^2)*V)/(bv+V);
+    end
 
-function FL = FL_fast_function(L)
-%---------------------------
-% force length (F-L) relationship for fast-twitch fiber
-% input: normalized muscle length and velocity
-% output: F-L factor (0-1)
-%---------------------------
-beta = 1.55;
-omega = 0.75;
-rho = 2.12;
+    function Fpe1 = F_pe_1_function(L,V)
+        %---------------------------
+        % passive element 1
+        % input: normalized muscle length
+        % output: passive element force (0-1)
+        %---------------------------
+        c1_pe1 = 23;
+        k1_pe1 = 0.046;
+        Lr1_pe1 = 1.17;
+        eta = 0.01;
+        
+        Fpe1 = c1_pe1 * k1_pe1 * log(exp((L - Lr1_pe1)/k1_pe1)+1) + eta*V;
+        
+    end
 
-FL = exp(-abs((L^beta - 1)/omega)^rho);
-end
+    function Fpe2 = F_pe_2_function(L)
+        %---------------------------
+        % passive element 2
+        % input: normalized muscle length
+        % output: passive element force (0-1)
+        %---------------------------
+        c2_pe2 = -0.02;
+        k2_pe2 = -21;
+        Lr2_pe2 = 0.70;
+        
+        Fpe2 = c2_pe2*exp((k2_pe2*(L-Lr2_pe2))-1);
+        
+    end
 
-function FVcon = FV_con_slow_function(L,V)
-%---------------------------
-% concentric force velocity (F-V) relationship for slow-twitch fiber
-% input: normalized muscle length and velocity
-% output: F-V factor (0-1)
-%---------------------------
-Vmax = -7.88;
-cv0 = 5.88;
-cv1 = 0;
+    function Fse = F_se_function(LT)
+        %---------------------------
+        % series elastic element (tendon)
+        % input: tendon length
+        % output: tendon force (0-1)
+        %---------------------------
+        cT_se = 27.8; %27.8
+        kT_se = 0.0047;
+        LrT_se = 0.964;
+        
+        Fse = cT_se * kT_se * log(exp((LT - LrT_se)/kT_se)+1);
+        
+    end
 
-FVcon = (Vmax - V)/(Vmax + (cv0 + cv1*L)*V);
-end
+    function [Lce_initial,Lse_initial,Lmax] =  InitialLength_function(L0,alpha,Lse_slack,Lce_initial,Lse_initial)
+        %---------------------------
+        % Determine the initial lengths of muscle and tendon and maximal
+        % muscle length
+        %---------------------------
+        
+        % serires elastic element parameters
+        cT = 27.8;
+        kT = 0.0047;
+        LrT = 0.964;
+        % parallel passive element parameters
+        c1 = 23;
+        k1 = 0.046;
+        Lr1 = 1.17;
+        
+        % passive force produced by parallel passive element at maximal
+        % muscle length
+        PassiveForce = c1 * k1 * log(exp((1 - Lr1)/k1)+1);
+        % tendon length at the above passive force
+        Normalized_SE_Length = kT*log(exp(PassiveForce/cT/kT)-1)+LrT;
+        
+        % maximal musculotendon length defined by joint range of motion
+        Lmt_temp_max = L0*cos(alpha)+Lse_slack + 1;
+        
+        % optimal muscle length
+        L0_temp = L0;
+        % optimal tendon length (Song et al. 2008)
+        L0T_temp = Lse_slack*1.05;
+        
+        % tendon length at maximal muscle length
+        SE_Length =  L0T_temp * Normalized_SE_Length;
+        % maximal fasicle length
+        FasclMax = (Lmt_temp_max - SE_Length)/L0_temp;
+        % maximal muscle fiber length
+        Lmax = FasclMax/cos(alpha);
+        
+        % initial musculotendon length defined by the user input
+        Lmt_temp = Lce_initial * cos(alpha) + Lse_initial;
+        
+        % initial muscle length determined by passive muscle force and
+        % tendon force
+        InitialLength =  (Lmt_temp-(-L0T_temp*(kT/k1*Lr1-LrT-kT*log(c1/cT*k1/kT))))/(100*(1+kT/k1*L0T_temp/Lmax*1/L0_temp)*cos(alpha));
+        % normalize the muscle legnth to optimal muscle length
+        Lce_initial = InitialLength/(L0_temp/100);
+        % calculate initial length of tendon and normalize it to optimal
+        % tendon length
+        Lse_initial = (Lmt_temp - InitialLength*cos(alpha)*100)/L0T_temp;
+    end
 
-function FVcon = FV_con_fast_function(L,V)
-%---------------------------
-% concentric force velocity (F-V) relationship for fast-twitch fiber
-% input: normalized muscle length and velocity
-% output: F-V factor (0-1)
-%---------------------------
-Vmax = -9.15;
-cv0 = -5.7;
-cv1 = 9.18;
-
-FVcon = (Vmax - V)/(Vmax + (cv0 + cv1*L)*V);
-end
-
-function FVecc = FV_ecc_slow_function(L,V)
-%---------------------------
-% eccentric force velocity (F-V) relationship for slow-twitch fiber
-% input: normalized muscle length and velocity
-% output: F-V factor (0-1)
-%---------------------------
-av0 = -4.7;
-av1 = 8.41;
-av2 = -5.34;
-bv = 0.35;
-FVecc = (bv - (av0 + av1*L + av2*L^2)*V)/(bv+V);
-end
-
-function FVecc = FV_ecc_fast_function(L,V)
-%---------------------------
-% eccentric force velocity (F-V) relationship for fast-twitch fiber
-% input: normalized muscle length and velocity
-% output: F-V factor (0-1)
-%---------------------------
-av0 = -1.53;
-av1 = 0;
-av2 = 0;
-bv = 0.69;
-FVecc = (bv - (av0 + av1*L + av2*L^2)*V)/(bv+V);
-end
-
-function Fpe1 = F_pe_1_function(L,V)
-%---------------------------
-% passive element 1
-% input: normalized muscle length
-% output: passive element force (0-1)
-%---------------------------
-c1_pe1 = 23;
-k1_pe1 = 0.046;
-Lr1_pe1 = 1.17;
-eta = 0.01;
-
-Fpe1 = c1_pe1 * k1_pe1 * log(exp((L - Lr1_pe1)/k1_pe1)+1) + eta*V;
-
-end
-
-function Fpe2 = F_pe_2_function(L)
-%---------------------------
-% passive element 2
-% input: normalized muscle length
-% output: passive element force (0-1)
-%---------------------------
-c2_pe2 = -0.02;
-k2_pe2 = -21;
-Lr2_pe2 = 0.70;
-
-Fpe2 = c2_pe2*exp((k2_pe2*(L-Lr2_pe2))-1);
-
-end
-
-function Fse = F_se_function(LT)
-%---------------------------
-% series elastic element (tendon)
-% input: tendon length
-% output: tendon force (0-1)
-%---------------------------
-cT_se = 27.8; %27.8
-kT_se = 0.0047;
-LrT_se = 0.964;
-
-Fse = cT_se * kT_se * log(exp((LT - LrT_se)/kT_se)+1);
-
-end
-
-function [Lce_initial,Lse_initial,Lmax] =  InitialLength_function(L0,alpha,Lse_slack,Lce_initial,Lse_initial)
-%---------------------------
-% Determine the initial lengths of muscle and tendon and maximal
-% muscle length
-%---------------------------
-
-% serires elastic element parameters
-cT = 27.8;
-kT = 0.0047;
-LrT = 0.964;
-% parallel passive element parameters
-c1 = 23;
-k1 = 0.046;
-Lr1 = 1.17;
-
-% passive force produced by parallel passive element at maximal
-% muscle length
-PassiveForce = c1 * k1 * log(exp((1 - Lr1)/k1)+1);
-% tendon length at the above passive force
-Normalized_SE_Length = kT*log(exp(PassiveForce/cT/kT)-1)+LrT;
-
-% maximal musculotendon length defined by joint range of motion
-Lmt_temp_max = L0*cos(alpha)+Lse_slack + 1;
-
-% optimal muscle length
-L0_temp = L0;
-% optimal tendon length (Song et al. 2008)
-L0T_temp = Lse_slack*1.05;
-
-% tendon length at maximal muscle length
-SE_Length =  L0T_temp * Normalized_SE_Length;
-% maximal fasicle length
-FasclMax = (Lmt_temp_max - SE_Length)/L0_temp;
-% maximal muscle fiber length
-Lmax = FasclMax/cos(alpha);
-
-% initial musculotendon length defined by the user input
-Lmt_temp = Lce_initial * cos(alpha) + Lse_initial;
-
-% initial muscle length determined by passive muscle force and
-% tendon force
-InitialLength =  (Lmt_temp-(-L0T_temp*(kT/k1*Lr1-LrT-kT*log(c1/cT*k1/kT))))/(100*(1+kT/k1*L0T_temp/Lmax*1/L0_temp)*cos(alpha));
-% normalize the muscle legnth to optimal muscle length
-Lce_initial = InitialLength/(L0_temp/100);
-% calculate initial length of tendon and normalize it to optimal
-% tendon length
-Lse_initial = (Lmt_temp - InitialLength*cos(alpha)*100)/L0T_temp;
 end
