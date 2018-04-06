@@ -6,7 +6,7 @@
 % Ojbective: find twitch amplitudes for each motor unit
 %
 %--------------------------------------------------------------------------
-function output = twitchBasedMuscleModel_FCR(amplitude)
+function output = twitchBasedMuscleModel_FCR_noTendon(amplitude)
 
 %--------------------------------------------------------------------------
 alpha = 3.1*pi/180;

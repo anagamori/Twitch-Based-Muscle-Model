@@ -12,7 +12,6 @@ mean_Force_all = zeros(1,length(amp_vec));
 SD_Force_all = zeros(1,length(amp_vec));
 SD_Force_SD_all = zeros(1,length(amp_vec));
 CoV_Force_all = zeros(1,length(amp_vec));
-CoV_Force_SD_all = zeros(1,length(amp_vec));
 
 for i = 1:length(amp_vec)
     cd (dataFolder)
@@ -35,27 +34,16 @@ for i = 1:length(amp_vec)
     SD_Force_all(i) = mean(SD_Force);
     SD_Force_SD_all(i) = std(SD_Force);
     CoV_Force_all(i) = mean(CoV_Force);
-    CoV_Force_SD_all(i) = std(CoV_Force);
     
 end
 
-figure(1)
-plot([0 amp_vec],[0 mean_Force_all/mean_Force_all(end)*100])
+mean_Force_vec = mean(mean_Force_all,2);
 
-figure(2)
-errorbar(amp_vec*100, SD_Force_all,SD_Force_SD_all,'-','Color',[0.078,0,0.831],'LineWidth',2,'Marker','o','MarkerFaceColor',[0.078,0,0.831])
-xlabel('Excitation Level (%)','FontSize',14,'fontweight','bold')
-ylabel('SD (N)','FontSize',14,'fontweight','bold')
-xlim([0 105])
+figure(1)
+plot(amp_vec,mean_Force_all)
 
 figure(3)
-errorbar(mean_Force_all/mean_Force_all(end)*100, SD_Force_all,SD_Force_SD_all,'-','Color',[0.078,0,0.831],'LineWidth',2,'Marker','o','MarkerFaceColor',[0.078,0,0.831])
-xlabel('Mean Force (%)','FontSize',14,'fontweight','bold')
-ylabel('SD (N)','FontSize',14,'fontweight','bold')
-xlim([0 105])
-
-figure(4)
-errorbar(amp_vec*100, CoV_Force_all*100,CoV_Force_SD_all*100,'-','Color',[0.078,0,0.831],'LineWidth',2,'Marker','o','MarkerFaceColor',[0.078,0,0.831])
+errorbar(amp_vec, mean(SD_Force_all,2)./mean_Force_vec(end)*100,std(SD_Force_all,[],2)./mean_Force_vec(end)*100,'-','Color',[0.078,0,0.831],'LineWidth',2,'Marker','o','MarkerFaceColor',[0.078,0,0.831])
 xlabel('Excitation Level (%)','FontSize',14,'fontweight','bold')
-ylabel('CoV (%)','FontSize',14,'fontweight','bold')
+ylabel('SD (%)','FontSize',14,'fontweight','bold')
 xlim([0 105])
