@@ -2,11 +2,11 @@ close all
 clear all
 clc
 
-dataFolder = '/Users/akiranagamori/Documents/GitHub/SDN Data';
-codeFolder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
+dataFolder = '/Volumes/DATA2/Motor Unit Model Data/Twitch-based Muscle Model';
+codeFolder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 amp_vec = 0.1:0.1:1;
 
-Fs = 1000;
+Fs = 40000;
 
 mean_Force_all = zeros(1,length(amp_vec));
 SD_Force_all = zeros(1,length(amp_vec));
@@ -16,7 +16,7 @@ CoV_Force_SD_all = zeros(1,length(amp_vec));
 
 for i = 1:length(amp_vec)
     cd (dataFolder)
-    load(['Data' num2str(i)],'Data')
+    load(['Force_' num2str(i)],'Force')
     cd (codeFolder)
     
     mean_Force = zeros(1,10);
@@ -24,10 +24,9 @@ for i = 1:length(amp_vec)
     CoV_Force = zeros(1,10);
     
     for j = 1:10
-        output = Data{j};
-        Force = sum(output.Force(:,5*Fs+1:end));
-        mean_Force(j) = mean(Force);
-        SD_Force(j) = std(Force);
+        Force_temp = Force(j,:);        
+        mean_Force(j) = mean(Force_temp);
+        SD_Force(j) = std(Force_temp);
         CoV_Force(j) = SD_Force(j)/mean_Force(j);
     end
     

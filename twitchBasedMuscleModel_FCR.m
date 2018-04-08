@@ -79,7 +79,8 @@ cv_MU = 0.1; %ISI variability as per coefficient of variation (=mean/SD)
 Vce = 0;
 Y = 0;
 U_eff = 0;
-Fs = 1000;
+Force = 0;
+Fs = 40000;
 h = 1/Fs;
 time = 0:1/Fs:10;
 
@@ -303,7 +304,7 @@ output.Lse = Lse_vec;
         f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
         
         twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
-        twitch = twitch(1:length(t_twitch));
+        twitch = twitch(1:1*Fs);
         
     end
 
