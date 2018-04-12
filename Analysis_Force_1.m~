@@ -14,7 +14,7 @@ SD_Force_SD_all = zeros(1,length(amp_vec));
 CoV_Force_all = zeros(1,length(amp_vec));
 CoV_Force_SD_all = zeros(1,length(amp_vec));
 
-for i = 1:length(amp_vec)
+for i = 5:length(amp_vec)
 %     cd (dataFolder)
 %     load(['Data_' num2str(i)],'Data')
 %     cd (codeFolder)
@@ -36,7 +36,7 @@ for i = 1:length(amp_vec)
     hold on 
     
     cd (dataFolder)
-    save(['Force_0_1_1_20_' num2str(i)],'Force')
+    save(['Force_FDI_0_1_1_10_' num2str(i)],'Force')
     cd (codeFolder)
     i
     

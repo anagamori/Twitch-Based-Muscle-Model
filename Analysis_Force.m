@@ -16,7 +16,7 @@ CoV_Force_SD_all = zeros(1,length(amp_vec));
 
 for i = 1:length(amp_vec)
     cd (dataFolder)
-    load(['Force_' num2str(i)],'Force')
+    load(['Force_FDI_0_1_1_10_' num2str(i)],'Force')
     cd (codeFolder)
     
     mean_Force = zeros(1,10);
