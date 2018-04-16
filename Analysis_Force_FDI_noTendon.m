@@ -25,18 +25,17 @@ for i = 1:length(amp_vec)
     load(['Data_FDI_noTendon_' num2str(i)],'Data')  
     cd (codeFolder)
     
+    Force = zeros(10,5*Fs);
     mean_Force_1 = zeros(1,10);
     SD_Force_1 = zeros(1,10);
     CoV_Force_1 = zeros(1,10);
-    
-    
-    
+       
     for j = 1:10
         output_temp = Data{j};  
         Force_temp = sum(output_temp.Force);
-        Force = Force_temp(5*Fs+2:end);
-        mean_Force_1(j) = mean(Force);
-        SD_Force_1(j) = std(Force);
+        Force(j,:) = Force_temp(5*Fs+2:end);
+        mean_Force_1(j) = mean(Force(j,:));
+        SD_Force_1(j) = std(Force(j,:));
         CoV_Force_1(j) = SD_Force_1(j)/mean_Force_1(j);        
         
     end
@@ -46,7 +45,11 @@ for i = 1:length(amp_vec)
     SD_Force_SD_all_1(i) = std(SD_Force_1);
     CoV_Force_all_1(i) = mean(CoV_Force_1);
     CoV_Force_SD_all_1(i) = std(CoV_Force_1);
-           
+    
+    cd (dataFolder)
+    save(['Force_FDI_noTendon_' num2str(i)],'Force')
+    cd (codeFolder)
+    
 end
 
 %%

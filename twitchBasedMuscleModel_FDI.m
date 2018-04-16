@@ -243,14 +243,15 @@ for t = 1:length(time)
         force(1:index_slow,t) = force(1:index_slow,t)*FL_slow*FV_slow;
         force(index_slow+1:end,t) = force(index_slow+1:end,t)*FL_fast*FV_fast;
         
-        FP1 = F_pe_1_function(Lce/Lmax,Vce);
-        FP2 = F_pe_2_function(Lce);
-        if FP2 > 0
-            FP2 = 0;
-        end
         
-        Force = sum(force(:,t)) + FP1*F0 + FP2*F0;
     end
+    FP1 = F_pe_1_function(Lce/Lmax,Vce);
+    FP2 = F_pe_2_function(Lce);
+    if FP2 > 0
+        FP2 = 0;
+    end
+    
+    Force = sum(force(:,t)) + FP1*F0 + FP2*F0;
     if Force < 0
         Force = 0;
     end
