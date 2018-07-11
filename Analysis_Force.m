@@ -22,10 +22,12 @@ CoV_Force_SD_all_2 = zeros(1,length(amp_vec));
 
 for i = 1:length(amp_vec)
     cd (dataFolder)
+
     load(['Force_FDI_0_1_1_5_180_' num2str(i)],'Force')
     Force_1 = Force;
     load(['Force_FDI_noTendon_0_1_1_5_180_' num2str(i)],'Force')
     Force_2 = Force;
+    load(['Force_FDI_0_1_1_10_' num2str(i)],'Force')
     cd (codeFolder)
     
     mean_Force_1 = zeros(1,10);

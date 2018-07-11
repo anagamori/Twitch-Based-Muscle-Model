@@ -11,10 +11,10 @@ function output = twitchBasedMuscleModel_FCR(amplitude)
 %--------------------------------------------------------------------------
 alpha = 3.1*pi/180;
 L0 = 5.1; % optimal muscle length [cm]
-Lse_slack = 27.1;
+Lse_slack = 13.5; %27.1
 L0T = Lse_slack*1.05;
 Lce_initial = 5.1;
-Lse_initial = 27.1;
+Lse_initial = 13.5;
 Lmt = Lce_initial+cos(alpha)*Lse_initial;
 [Lce,Lse,Lmax] =  InitialLength_function(L0,alpha,Lse_slack,Lce_initial,Lse_initial);
 
