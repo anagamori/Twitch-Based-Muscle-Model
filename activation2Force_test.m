@@ -52,9 +52,10 @@ U_eff = 0;
 alpha_eff = 0;
 
 cv_MU = 0;
-testingUnit =  1;
+testingUnit =  150;
+%MFR_MU(testingUnit) = 1.99;
 %FR = 2:4:60; %PFR_MU(testingUnit);
-FR_test = [10 20 30 40 50 60]; %[2 5 10 15 20 25 30 35 40 45 50 55 60];
+FR_test = 15; %[2 10 20 30]; %[10 20 30 40 50 60]; %[2 5 10 15 20 25 30 35 40 45 50 55 60];
 
 twitch2tetanus = 5;
 force_half = twitch2tetanus/2;
@@ -78,10 +79,10 @@ for k = 1:length(FR_test)
             T = 0.15;
         end
         U_eff_dot = (U(t)-U_eff)/T;
-        U_eff = U_eff_dot*1/Fs + U_eff;
+        U_eff = U_eff_dot*1/Fs + U_eff;      
         
         if t > 1
-            FR = g_e.*(U_eff - U_th(n)) + MFR_MU(n);
+            FR = g_e.*(U(t) - U_th(n)) + MFR_MU(n);
             f_env = FR/FR_half(n);
             if FR < MFR_MU(n)
                 FR = 0;
@@ -89,20 +90,22 @@ for k = 1:length(FR_test)
                 FR = PFR_MU(n);
             end
             
-            T_alpha = 0.05*f_env;
+            T_alpha = 0.01*f_env;
             alpha = 1-(1-exp(-force(t)/force_half.^3));
+            %alpha = 1-(1-exp(-f_env.^3));
             alpha_eff_dot = (alpha-alpha_eff)/T_alpha;
             alpha_eff = alpha_eff_dot/Fs + alpha_eff;
             noise_FR = FR;
             FR_mat(t) = FR;
-            
-%             if n <= index_fast
-%                 Af = Af_slow_function(f_env,Lce,Y);
-%                 Af_cor = Af_slow_correction_function(f_env,Lce,Y);
-%             else
-%                 Af = Af_fast_function(f_env,Lce,Y);
-%                 Af_cor = Af_fast_correction_function(f_env,Lce,Y);
-%             end
+            alpha_2 = 4*(1-exp(-force(t).^3))+1;
+            %alpha_2 = alpha_2/(force(t)/force_half);
+            if n <= index_fast
+                Af = Af_slow_function(f_env,Lce,Y);
+                Af_cor = Af_slow_correction_function(f_env,Lce,Y);
+            else
+                Af = Af_fast_function(f_env,Lce,Y);
+                Af_cor = Af_fast_correction_function(f_env,Lce,Y);
+            end
             
             spike_train_temp = zeros(1,length(time));
             if FR >= MFR_MU(n)
@@ -121,7 +124,7 @@ for k = 1:length(FR_test)
                     spike_time = round(spike_time_temp) + t;
                     [twitch,~,~] = twitch_function(1,f_env,Lce,CT(n),RT(n),Fs);
                     force_temp = conv(spike_train_temp,twitch);
-                    force = force + force_temp(1:length(time));
+                    force = force + force_temp(1:length(time));                    
                     spike_time_previous = t;
                 else
                     if spike_time == t
@@ -148,9 +151,10 @@ for k = 1:length(FR_test)
 %                             Af_cor = Af_fast_correction_function(FR_temp/FR_half(n),Lce,Y);
 %                         end
                         %ISI = mu;
-                        [twitch,~,~] = twitch_function(alpha_eff,f_env,Lce,CT(n),RT(n),Fs);
+                        [twitch,~,~] = twitch_function(Af_cor,f_env,Lce,CT(n),RT(n),Fs);
                         force_temp = conv(spike_train_temp,twitch);
                         force = force + force_temp(1:length(time));
+                        
                         spike_time_previous = t;
                     elseif FR_mat(t-1) == 0
                         spike_train(t) = 1;
@@ -173,7 +177,11 @@ for k = 1:length(FR_test)
                     end
                 end
             end
+            %Af = Af_slow_function(force(t)/force_half,Lce,Y);
+            %force(t) = 5*(1-exp(-(force(t)/2).^2));
+            %force(t) = twitch2tetanus*Af;
         end
+        
         alpha_eff_vec(t) = alpha_eff;
     end
     
@@ -262,7 +270,7 @@ n_f = n_f0 + n_f1*(1/L-1);
 Af = 1 - exp(-(S*f_eff/(a_f*n_f))^n_f);
 end
 
-function FF = frequency2Force_slow_function_new(f_env,L,Y)
+function FF = Af_slow_correction_function(f_env,L,Y)
 a_f = 0.56;
 n_f0 = 2.1; %2.33
 n_f1 = 5;
@@ -277,7 +285,7 @@ if FF > 1
 end
 end
 
-function FF = frequency2Force_fast_function_new(f_env,L,S)
+function FF = Af_fast_correction_function(f_env,L,S)
 a_f = 0.56;
 n_f0 = 2.1;
 n_f1 = 3.3;

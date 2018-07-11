@@ -17,9 +17,9 @@ freq = 0:0.1:100;
 for k = 1:length(test_amp)
     i = test_amp(k);
     cd (dataFolder)
-    load(['Force_FDI_' num2str(i)],'Force')
+    load(['Force_FDI_0_1_1_5_180_' num2str(i)],'Force')
     Force_1 = Force;
-    load(['Force_FDI_noTendon_' num2str(i)],'Force')
+    load(['Force_FDI_noTendon_0_1_1_5_180_' num2str(i)],'Force')
     Force_2 = Force;
     cd (codeFolder)
     
@@ -47,8 +47,8 @@ end
 figure(1)
 plot(freq,mean_pxx_all_1,'LineWidth',2);
 xlim([0 60])
-ylim([0 0.005])
-yticks([0:0.001:0.05])
+ylim([0 0.0003])
+yticks([0:0.0001:0.0003])
 xlabel('Frequency (Hz)','FontSize',14,'fontweight','bold')
 ylabel('Power (N^2)','FontSize',14,'fontweight','bold')
 legend('10% MVC','30% MVC','50% MVC','80% MVC')
@@ -57,8 +57,8 @@ legend('10% MVC','30% MVC','50% MVC','80% MVC')
 figure(2)
 plot(freq,mean_pxx_all_2,'LineWidth',2)
 xlim([0 60])
-ylim([0 0.005])
-yticks([0:0.001:0.005])
+ylim([0 0.002])
+yticks([0:0.001:0.002])
 xlabel('Frequency (Hz)','FontSize',14,'fontweight','bold')
 ylabel('Power (N^2)','FontSize',14,'fontweight','bold')
 legend('10% MVC','30% MVC','50% MVC','80% MVC')

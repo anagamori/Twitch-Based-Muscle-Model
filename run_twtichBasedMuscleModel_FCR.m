@@ -12,7 +12,7 @@ for i = 6:length(amp_vec)
     tic
     %parpool(2)
     for j = 1:10
-        output = twitchBasedMuscleModel_FCR(amp_vec(i));
+        output = twitchBasedMuscleModel_FCR(0.1);
         Data{j} = output;
     end
     toc
