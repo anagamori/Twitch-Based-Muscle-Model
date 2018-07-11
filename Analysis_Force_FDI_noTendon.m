@@ -20,7 +20,7 @@ SD_Force_SD_all_2 = zeros(1,length(amp_vec));
 CoV_Force_all_2 = zeros(1,length(amp_vec));
 CoV_Force_SD_all_2 = zeros(1,length(amp_vec));
 
-for i = 1:length(amp_vec)
+for i = 1 %:length(amp_vec)
     cd (dataFolder)
     load(['Data_FDI_noTendon_' num2str(i)],'Data')  
     cd (codeFolder)

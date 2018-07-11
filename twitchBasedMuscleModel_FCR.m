@@ -11,10 +11,10 @@ function output = twitchBasedMuscleModel_FCR(amplitude)
 %--------------------------------------------------------------------------
 alpha = 3.1*pi/180;
 L0 = 5.1; % optimal muscle length [cm]
-Lse_slack = 13.5; %27.1
+Lse_slack = 27.1; %27.1
 L0T = Lse_slack*1.05;
 Lce_initial = 5.1;
-Lse_initial = 13.5;
+Lse_initial = 27.1;
 Lmt = Lce_initial+cos(alpha)*Lse_initial;
 [Lce,Lse,Lmax] =  InitialLength_function(L0,alpha,Lse_slack,Lce_initial,Lse_initial);
 
@@ -45,9 +45,8 @@ F_pcsa_slow = 0.5; % fractional PSCA of slow-twitch motor units (0-1)
 [~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); % index for the largest motor unit clacified as slow-twitch
 Ur = 0.6; % recruitment threshold for the last recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
-f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
-coeffs_f_RT = coeffvalues(f_RT);
-U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
+b_Ur = log(Ur/Ur_1)/N_MU;
+U_th = exp(b_Ur*i_MU)/100; % the resulting recruitment threshold for individual units
 index_fast = 239;
 %--------------------------------------------------------------------------
 % Firing rate parameters
@@ -80,7 +79,7 @@ Vce = 0;
 Y = 0;
 U_eff = 0;
 Force = 0;
-Fs = 40000;
+Fs = 50000;
 h = 1/Fs;
 time = 0:1/Fs:10;
 
@@ -109,6 +108,7 @@ Lce_vec = zeros(1,length(time));
 Lse_vec = zeros(1,length(time));
 U_eff_vec = zeros(1,length(time));
 
+tic 
 for t = 1:length(time)
     if U(t) >= U_eff
         T_U = 0.03;
@@ -286,7 +286,7 @@ for t = 1:length(time)
     Vce_vec(t) = Vce; % normalized muscle excursion velocity
     
 end
-
+toc
 output.Force = force;
 output.Tendon_Force = Tendon_Force_vec;
 output.SpikeTrain = spike_train;

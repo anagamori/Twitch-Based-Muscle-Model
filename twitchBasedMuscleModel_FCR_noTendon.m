@@ -39,6 +39,7 @@ Pi_half = PTi./2; % half of peak tetanus amplitude of each unit
 a_twitch = 0.016860913109322;
 b_twitch = 0.012195538822182;
 Pi_MU = a_twitch*exp(b_twitch*i_MU);
+%Pi_MU = PTi*0.3;
 %--------------------------------------------------------------------------
 % Recruitment parameters
 %   Find recruitment threshold for individual units using exponential fit
@@ -46,9 +47,11 @@ F_pcsa_slow = 0.5; % fractional PSCA of slow-twitch motor units (0-1)
 [error, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); % index for the largest motor unit clacified as slow-twitch
 Ur = 0.6; % recruitment threshold for the last recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
-f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
-coeffs_f_RT = coeffvalues(f_RT);
-U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
+b_Ur = log(Ur/Ur_1)/N_MU;
+% f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
+% coeffs_f_RT = coeffvalues(f_RT);
+% U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
+U_th = exp(b_Ur*i_MU)/100;
 index_fast = 239;
 %--------------------------------------------------------------------------
 % Firing rate parameters
@@ -64,13 +67,13 @@ g_e = (PFR_MU(end) - MFR_MU(end))/(1-U_th(end));
 % Contraction time and half relaxation time
 %    Find contraction time and half relaxation time of individual units
 %   Using Loeb's formulation that contraction time of individual units is
-%   proportional to 1/FR_half (Brown & Loeb 2000 IV; Botterman et al., 1996)
+%   proportional to 1/FR_half (Brown & Loeb 2000 IV; Botterman et al., 1986)
 CT_n = 20;
 FR_half_n = FR_half(end);
 CT = 1.5*(CT_n*FR_half_n)./FR_half;
 CT = CT - (CT(end)-CT_n);
 CT = CT/1000;
-RT = CT;
+RT = CT+0.02;
 
 %--------------------------------------------------------------------------
 cv_MU = 0.1; %ISI variability as per coefficient of variation (=mean/SD)
@@ -90,6 +93,7 @@ U = [zeros(1,1*Fs) (amp/2)*(0:1/Fs:2) amp*ones(1,length(time)-3*Fs-1)];
 FR = zeros(1,N_MU);
 FR_mat = zeros(N_MU,length(time));
 f_env = zeros(1,N_MU);
+f_env_mat = zeros(N_MU,length(time));
 S = zeros(1,N_MU);
 spike_train = zeros(N_MU,length(time));
 spike_time = zeros(1,N_MU);
@@ -160,6 +164,7 @@ for t = 1:length(time)
                 end
                 
                 [twitch,~,~] = twitch_function(Af,Lce,CT(index_MU),RT(index_MU),Fs);
+                alpha_twitch = -0.2761*f_env(index_MU)+1.045;
                 force_temp = conv(spike_train_temp,Pi_MU(index_MU)*twitch*Af_cor);
                 force(index_MU,:) = force(index_MU,:) + force_temp(1:length(time));
                 spike_time_previous(index_MU) = t;
@@ -189,6 +194,7 @@ for t = 1:length(time)
                     end
                     %ISI = mu;
                     [twitch,~,~] = twitch_function(Af,Lce,CT(index_MU),RT(index_MU),Fs);
+                    alpha_twitch = -0.2761*f_env(index_MU)+1.045;
                     force_temp = conv(spike_train_temp,Pi_MU(index_MU)*twitch*Af_cor);
                     force(index_MU,:) = force(index_MU,:) + force_temp(1:length(time));
                     spike_time_previous(index_MU) = t;
@@ -214,6 +220,7 @@ for t = 1:length(time)
                         Af_cor = Af_fast_correction_function(f_env(index_MU),Lce,S(index_MU));
                     end
                     [twitch,~,~] = twitch_function(Af,Lce,CT(index_MU),RT(index_MU),Fs);
+                    alpha_twitch = -0.2761*f_env(index_MU)+1.045;
                     force_temp = conv(spike_train_temp,Pi_MU(index_MU)*twitch*Af_cor);
                     force(index_MU,:) = force(index_MU,:) + force_temp(1:length(time));
                     
@@ -244,6 +251,7 @@ for t = 1:length(time)
         Force(t) = sum(force(:,t)) + FP1*F0 + FP2*F0;
     end
     
+    f_env_mat(:,t) = f_env';
     U_eff_vec(t) = U_eff;
 end
 
@@ -251,18 +259,23 @@ toc
 
 output.Force = force;
 output.SpikeTrain = spike_train;
+output.f_env = f_env_mat;
 
 %%
     function [twitch,T1,T2_temp] = twitch_function(Af,Lce,CT,RT,Fs)
-        T1 = CT*Lce^2+CT*Af;
-        T2_temp = (RT + RT*Af)/Lce;
+        T1 = CT*Lce^2+CT*Af/2;
+        T2_temp = (RT + RT*Af/2)/Lce;
         T2 = T2_temp/1.68;
-        t_twitch = 0:1/Fs:2;
+        t_twitch = 0:1/Fs:5;
         f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
         f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
         
         twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
-        twitch = twitch(1:length(t_twitch));
+        if length(twitch) < length(t_twitch)
+            twitch = [twitch zeros(1,length(t_twitch)-length(twitch))];
+        else
+            twitch = twitch(1:length(t_twitch));
+        end
         
     end
 
