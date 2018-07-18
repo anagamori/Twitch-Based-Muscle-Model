@@ -39,9 +39,8 @@ F_pcsa_slow = 0.5; % fractional PSCA of slow-twitch motor units (0-1)
 % Recruitment threshold of each unit
 Ur = 0.6; % recruitment threshold for the lastly recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
-f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
-coeffs_f_RT = coeffvalues(f_RT);
-U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
+b_Ur = log(Ur/Ur_1)/N_MU;
+U_th = exp(b_Ur*i_MU)/100;
 %--------------------------------------------------------------------------
 % Minimum and maximum firing rates of each unit
 MFR1_MU = 8; %minimum firing rate of first unit
@@ -79,8 +78,9 @@ S = 0.96;
 mean_CT_slow = mean(CT(1:index_slow));
 [~, index_slow_rep] = min(abs(CT(1:index_slow) - mean_CT_slow));
 
-testingUnit =  1; %index_slow_rep;
-FR_test = [16 20 24 28 32 36 40 44 48];
+testingUnit =  120; %index_slow_rep;
+%FR_test = [12 16 20 24 28 32 36 40 44 48];
+FR_test = [20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84];
 for j = 1:length(FR_test)
     FR = FR_test(j); %round(3*FR_half(testingUnit)); %round(3*FR_half(testingUnit)) %round(2.7*FR_half(testingUnit)); % [2 5 10 15 20 25 30 35 40 45 48];
     f_env = FR/FR_half(testingUnit);
@@ -130,7 +130,7 @@ for j = 1:length(FR_test)
             end
         end
         f_int_dot = (f_env_2(t) - f_int)/T_f;
-        f_int = f_int_dot*1/Fs + f_int;
+        f_int = f_int_dot*1/Fs + f_int;      
         f_eff_dot = (f_int - f_eff)/T_f;
         f_eff = f_eff_dot*1/Fs + f_eff;
         f_eff_vec(t) = f_eff;
@@ -180,9 +180,9 @@ for j = 1:length(FR_test)
         Force = Force_temp(1:length(time));
         mean_Force_2 = mean(Force(2*Fs:3*Fs));
         if mean_Force_2 < mean_Force_1
-            alpha = alpha + 0.4./2.^(i-2);
+            alpha = alpha + 0.6./2.^(i-2);
         else
-            alpha = alpha - 0.4./2.^(i-2);
+            alpha = alpha - 0.6./2.^(i-2);
         end
     end
     %--------------------------------------------------------------------------
@@ -196,6 +196,7 @@ for j = 1:length(FR_test)
     [~,loc_fall_2] = min(abs((Force(end_stimulation:end_stimulation+0.3*Fs)-endForce_2/2)));
     t_fall_time_2 = (time(end_stimulation+loc_fall_2)-time(end_stimulation ));
     
+    maxForce_2_vec(j) = maxForce_2;
     %--------------------------------------------------------------------------
     % Calculate degree of fusion (Macefield et al. (1993))
     p2p_Force = max(Force(2*Fs:3*Fs))-min(Force(2*Fs:3*Fs));
@@ -218,10 +219,26 @@ for j = 1:length(FR_test)
     
 end
 
+% Reference frequency-force relationship from Bellemare 1983
+% FR_half_reference = 14.4;
+% FR_reference = [3 5 8 10 15 20 30 40 50 60 80];
+% Force_reference = [6.34 7.3 13.7 22.7 55.1 71.5 87.2, 93.7 96 98.9 100];
+
+figure(2)
+plot(FR_test,fusion,'LineWidth',1)
+xlabel('Frequency (Hz)')
+ylabel('Fusion')
+
+x = FR_test/FR_half(testingUnit);
+x = x';
+%x = [0.5;x];
+y = alpha_vec;
+y = y';
+%y = [0.85; y];
 %% function used
 function Af = Af_slow_function(f_eff,L,Y)
 a_f = 0.56;
-n_f0 = 2.1;
+n_f0 = 1.9;
 n_f1 = 5;
 n_f = n_f0 + n_f1*(1/L-1);
 Af = 1 - exp(-(Y*f_eff/(a_f*n_f))^n_f);
@@ -229,7 +246,7 @@ end
 
 function Af = Af_fast_function(f_eff,L,S)
 a_f = 0.56;
-n_f0 = 2.1;
+n_f0 = 1.9;
 n_f1 = 3.3;
 n_f = n_f0 + n_f1*(1/L-1);
 Af = 1 - exp(-(S*f_eff/(a_f*n_f))^n_f);

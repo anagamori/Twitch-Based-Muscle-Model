@@ -212,7 +212,7 @@ for t = 1:length(time)
                         alpha = a1_twitch*exp(-((f_env(index_MU)-b1_twitch)/c1_twitch)^2) + a2_twitch*exp(-((f_env(index_MU)-b2_twitch)/c2_twitch)^2);
                     end
                     [twitch,~,~] = twitch_function(Af,Lce,CT(index_MU),RT(index_MU),Fs,index_MU);
-                    force_temp = conv(spike_train_temp,PTi(index_MU)*twitch*alpha*twitch2tetanus_ratio);
+                    force_temp = conv(spike_train_temp,Pi_MU(index_MU)*twitch*alpha*twitch2tetanus_ratio);
                     force(index_MU,:) = force(index_MU,:) + force_temp(1:length(time));
                     spike_time_previous(index_MU) = t;
                 elseif FR_mat(index_MU,t-1) == 0
@@ -242,7 +242,7 @@ for t = 1:length(time)
                         alpha = a1_twitch*exp(-((f_env(index_MU)-b1_twitch)/c1_twitch)^2) + a2_twitch*exp(-((f_env(index_MU)-b2_twitch)/c2_twitch)^2);
                     end
                     [twitch,~,~] = twitch_function(Af,Lce,CT(index_MU),RT(index_MU),Fs,index_MU);
-                    force_temp = conv(spike_train_temp,PTi(index_MU)*twitch*alpha*twitch2tetanus_ratio);                  
+                    force_temp = conv(spike_train_temp,Pi_MU(index_MU)*twitch*alpha*twitch2tetanus_ratio);                  
                     force(index_MU,:) = force(index_MU,:) + force_temp(1:length(time));
                     
                     spike_time_previous(index_MU) = t;
@@ -308,7 +308,6 @@ for t = 1:length(time)
     
 end
 
-output.time = time;
 output.F0 = F0;
 output.Force = force;
 output.FR = FR_mat;
