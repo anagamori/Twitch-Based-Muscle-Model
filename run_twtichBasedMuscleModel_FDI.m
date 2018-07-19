@@ -10,21 +10,21 @@ for i = 1:length(amp_vec)
     
     tic
     %parpool(2)
-    for j = 1 %:10
+    for j = 1:10
         output = twitchBasedMuscleModel_FDI(amp_vec(i));
         
-%         cd (dataFolder)
-%         save(['output_FDI_noTendon_0_1_1_5_180_' num2str(i) '_' num2str(j)],'output')
-%         cd (codeFolder)
-%         
-%         clear output
+        cd (dataFolder)
+        save(['output_FDI_noTendon_new_' num2str(i) '_' num2str(j)],'output')
+        cd (codeFolder)
+        
+        %clear output
     end
     toc   
     
-    figure()
+    figure(1)
     plot(output.time,sum(output.Force))
-    hold on 
-    plot([output.time(1) output.time(end)],[output.F0 output.F0])
+%     hold on 
+%     plot([output.time(1) output.time(end)],[output.F0 output.F0])
    
     i
     

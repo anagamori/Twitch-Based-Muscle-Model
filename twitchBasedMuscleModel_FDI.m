@@ -79,7 +79,7 @@ a2_twitch = 1.448e6;
 b2_twitch = -74;
 c2_twitch = 19.96;
 %--------------------------------------------------------------------------
-cv_MU = 0.05; %ISI variability as per coefficient of variation (=mean/SD)
+cv_MU = 0.1; %ISI variability as per coefficient of variation (=mean/SD)
 
 %--------------------------------------------------------------------------
 
