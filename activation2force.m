@@ -122,8 +122,8 @@ for i = 1:length(FR)
     a = 12.56*exp(-4.229*Lce); %2*rand(1); 1 for Lce = 0.6, 0.4 for Lce = 0.8, 0.2 for Lce = 1.2
     b = 12.56*exp(-4.229*Lce);
     
-    T1 = CT(testingUnit); %+CT(testingUnit)*Af_old(i);% *1.1;
-    T2_temp = RT(testingUnit);% + RT(testingUnit)*Af_old(i));
+    T1 = CT(testingUnit)+CT(testingUnit)*Af_old(i);% *1.1;
+    T2_temp = RT(testingUnit)+RT(testingUnit)*Af_old(i);
     
     T2 = T2_temp/1.68;
     t_twitch = 0:1/Fs:5;
