@@ -66,10 +66,51 @@ time = 0:1/Fs:5;
 t_temp = 0:1/Fs:3;
 %--------------------------------------------------------------------------
 % simulation parameters
-Lce = 1;
+Lce = 0.8;
 Y = 1;
 S = 0.96;
 
+%--------------------------------------------------------------------------
+% Determine twitch-tetanus ratio from Stephens et al. (1975) (see Tw2Tet_fit_Stephens.m)
+a1_Tw2Tet = 0;
+b1_Tw2Tet = 0.9607;
+c1_Tw2Tet = 0.003597;
+a2_Tw2Tet = 0.1882;
+b2_Tw2Tet = 0.706;
+c2_Tw2Tet = 0.1679;
+a3_Tw2Tet = 0.5776;
+b3_Tw2Tet = 0.9928;
+c3_Tw2Tet = 0.3403;
+a4_Tw2Tet = 0.4059;
+b4_Tw2Tet = 0.9397;
+c4_Tw2Tet = 1.541;
+twitch2tetanus_ratio = a1_Tw2Tet*exp(-((Lce-b1_Tw2Tet)/c1_Tw2Tet).^2) + a2_Tw2Tet*exp(-((Lce-b2_Tw2Tet)/c2_Tw2Tet).^2) ...
+    + a3_Tw2Tet*exp(-((Lce-b3_Tw2Tet)/c3_Tw2Tet).^2) + a4_Tw2Tet*exp(-((Lce-b4_Tw2Tet)/c4_Tw2Tet).^2);
+twitch2tetanus_ratio = 0.05;% 0.2*twitch2tetanus_ratio;
+PT = 1/twitch2tetanus_ratio;
+
+%--------------------------------------------------------------------------
+% Determine contraction time from Stephens et al. (1975) (see CT_HRT_fit_Stephens.m)
+a1_CT = 0.416;
+b1_CT = 1.235;
+c1_CT = 0.45;
+a2_CT = 1.015;
+b2_CT = -9.718;
+c2_CT = 17.24;
+CT_fit =  a1_CT*exp(-((Lce-b1_CT)/c1_CT).^2) + a2_CT*exp(-((Lce-b2_CT)/c2_CT).^2);
+CT = CT*CT_fit;
+
+a1_HRT = 1.114;
+b1_HRT = 1.446;
+c1_HRT = 0.7234;
+a2_HRT = 0.09588;
+b2_HRT = 1.192;
+c2_HRT = 0.194;
+a3_HRT = 0.8869;
+b3_HRT = -0.4906;
+c3_HRT = 1.271;
+HRT_fit =  a1_HRT*exp(-((Lce-b1_HRT)/c1_HRT).^2) + a2_HRT*exp(-((Lce-b2_HRT)/c2_HRT).^2) + a3_HRT*exp(-((Lce-b3_HRT)/c3_HRT).^2);
+RT = RT*HRT_fit;
 %--------------------------------------------------------------------------
 % Find an index of representative slow twitch fiber
 % From Burke et al. (1974), fibers types between slow and fast can be differentiable based on the length of contraction time
@@ -78,17 +119,13 @@ S = 0.96;
 mean_CT_slow = mean(CT(1:index_slow));
 [~, index_slow_rep] = min(abs(CT(1:index_slow) - mean_CT_slow));
 
-testingUnit =  120; %index_slow_rep;
-%FR_test = [12 16 20 24 28 32 36 40 44 48];
-FR_test = [20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84];
+testingUnit =  1; %index_slow_rep;
+FR_test = [8 12 16 20 24 28 32 36 40 44 48];%
+% FR_test = [2 8 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84];
 for j = 1:length(FR_test)
     FR = FR_test(j); %round(3*FR_half(testingUnit)); %round(3*FR_half(testingUnit)) %round(2.7*FR_half(testingUnit)); % [2 5 10 15 20 25 30 35 40 45 48];
     f_env = FR/FR_half(testingUnit);
     
-    % Use average twitch-tetanus ratio (0.2) for slow twitch fibers from
-    % Macefield et al. (1993)
-    twitch2tetanus_ratio = 0.2;
-    PT = 1/twitch2tetanus_ratio;
     %--------------------------------------------------------------------------
     % Generate spike train
     spikeTrain_temp = spikeTrainGenerator(t_temp,Fs,FR);
@@ -130,11 +167,12 @@ for j = 1:length(FR_test)
             end
         end
         f_int_dot = (f_env_2(t) - f_int)/T_f;
-        f_int = f_int_dot*1/Fs + f_int;      
+        f_int = f_int_dot*1/Fs + f_int;
         f_eff_dot = (f_int - f_eff)/T_f;
         f_eff = f_eff_dot*1/Fs + f_eff;
         f_eff_vec(t) = f_eff;
-        if testingUnit <= index_slow
+        
+        if testingUnit <= index_slow            
             Af_vec(t) = Af_slow_function(f_eff,Lce,Y);
         else
             Af_vec(t) = Af_fast_function(f_eff,Lce,S);
@@ -150,16 +188,19 @@ for j = 1:length(FR_test)
     [~,loc_fall_1] = min(abs((Af_vec(4*Fs+1:4.3*Fs)-maxForce_1/2)));
     t_fall_time_1 = (time(4*Fs+1+loc_fall_1)-time(4*Fs+1));
     
-    mean_Force_1 = mean(Af_vec(2*Fs:3*Fs)*PT);
+    mean_Force_1 = mean(Af_vec(2*Fs:3*Fs));
+    mean_Force_1_vec(j) = mean_Force_1;
     %--------------------------------------------------------------------------
     %% Obtain new activation-force relationship
     %--------------------------------------------------------------------------
     % Create twitch profile
-    a = 1; %2*rand(1);
-    b = 1; %2*rand(1);
+    a = 0.2; %12.56*exp(-4.229*Lce); %2*rand(1);
+    b = 0.2; %12.56*exp(-4.229*Lce); %2*rand(1);
     
-    T1 = CT(testingUnit)*Lce^2 + CT(testingUnit)*Af_old*a;
-    T2_temp = (RT(testingUnit)+ RT(testingUnit)*Af_old*b)/Lce; %;
+    %T1 = CT(testingUnit)*Lce^2 + CT(testingUnit)*Af_old*a;
+    %T2_temp = (RT(testingUnit)+ RT(testingUnit)*Af_old*b)/Lce; %;
+    T1 = CT(testingUnit) + CT(testingUnit)*Af_old*a;
+    T2_temp = RT(testingUnit)+ RT(testingUnit)*Af_old*b; %;
     T2 = T2_temp/1.68;
     t_twitch = 0:1/Fs:5;
     f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
@@ -174,9 +215,16 @@ for j = 1:length(FR_test)
     
     %--------------------------------------------------------------------------
     % Compute resulting force with a given twithc profile
+    
+    %     if j <= 3
+    %         alpha = 1;
+    %         Force_temp = conv(spikeTrain,twitch*alpha*twitch2tetanus_ratio);
+    %         Force = Force_temp(1:length(time));
+    %         mean_Force_2 = mean(Force(2*Fs:3*Fs));
+    %     else
     alpha = 2*rand(1);
     for i = 1:100
-        Force_temp = conv(spikeTrain,twitch*alpha);
+        Force_temp = conv(spikeTrain,twitch*alpha); %*twitch2tetanus_ratio
         Force = Force_temp(1:length(time));
         mean_Force_2 = mean(Force(2*Fs:3*Fs));
         if mean_Force_2 < mean_Force_1
@@ -185,6 +233,8 @@ for j = 1:length(FR_test)
             alpha = alpha - 0.6./2.^(i-2);
         end
     end
+    %end
+    mean_Force_2_vec(j) = mean_Force_2;
     %--------------------------------------------------------------------------
     % Calculate rise (t_0-50) and fall time (t_100-50)
     maxForce_2 = max(Force);
@@ -199,12 +249,12 @@ for j = 1:length(FR_test)
     maxForce_2_vec(j) = maxForce_2;
     %--------------------------------------------------------------------------
     % Calculate degree of fusion (Macefield et al. (1993))
-    p2p_Force = max(Force(2*Fs:3*Fs))-min(Force(2*Fs:3*Fs));
-    fusion(j) = (1 - p2p_Force/1)*100;
+    p2p_Force(j) = max(Force(2*Fs:3*Fs))-min(Force(2*Fs:3*Fs));
+    
     %--------------------------------------------------------------------------
     % Plot results
     figure(1)
-    plot(time,Af_vec*PT,'LineWidth',1)
+    plot(time,Af_vec,'LineWidth',1)
     hold on
     plot(time,Force,'LineWidth',1)
     
@@ -219,13 +269,25 @@ for j = 1:length(FR_test)
     
 end
 
+fusion = (1 - p2p_Force/twitch2tetanus_ratio)*100;
+
 % Reference frequency-force relationship from Bellemare 1983
-% FR_half_reference = 14.4;
-% FR_reference = [3 5 8 10 15 20 30 40 50 60 80];
-% Force_reference = [6.34 7.3 13.7 22.7 55.1 71.5 87.2, 93.7 96 98.9 100];
+FR_half_reference = 14.4;
+FR_reference = [3 5 8 10 15 20 30 40 50 60 80]/FR_half_reference;
+Force_reference = [6.34 7.3 13.7 22.7 55.1 71.5 87.2, 93.7 96 98.9 100]/100;
 
 figure(2)
-plot(FR_test,fusion,'LineWidth',1)
+plot(FR_test/FR_half(testingUnit),mean_Force_1_vec,'LineWidth',1)
+hold on
+plot(FR_test/FR_half(testingUnit),mean_Force_2_vec,'LineWidth',1)
+hold on
+plot(FR_reference,Force_reference,'LineWidth',1)
+xlabel('Frequency (Hz)')
+ylabel('Mean Force')
+xlim([0 3])
+
+figure(3)
+plot(FR_test/FR_half(testingUnit),fusion,'LineWidth',1)
 xlabel('Frequency (Hz)')
 ylabel('Fusion')
 
@@ -238,15 +300,27 @@ y = y';
 %% function used
 function Af = Af_slow_function(f_eff,L,Y)
 a_f = 0.56;
-n_f0 = 1.9;
+n_f0 = 2;
 n_f1 = 5;
 n_f = n_f0 + n_f1*(1/L-1);
 Af = 1 - exp(-(Y*f_eff/(a_f*n_f))^n_f);
 end
 
+% function Af = Af_slow_function(f_eff,L,Y)
+% p1 = 1.07;
+% p2 = -1.003;
+% p3 = 0.3268;
+% p4 = -0.01941;
+% q1 = -0.6124;
+% q2 = 0.1152;
+% q3 = 0.23;
+% 
+% Af = (p1*f_eff^3 + p2*f_eff^2 + p3*f_eff + p4)/(f_eff^3 + q1*f_eff^2 + q2*f_eff + q3);
+% end
+
 function Af = Af_fast_function(f_eff,L,S)
 a_f = 0.56;
-n_f0 = 1.9;
+n_f0 = 2;
 n_f1 = 3.3;
 n_f = n_f0 + n_f1*(1/L-1);
 Af = 1 - exp(-(S*f_eff/(a_f*n_f))^n_f);

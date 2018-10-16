@@ -1,5 +1,5 @@
 %--------------------------------------------------------------------------
-% activation2force_new_fit_v3.m
+% activation2force_new_fit_v4.m
 % Author: Akira Nagamori
 % Last update: 7/18/18
 % Code descriptions
@@ -68,6 +68,47 @@ Y = 1;
 S = 0.96;
 
 %--------------------------------------------------------------------------
+% Determine twitch-tetanus ratio from Stephens et al. (1975) (see Tw2Tet_fit_Stephens.m)
+a1_Tw2Tet = 0;
+b1_Tw2Tet = 0.9607;
+c1_Tw2Tet = 0.003597;
+a2_Tw2Tet = 0.1882;
+b2_Tw2Tet = 0.706;
+c2_Tw2Tet = 0.1679;
+a3_Tw2Tet = 0.5776;
+b3_Tw2Tet = 0.9928;
+c3_Tw2Tet = 0.3403;
+a4_Tw2Tet = 0.4059;
+b4_Tw2Tet = 0.9397;
+c4_Tw2Tet = 1.541;
+twitch2tetanus_ratio = a1_Tw2Tet*exp(-((Lce-b1_Tw2Tet)/c1_Tw2Tet).^2) + a2_Tw2Tet*exp(-((Lce-b2_Tw2Tet)/c2_Tw2Tet).^2) ...
+    + a3_Tw2Tet*exp(-((Lce-b3_Tw2Tet)/c3_Tw2Tet).^2) + a4_Tw2Tet*exp(-((Lce-b4_Tw2Tet)/c4_Tw2Tet).^2);
+twitch2tetanus_ratio = 0.2*twitch2tetanus_ratio;
+PT = 1/twitch2tetanus_ratio;
+
+%--------------------------------------------------------------------------
+% Determine contraction time from Stephens et al. (1975) (see CT_HRT_fit_Stephens.m)
+a1_CT = 0.416;
+b1_CT = 1.235;
+c1_CT = 0.45;
+a2_CT = 1.015;
+b2_CT = -9.718;
+c2_CT = 17.24;
+CT_fit =  a1_CT*exp(-((Lce-b1_CT)/c1_CT).^2) + a2_CT*exp(-((Lce-b2_CT)/c2_CT).^2);
+CT = CT*CT_fit;
+
+a1_HRT = 1.114;
+b1_HRT = 1.446;
+c1_HRT = 0.7234;
+a2_HRT = 0.09588;
+b2_HRT = 1.192;
+c2_HRT = 0.194;
+a3_HRT = 0.8869;
+b3_HRT = -0.4906;
+c3_HRT = 1.271;
+HRT_fit =  a1_HRT*exp(-((Lce-b1_HRT)/c1_HRT).^2) + a2_HRT*exp(-((Lce-b2_HRT)/c2_HRT).^2) + a3_HRT*exp(-((Lce-b3_HRT)/c3_HRT).^2);
+RT = RT*HRT_fit;
+%--------------------------------------------------------------------------
 % Find an index of representative slow twitch fiber
 % From Burke et al. (1974), fibers types between slow and fast can be differentiable based on the length of contraction time
 % A unit that has contraction time closest to mean contraction time of all
@@ -75,148 +116,106 @@ S = 0.96;
 mean_CT_slow = mean(CT(1:index_slow));
 [~, index_slow_rep] = min(abs(CT(1:index_slow) - mean_CT_slow));
 
-testingUnit =  80; %index_slow_rep;
+testingUnit =  1; %index_slow_rep;
 
 %FR = [2 5 10 14 18 22 26 30 34 38 42 46 50 54 58 62 64 68 72 76 80 84];
 FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)];
 %FR = [2 0.5*FR_half(testingUnit) 1*FR_half(testingUnit) 2*FR_half(testingUnit) 3*FR_half(testingUnit)];
 % Use average twitch-tetanus ratio (0.3) for slow twitch fibers from Burke
 % et al. (1974)
-twitch2tetanus_ratio = 0.2;
-PT = 1/twitch2tetanus_ratio;
-
 %% Obtain non-corrected activation-force relationship
 
-a = (2-0.1)*rand(1)+0.1;
-b = a;
+
+meanForce = zeros(1,length(FR));
+P2PForce = zeros(1,length(FR));
+Af_old = zeros(1,length(FR));
+for i = 1:length(FR)
+    %force = zeros(1,length(time));
+    f_env = FR(i)/FR_half(testingUnit);
+    spikeTrain_temp = spikeTrainGenerator(t_temp,Fs,FR(i));
+    spikeTrain = [zeros(1,1*Fs) spikeTrain_temp zeros(1,1*Fs)];
     
-for j = 1:10
-        
-    a
-    b
-    a_temp_1 = a + 0.4./2.^(j-2);
-    if a_temp_1 < 0 
-        a_temp_1 = 0;
-    end
-    b_temp_1 = b + 0.4./2.^(j-2);
-    if b_temp_1 < 0 
-        b_temp_1 = 0;
-    end
-    a_temp_2 = a - 0.4./2.^(j-2);
-    if a_temp_2 < 0 
-        a_temp_2 = 0;
-    end
-    b_temp_2 = b - 0.4./2.^(j-2);
-    if b_temp_2 < 0 
-        b_temp_2 = 0;
-    end
+    f_env_2 = [zeros(1,1*Fs) f_env*ones(1,length(spikeTrain_temp)) zeros(1,1*Fs)];
+    f_int = 0;
+    f_eff = 0;
+    f_eff_dot = 0;
+    f_eff_vec = zeros(1,length(f_env_2));
+    Af_vec = zeros(1,length(f_env_2));
     
-    for k = 1:2
-        meanForce = zeros(1,length(FR));
-        P2PForce = zeros(1,length(FR));
-        Af_old = zeros(1,length(FR));
-        for i = 1:length(FR)
-            %force = zeros(1,length(time));
-            f_env = FR(i)/FR_half(testingUnit);
-            spikeTrain_temp = spikeTrainGenerator(t_temp,Fs,FR(i));
-            spikeTrain = [zeros(1,1*Fs) spikeTrain_temp zeros(1,1*Fs)];
-            
-            f_env_2 = [zeros(1,1*Fs) f_env*ones(1,length(spikeTrain_temp)) zeros(1,1*Fs)];
-            f_int = 0;
-            f_eff = 0;
-            f_eff_dot = 0;
-            f_eff_vec = zeros(1,length(f_env_2));
-            Af_vec = zeros(1,length(f_env_2));
-                     
-            if testingUnit <= index_slow
-                Af_old(i) = Af_slow_function(f_env,Lce,Y);
-                Af = Af_slow_function(f_env,Lce,Y);
-            else
-                Af_old(i) = Af_fast_function(f_env,Lce,S);
-                Af = Af_fast_function(f_env,Lce,S);
-            end
-            
-            for t = 1:length(f_env_2)
-                if f_eff_dot >= 0
-                    T_f = 0.0343 + 0.0227*f_env;
-                else
-                    T_f = (0.047+0.0252*Af_old(i));
-                end
-                f_int_dot = (f_env_2(t) - f_int)/T_f;
-                f_int = f_int_dot*1/Fs + f_int;
-                f_eff_dot = (f_int - f_eff)/T_f;
-                f_eff = f_eff_dot*1/Fs + f_eff;
-                f_eff_vec(t) = f_eff;
-                if testingUnit <= index_slow
-                    Af_temp = Af_slow_function(f_env,Lce,Y);
-                else
-                    Af_temp = Af_fast_function(f_env,Lce,S);
-                end
-                Af_vec(t) = Af_temp;
-            end
-            
-            if k == 1
-                T1 = CT(testingUnit)*Lce^2+CT(testingUnit)*Af_old(i)*a_temp_1;% *1.1;
-                T2_temp = (RT(testingUnit) + RT(testingUnit)*Af_old(i)*b_temp_1)/Lce;
-            else
-                T1 = CT(testingUnit)*Lce^2+CT(testingUnit)*Af_old(i)*a_temp_2;% *1.1;
-                T2_temp = (RT(testingUnit) + RT(testingUnit)*Af_old(i)*b_temp_2)/Lce;
-            end
-            T2 = T2_temp/1.68;
-            t_twitch = 0:1/Fs:5;
-            f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
-            f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
-            
-            twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
-            if length(twitch) < length(t_twitch)
-                twitch = [twitch zeros(1,length(t_twitch)-length(twitch))];
-            else
-                twitch = twitch(1:length(t_twitch));
-            end
-            
-            if f_env < 0.5
-                alpha = 1;
-            else
-                a1 = -0.5279;
-                b1 = 0.304;
-                c1 = 0.5621;
-                a2 = 1.448e6;
-                b2 = -74;
-                c2 = 19.96;
-                alpha = a1*exp(-((f_env-b1)/c1)^2) + a2*exp(-((f_env-b2)/c2)^2);
-            end
-            twitch = alpha*twitch; %*PTi(1)*0.3;
-            force_temp = conv(spikeTrain,twitch);
-            force = force_temp(1:length(time));
-            
-            force_model = Af_old(i)*PT;
-            
-            meanForce(i) = mean(force(3*Fs:4*Fs));
-            P2PForce(i) = 1-(max(force(3*Fs:4*Fs))-min(force(3*Fs:4*Fs)))/1;
-            
-        end
-        
-%         figure(1)
-%         plot(meanForce)
-        Error(k) = sum(abs(meanForce-Af_old*PT));
-    end
-    Error_vec(j) = min(Error);
-    [~,loc] = min(Error);
-    if loc == 1
-        a = a_temp_1;
-        b = b_temp_1;
+    if testingUnit <= index_slow
+        Af_old(i) = Af_slow_function(f_env,Lce,Y);
+        Af = Af_slow_function(f_env,Lce,Y);
     else
-        a = a_temp_2;
-        b = b_temp_2;
+        Af_old(i) = Af_fast_function(f_env,Lce,S);
+        Af = Af_fast_function(f_env,Lce,S);
     end
+    
+    for t = 1:length(f_env_2)
+        if f_eff_dot >= 0
+            T_f = 0.0343 + 0.0227*f_env;
+        else
+            T_f = (0.047+0.0252*Af_old(i));
+        end
+        f_int_dot = (f_env_2(t) - f_int)/T_f;
+        f_int = f_int_dot*1/Fs + f_int;
+        f_eff_dot = (f_int - f_eff)/T_f;
+        f_eff = f_eff_dot*1/Fs + f_eff;
+        f_eff_vec(t) = f_eff;
+        if testingUnit <= index_slow
+            Af_temp = Af_slow_function(f_env,Lce,Y);
+        else
+            Af_temp = Af_fast_function(f_env,Lce,S);
+        end
+        Af_vec(t) = Af_temp;
+    end
+    
+    a = 12.56*exp(-4.229*Lce); %2*rand(1); 1 for Lce = 0.6, 0.4 for Lce = 0.8, 0.2 for Lce = 1.2
+    b = 12.56*exp(-4.229*Lce);
+    T1 = CT(testingUnit)+CT(testingUnit)*Af_old(i)*a;% *1.1;
+    T2_temp = (RT(testingUnit) + RT(testingUnit)*Af_old(i)*b);
+    
+    T2 = T2_temp/1.68;
+    t_twitch = 0:1/Fs:5;
+    f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
+    f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
+    
+    twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
+    if length(twitch) < length(t_twitch)
+        twitch = [twitch zeros(1,length(t_twitch)-length(twitch))];
+    else
+        twitch = twitch(1:length(t_twitch));
+    end
+    
+    a_alpha = -0.508;
+    b_alpha = 1.406;
+    c_alpha = 1.977;
+    d_alpha = 1.478;
+        
+    alpha = a_alpha*(a_alpha*tanh(-b_alpha*(f_env-c_alpha))-d_alpha);
+    
+    twitch = alpha*twitch*twitch2tetanus_ratio; %*PTi(1)*0.3;
+    force_temp = conv(spikeTrain,twitch);
+    force = force_temp(1:length(time));
+    
+    force_model = Af_old(i);
+    
+    meanForce(i) = mean(force(3*Fs:4*Fs));
+    P2PForce(i) = 1-(max(force(3*Fs:4*Fs))-min(force(3*Fs:4*Fs)))/twitch2tetanus_ratio;
+    
+    figure(1)
+    plot(force)
+    hold on
 end
+
+Error = sum(abs(meanForce-Af_old));
+
 
 
 figure(2)
 %plot(FR/FR_half(testingUnit),meanForce./max(meanForce)*100,'LineWidth',1,'Color',[0.078,0,0.831])
 plot(FR/FR_half(testingUnit),meanForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831])
 hold on
-plot(FR/FR_half(testingUnit),Af_old*PT,'LineWidth',1,'Color',[0.851,0.325,0.098])
+plot(FR/FR_half(testingUnit),Af_old,'LineWidth',1,'Color',[0.851,0.325,0.098])
 xlabel('Frequency (f_{0.5})','FontSize',14)
 ylabel('Force (%)','FontSize',14)
 
@@ -236,15 +235,15 @@ xlim([0 4])
 
 function Af = Af_slow_function(f_eff,L,Y)
 a_f = 0.56;
-n_f0 = 1.9;
-n_f1 = 5;
+n_f0 = 1.81;
+n_f1 = 1;
 n_f = n_f0 + n_f1*(1/L-1);
 Af = 1 - exp(-(Y*f_eff/(a_f*n_f))^n_f);
 end
 
 function Af = Af_fast_function(f_eff,L,S)
 a_f = 0.56;
-n_f0 = 1.9;
+n_f0 = 2;
 n_f1 = 3.3;
 n_f = n_f0 + n_f1*(1/L-1);
 Af = 1 - exp(-(S*f_eff/(a_f*n_f))^n_f);
