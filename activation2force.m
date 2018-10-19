@@ -71,13 +71,13 @@ RT = CT; %half-relaxation time [s]
 Fs = 1000; %sampling frequency
 time = 0:1/Fs:5; %simulation time
 time_active = 0:1/Fs:3; %time window in which a motor unit discharges
-testingUnit =  1; %index for the testing motor unit
+testingUnit = 1; %index for the testing motor unit
 Lce = 1; % muscle length
 Y = 1;
 S = 1;
 
-%FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)];
-FR = [2:2:3*FR_half(testingUnit)];
+FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)];
+%FR = [2:2:3*FR_half(testingUnit)];
 Af_old = length(FR);
 
 FR_exp = [2:1:50];
@@ -162,7 +162,7 @@ for i = 1:length(FR)
     else
         twitch = twitch(1:length(t_twitch));
     end
-    alpha = 0.25;
+    alpha = 0.2;
     twitch = alpha*twitch; %*PTi(1)*0.3;
     Force_temp = conv(spikeTrain,twitch);
     Force = Force_temp(1:length(time));
@@ -211,6 +211,11 @@ xlim([0 3.1])
 
 figure(3)
 plot(FR/FR_half(testingUnit),P2PForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831])
+hold on 
+
+figure(4)
+plot(FR/FR_half(testingUnit),meanForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831])
+hold on
 
 % figure(4)
 % plot(FR/FR_half(testingUnit),alpha_vec,'LineWidth',1)
