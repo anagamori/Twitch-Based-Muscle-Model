@@ -35,35 +35,14 @@ F_pcsa_slow = 0.5; % fractional PSCA of slow-twitch motor units [0-1]
 [~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); % index for the largest motor unit slow-twitch fiber in a pool
 
 %--------------------------------------------------------------------------
-% 5) Determine twithc-tetanus ratio
-if n <= index_slow
-    twitch2tetanus_ratio = 0.2; %slow-twitch fibers
-else
-    twitch2tetanus_ratio = 0.4; %fast-twitch fibers
-end
-
-% 0.2 for average twitch-tetanus ratio for slow tiwtich
-% 0.457 for average tiwtch-tetnaus ratio for fast twitch (both FF and FR):
-% (Stephens & Stuart, 1975b; Burke et al. 1973; Devanandan et al., 1965; Dum & Kennedy 1980; Mayer et al., 1984; Walsh et al., 1978)
-
-%--------------------------------------------------------------------------
-% 6) Determine the recruitment threshold of motor units [0 1]
+% 5) Determine the recruitment threshold of motor units [0 1]
 Ur = 0.6; % recruitment threshold for the last-recruited motor unit (i.e., the largest motor unit)
 Ur_1 = 0.01; % reruitment threshold for the first unit
 b_Ur = log(Ur/Ur_1)/N_MU; %coefficient to establish the exponential distribution of recruitment threshold
 U_th = exp(b_Ur*i_MU)/100; % recruitment threshold for each motor unit [0 1]
 
 %--------------------------------------------------------------------------
-% 7) Determine the minimum and maximum firing of motor units
-MFR1_MU = 8; %minimum firing rate of first unit
-MFRn_MU = 14; %minimum firing rate of last unit
-RTEn_MU = U_th(end)-Ur_1;  %difference in the recruitment threshold of the smallest and largest motor units
-MFR_MU = MFR1_MU + (MFRn_MU-MFR1_MU) * ((U_th-Ur_1)./RTEn_MU); %minimum firing rate of all motor units as a linear function of recruitment thresholds
-PFR_MU = 4*MFR_MU; %peak firing rate
-FR_half = PFR_MU./2; % firing rate at which half of maximum tetanic tension is achieved
-
-%--------------------------------------------------------------------------
-% 8) Determine the contraction time and half-reflaxation time
+% 6) Determine the contraction time and half-reflaxation time
 % Use the formulation given by Fuglevand et al. (1993)
 CT_n = 30; %contraction time of first unit [ms]
 CT_1 = 90; %contraction time of lasdt unit [ms]
@@ -74,8 +53,9 @@ CT = CT/1000; %contraction time [s]
 RT = CT; %half-relaxation time [s]
 
 %--------------------------------------------------------------------------
-% 9) Determine FR_half (frequency at which half the maximum tetanic tension is achieved)
+% 7) Determine FR_half (frequency at which half the maximum tetanic tension is achieved)
 % Use the relationship between contraction time and FR_half drived by Kernell et al. (1983)
+FR_half = zeros(1,N_MU);
 for n = 1:N_MU
     if n <= index_slow
         FR_half(n) = 1/(CT(n)*1.5); %slow-twitch fibers
@@ -84,7 +64,7 @@ for n = 1:N_MU
     end
 end
 %--------------------------------------------------------------------------
-% 10) Determine minimum and peak firing rate of each motor unit 
+% 8) Determine minimum and peak firing rate of each motor unit 
 % Use the formulation given in Song et al. (2008)
 % Minimum firing rate = half the FR_half
 % Peak firing rate = twitch the FR_half
@@ -130,8 +110,8 @@ FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rat
 
 S_vec = zeros(1,length(time)); % vector for sag parameter, S
 Af = length(FR);
-meanForce(i) = length(FR); %mean force 
-P2PForce(i) = length(FR);
+meanForce = length(FR); %mean force 
+P2PForce = length(FR);
     
 %==========================================================================
 % Start simulation
@@ -205,9 +185,20 @@ for i = 1:length(FR)
     else
         twitch = twitch(1:length(t_twitch));
     end
-      
-    alpha = twitch2tetanus_ratio; % scaling factor for the twitch profile
-    twitch = alpha*twitch;
+    
+    %--------------------------------------------------------------------------
+    % Determine twithc-tetanus ratio
+    if testingUnit <= index_slow
+        twitch2tetanus_ratio = 0.2; %slow-twitch fibers
+    else
+        twitch2tetanus_ratio = 0.4; %fast-twitch fibers
+    end
+    
+    % 0.2 for average twitch-tetanus ratio for slow tiwtich
+    % 0.457 for average tiwtch-tetnaus ratio for fast twitch (both FF and FR):
+    % (Stephens & Stuart, 1975b; Burke et al. 1973; Devanandan et al.,
+    % 1965; Dum & Kennedy 1980; Mayer et al., 1984; Walsh et al., 1978)
+    twitch = twitch2tetanus_ratio*twitch;
     
     %----------------------------------------------------------------------
     % Generate force output by convolving the twitch profile with the spike
@@ -234,8 +225,8 @@ for i = 1:length(FR)
     
     %----------------------------------------------------------------------
     % Non-linear scaling of output force
-    a = 2.1; % unit 1: 2.2
-    b = 0.52; % unit 1:0.3
+    a = 2.2; % unit 1: 2.2
+    b = 0.48; % unit 1:0.3
     Force = Force.^a./(Force.^a+b^2);    
           
     %----------------------------------------------------------------------
