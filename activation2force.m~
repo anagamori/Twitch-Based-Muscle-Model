@@ -1,9 +1,9 @@
-%==========================================================================
+%--------------------------------------------------------------------------
 % activation2force.m
 % Author: Akira Nagamori
-% Last update: 10/25/18
-% Descriptions: Frequency-force relationship 
-%==========================================================================
+% Last update: 10/15/18
+%--------------------------------------------------------------------------
+
 close all
 clear all
 clc
@@ -57,7 +57,7 @@ PFR_MU = 4*MFR_MU; %peak firing rate
 FR_half = PFR_MU./2; % firing rate at which half of maximum tetanic tension is achieved
 
 %--------------------------------------------------------------------------
-% 8) Determine the contraction time and half-reflaxation time
+% 7) Determine the contraction time and half-reflaxation time
 % Use the formulation given by Fuglevand et al. (1993)
 CT_n = 30; %contraction time of first unit [ms]
 CT_1 = 90; %contraction time of lasdt unit [ms]
@@ -68,7 +68,7 @@ CT = CT/1000; %contraction time [s]
 RT = CT; %half-relaxation time [s]
 
 %--------------------------------------------------------------------------
-% 9) Determine FR_half (frequency at which half the maximum tetanic tension is achieved)
+% 8) Determine FR_half (frequency at which half the maximum tetanic tension is achieved)
 % Use the relationship between contraction time and FR_half drived by Kernell et al. (1983)
 for n = 1:N_MU
     if n <= index_slow
@@ -78,14 +78,14 @@ for n = 1:N_MU
     end
 end
 %--------------------------------------------------------------------------
-% 10) Determine minimum and peak firing rate of each motor unit 
+% 9) Determine minimum and peak firing rate of each motor unit 
 % Use the formulation given in Song et al. (2008)
 % Minimum firing rate = half the FR_half
 % Peak firing rate = twitch the FR_half
 MFR_MU = FR_half./2;
 PFR_MU = FR_half*2;
 
-%==========================================================================
+%--------------------------------------------------------------------------
 % Parameters for sag (Brown & Loeb, 2000 IV)
 T_S = 0.043;
 a_S1 = 1.76;
@@ -97,7 +97,23 @@ S_temp = 0.96;
 % Parameters for yielding (Brown & Loeb, 2000 IV)
 Y = 1;
 
-%==========================================================================
+%--------------------------------------------------------------------------
+% Simulation
+Fs = 1000; %sampling frequency
+time = 0:1/Fs:5; %simulation time
+time_active = 0:1/Fs:3; %time window in which a motor unit discharges
+
+testingUnit = 300; %index for the testing motor unit
+Lce = 1; % muscle length
+
+FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rates
+
+S_vec = zeros(1,length(time)); % vector for sag parameter, S
+Af = length(FR);
+meanForce(i) = length(FR); %mean force 
+P2PForce(i) = length(FR);
+    
+%--------------------------------------------------------------------------
 % Frequency to force relationship from Rack & Westbury 1969
 FR_exp = [2:1:50];
 Force_exp = [0.0843934948657 0.10123804947139 0.11244878344883 0.14056097931104 0.18557463705802 0.27002503920278 0.39954600637362...
@@ -111,22 +127,6 @@ FR_half_exp = 10.2;
 FR_exp = FR_exp/FR_half_exp;
 Force_exp = Force_exp./(Force_exp(end));
 
-%==========================================================================
-% Simulation
-Fs = 1000; %sampling frequency
-time = 0:1/Fs:5; %simulation time
-time_active = 0:1/Fs:3; %time window in which a motor unit discharges
-
-testingUnit = 300; %index for the testing motor unit
-Lce = 1; % muscle length
-
-FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rates
-
-S_vec = zeros(1,length(time)); % vector for sag parameter, S
-Af = length(FR);
-meanForce = length(FR); %mean force 
-P2PForce = length(FR);
-    
 %==========================================================================
 % Start simulation
 for i = 1:length(FR)
@@ -211,6 +211,12 @@ for i = 1:length(FR)
     Force = Force_temp(1:length(time));
     
     %----------------------------------------------------------------------
+    % Non-linear scaling of output force
+    a = 2.1; % unit 1: 2.2
+    b = 0.52; % unit 1:0.3
+    Force = Force.^a./(Force.^a+b^2);    
+    
+    %----------------------------------------------------------------------
     % Apply sag if the unit is fast-twitch
     if testingUnit > index_slow
         for t = 1:length(time)
@@ -227,12 +233,6 @@ for i = 1:length(FR)
         Force = Force.*S_vec;
     end
       
-    %----------------------------------------------------------------------
-    % Non-linear scaling of output force
-    a = 2.2; % unit 1: 2.2
-    b = 0.48; % unit 1:0.3
-    Force = Force.^a./(Force.^a+b^2);    
-   
     %----------------------------------------------------------------------
     % Plot output
     figure(1)
@@ -273,7 +273,7 @@ plot(FR/FR_half(testingUnit),P2PForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831]
 hold on
 
 %----------------------------------------------------------------------
-% Plot force vs fusion (Macefield et al., 19993)
+% Plot 
 figure(4)
 plot(meanForce*100,P2PForce,'LineWidth',1)
 hold on

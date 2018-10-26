@@ -1,8 +1,9 @@
 %==========================================================================
-% activation2force.m
+% activation2force_fit.m
 % Author: Akira Nagamori
 % Last update: 10/25/18
-% Descriptions: Frequency-force relationship 
+% Descriptions: fit parameters a and b for non-linear scaling of force
+% output 
 %==========================================================================
 close all
 clear all
@@ -124,8 +125,8 @@ FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rat
 
 S_vec = zeros(1,length(time)); % vector for sag parameter, S
 Af = length(FR);
-meanForce = length(FR); %mean force 
-P2PForce = length(FR);
+meanForce(i) = length(FR); %mean force 
+P2PForce(i) = length(FR);
     
 %==========================================================================
 % Start simulation
@@ -211,6 +212,12 @@ for i = 1:length(FR)
     Force = Force_temp(1:length(time));
     
     %----------------------------------------------------------------------
+    % Non-linear scaling of output force
+    a = 2.1; % unit 1: 2.2
+    b = 0.52; % unit 1:0.3
+    Force = Force.^a./(Force.^a+b^2);    
+    
+    %----------------------------------------------------------------------
     % Apply sag if the unit is fast-twitch
     if testingUnit > index_slow
         for t = 1:length(time)
@@ -227,12 +234,6 @@ for i = 1:length(FR)
         Force = Force.*S_vec;
     end
       
-    %----------------------------------------------------------------------
-    % Non-linear scaling of output force
-    a = 2.2; % unit 1: 2.2
-    b = 0.48; % unit 1:0.3
-    Force = Force.^a./(Force.^a+b^2);    
-   
     %----------------------------------------------------------------------
     % Plot output
     figure(1)

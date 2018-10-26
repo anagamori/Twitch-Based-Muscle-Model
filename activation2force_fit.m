@@ -1,8 +1,9 @@
 %==========================================================================
-% activation2force.m
+% activation2force_fit.m
 % Author: Akira Nagamori
 % Last update: 10/25/18
-% Descriptions: Frequency-force relationship 
+% Descriptions: find parameters, a and b, for non-linear scaling of force
+% output, for each motor unit
 %==========================================================================
 close all
 clear all
@@ -35,7 +36,12 @@ F_pcsa_slow = 0.5; % fractional PSCA of slow-twitch motor units [0-1]
 
 %--------------------------------------------------------------------------
 % 5) Determine twithc-tetanus ratio
-twitch2tetanus_ratio = 0.38;
+if n <= index_slow
+    twitch2tetanus_ratio = 0.2; %slow-twitch fibers
+else
+    twitch2tetanus_ratio = 0.4; %fast-twitch fibers
+end
+
 % 0.2 for average twitch-tetanus ratio for slow tiwtich
 % 0.457 for average tiwtch-tetnaus ratio for fast twitch (both FF and FR):
 % (Stephens & Stuart, 1975b; Burke et al. 1973; Devanandan et al., 1965; Dum & Kennedy 1980; Mayer et al., 1984; Walsh et al., 1978)
@@ -124,13 +130,12 @@ FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rat
 
 S_vec = zeros(1,length(time)); % vector for sag parameter, S
 Af = length(FR);
-meanForce = length(FR); %mean force 
-P2PForce = length(FR);
+meanForce(i) = length(FR); %mean force 
+P2PForce(i) = length(FR);
     
 %==========================================================================
 % Start simulation
-for i = 1:length(FR)
-        
+for i = 1:length(FR)        
     %----------------------------------------------------------------------
     % Compute the value of Af (activation-frequency relationship) from
     % Tsianos et al. (2012)
@@ -226,13 +231,13 @@ for i = 1:length(FR)
         end
         Force = Force.*S_vec;
     end
-      
+    
     %----------------------------------------------------------------------
     % Non-linear scaling of output force
-    a = 2.2; % unit 1: 2.2
-    b = 0.48; % unit 1:0.3
+    a = 2.1; % unit 1: 2.2
+    b = 0.52; % unit 1:0.3
     Force = Force.^a./(Force.^a+b^2);    
-   
+          
     %----------------------------------------------------------------------
     % Plot output
     figure(1)
