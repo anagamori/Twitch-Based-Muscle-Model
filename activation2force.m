@@ -35,8 +35,13 @@ F_pcsa_slow = 0.5; % fractional PSCA of slow-twitch motor units [0-1]
 
 %--------------------------------------------------------------------------
 % 5) Determine twithc-tetanus ratio
-twitch2tetanus_ratio = 0.38;
-% 0.2 for average twitch-tetanus ratio for slow tiwtich
+if n <= index_slow
+    twitch2tetanus_ratio = 0.2; %slow-twitch fibers
+else
+    twitch2tetanus_ratio = 0.4; %fast-twitch fibers
+end
+
+% 0.2 for average twitch-tetanus ratio for slow tiwtich averaged across various studies (Proske & Waite, 1974; Stephens et al. 1975; Stephens & Stuart, 1975; Burke et al. 1973; Mayer et al., 1984; Walsh et al. 1978)
 % 0.457 for average tiwtch-tetnaus ratio for fast twitch (both FF and FR):
 % (Stephens & Stuart, 1975b; Burke et al. 1973; Devanandan et al., 1965; Dum & Kennedy 1980; Mayer et al., 1984; Walsh et al., 1978)
 

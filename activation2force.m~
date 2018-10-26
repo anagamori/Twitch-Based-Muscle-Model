@@ -35,10 +35,14 @@ F_pcsa_slow = 0.5; % fractional PSCA of slow-twitch motor units [0-1]
 
 %--------------------------------------------------------------------------
 % 5) Determine twithc-tetanus ratio
+<<<<<<< HEAD
 twitch2tetanus_ratio = 0.38;
 % 0.2 for average twitch-tetanus ratio for slow tiwtich
 % 0.457 for average tiwtch-tetnaus ratio for fast twitch (both FF and FR):
 % (Stephens & Stuart, 1975b; Burke et al. 1973; Devanandan et al., 1965; Dum & Kennedy 1980; Mayer et al., 1984; Walsh et al., 1978)
+=======
+twitch2tetanus_ratio = 0.2; %averaged across various studies (Stephens et al. 1975; Stephens & Stuart, 1975; Burke et al. 1973; Mayer et al., 1984; Walsh et al. 1978)
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
 
 %--------------------------------------------------------------------------
 % 6) Determine the recruitment threshold of motor units [0 1]
@@ -57,6 +61,7 @@ PFR_MU = 4*MFR_MU; %peak firing rate
 FR_half = PFR_MU./2; % firing rate at which half of maximum tetanic tension is achieved
 
 %--------------------------------------------------------------------------
+<<<<<<< HEAD
 % 7) Determine the contraction time and half-reflaxation time
 % Use the formulation given by Fuglevand et al. (1993)
 CT_n = 30; %contraction time of first unit [ms]
@@ -97,11 +102,26 @@ S_temp = 0.96;
 % Parameters for yielding (Brown & Loeb, 2000 IV)
 Y = 1;
 
+=======
+% 8) Determine the contraction time and half-reflaxation time
+% contraction time was derived from the linear relationship with the
+% FR_half (Thomas et al., 1991, Kernell et al. 1983b)
+CT_n = 30; %contraction time of first unit [ms]
+CT_1 = 90; %contraction time of lasdt unit [ms]
+slope_CT = (CT_1 - CT_n)/(FR_half(1)-FR_half(end)); %slope for the linear relationship between contraction time and FR_half
+intercept_CT = CT_1-slope_CT*FR_half(1); %intercept for the linear relationship between contraction time and FR_half
+CT = slope_CT*FR_half+intercept_CT; %contraction time of all motor units
+CT = CT/1000; %convert the contraction time into second [s]
+RT = CT; %half-relaxation time [s]
+
+%--------------------------------------------------------------------------
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
 %--------------------------------------------------------------------------
 % Simulation
 Fs = 1000; %sampling frequency
 time = 0:1/Fs:5; %simulation time
 time_active = 0:1/Fs:3; %time window in which a motor unit discharges
+<<<<<<< HEAD
 
 testingUnit = 300; %index for the testing motor unit
 Lce = 1; % muscle length
@@ -115,6 +135,17 @@ P2PForce(i) = length(FR);
     
 %--------------------------------------------------------------------------
 % Frequency to force relationship from Rack & Westbury 1969
+=======
+testingUnit = 1; %index for the testing motor unit
+Lce = 1; % muscle length
+Y = 1;
+S = 1;
+
+FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)];
+%FR = [2:2:3*FR_half(testingUnit)];
+Af_old = length(FR);
+
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
 FR_exp = [2:1:50];
 Force_exp = [0.0843934948657 0.10123804947139 0.11244878344883 0.14056097931104 0.18557463705802 0.27002503920278 0.39954600637362...
     0.57977135919875 0.7318339319136 0.89515149982296 0.99087586625525 1.07532626840002 1.13724138803177 1.187888866407 ...
@@ -126,6 +157,7 @@ Force_exp = [0.0843934948657 0.10123804947139 0.11244878344883 0.14056097931104 
 FR_half_exp = 10.2;
 FR_exp = FR_exp/FR_half_exp;
 Force_exp = Force_exp./(Force_exp(end));
+<<<<<<< HEAD
 
 %==========================================================================
 % Start simulation
@@ -148,6 +180,24 @@ for i = 1:length(FR)
     
     %----------------------------------------------------------------------
     % Initialize vectors for the follwoing sections
+=======
+% FR_exp = [2 5 8 10 15 20 30 50 80 100];
+% Force_exp = [4.44 13.5 30.52 46.26 64.34 76.32 87.24 92.07 92.26 94.53];
+% Force_exp = Force_exp/Force_exp(end);
+% FR_half_exp = 10.2;
+% FR_exp_int = 2:0.1:100;
+% Force_exp_int = spline(FR_exp,Force_exp,FR_exp_int);
+% FR_exp_int = FR_exp_int/FR_half_exp;
+
+%plot(FR_exp_int,Force_exp_int)
+%%
+for i = 1:length(FR)
+    %force = zeros(1,length(time));
+    f_env = FR(i)/FR_half(testingUnit);
+    spikeTrain_temp = spikeTrainGenerator(time_active,Fs,FR(i));
+    spikeTrain = [zeros(1,1*Fs) spikeTrain_temp zeros(1,1*Fs)];
+    
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
     f_env_2 = [zeros(1,1*Fs) f_env*ones(1,length(spikeTrain_temp)) zeros(1,1*Fs)];
     f_int = 0;
     f_eff = 0;
@@ -156,6 +206,7 @@ for i = 1:length(FR)
     Af_vec = zeros(1,length(f_env_2));
     
     %----------------------------------------------------------------------
+<<<<<<< HEAD
     % Compute a time-series of Af values from Tsianos et al. (2012)
     for t = 1:length(f_env_2)
         if f_eff_dot >= 0
@@ -170,6 +221,26 @@ for i = 1:length(FR)
             else
                 T_f = (0.0282+0.0151*Af(i))/Lce;
             end
+=======
+    % Compute the desired frequency-force relationship
+    [~, index_FR_half] = min(abs(FR_exp - f_env));
+    Force_desired = Force_exp(index_FR_half);
+    %----------------------------------------------------------------------
+    % Compute a time-series of Af
+    if testingUnit <= index_slow
+        Af_old(i) = Af_slow_function(f_env,Lce,Y);
+        Af = Af_slow_function(f_env,Lce,Y);
+    else
+        Af_old(i) = Af_fast_function(f_env,Lce,S);
+        Af = Af_fast_function(f_env,Lce,S);
+    end
+    
+    for t = 1:length(f_env_2)
+        if f_eff_dot >= 0
+            T_f = 0.0343 + 0.0227*f_env;
+        else
+            T_f = (0.047+0.0252*Af_old(i));
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
         end
         f_int_dot = (f_env_2(t) - f_int)/T_f;
         f_int = f_int_dot*1/Fs + f_int;
@@ -183,6 +254,7 @@ for i = 1:length(FR)
         end
         Af_vec(t) = Af_temp;
     end
+<<<<<<< HEAD
     
     %======================================================================
     % Testing a new model
@@ -194,12 +266,25 @@ for i = 1:length(FR)
     t_twitch = 0:1/Fs:5;
     f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
     f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
+=======
+    %----------------------------------------------------------------------
+    % Create a tiwthc profile
+    T1 = CT(testingUnit)+CT(testingUnit)*(f_env/2)^2;
+    T2_temp = RT(testingUnit)+RT(testingUnit)*(f_env/4)^2;
+    
+    T2 = T2_temp/1.68;
+    t_twitch = 0:1/Fs:5;
+    f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
+    f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
+    
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
     twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
     if length(twitch) < length(t_twitch)
         twitch = [twitch zeros(1,length(t_twitch)-length(twitch))];
     else
         twitch = twitch(1:length(t_twitch));
     end
+<<<<<<< HEAD
       
     alpha = twitch2tetanus_ratio; % scaling factor for the twitch profile
     twitch = alpha*twitch;
@@ -257,10 +342,55 @@ plot(FR/FR_half(testingUnit),meanForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831
 hold on
 plot(FR/FR_half(testingUnit),Af,'LineWidth',1)
 hold on
+=======
+    alpha = 0.2;
+    twitch = alpha*twitch; %*PTi(1)*0.3;
+    Force_temp = conv(spikeTrain,twitch);
+    Force = Force_temp(1:length(time));
+    %Force = 1./(1+exp(-5*(Force-1)));
+    Force = Force.^2./(Force.^2+0.5^2);
+    %Force = 0.5*(1+tanh((Force-0.5)/1));
+    mean_Force = mean(Force(2*Fs:3*Fs));
+    %----------------------------------------------------------------------
+    % Find a coefficient, alpha, to fit model force to the desired force
+%     alpha = 1*rand(1);
+%     for j = 1:100
+%         Force_test = alpha*mean_Force;
+%         if Force_test < Force_desired
+%             alpha = alpha + 0.5./2.^(j-2);
+%         else
+%             alpha = alpha - 0.5./2.^(j-2);
+%         end
+%     end
+    
+    figure(1)
+    plot(time,Force)
+    hold on 
+    plot([time(1) time(end)],[Force_desired Force_desired])
+    
+    Force_model = Af_old(i);
+    
+    meanForce(i) = mean(Force(3*Fs:4*Fs));
+    P2PForce(i) = max(Force(3*Fs:4*Fs))-min(Force(3*Fs:4*Fs));
+    
+    alpha_vec(i) = alpha;
+    
+end
+
+freq = FR/FR_half(testingUnit);
+P2PForce = (1-P2PForce/P2PForce(1))*100;
+
+figure(2)
+plot(FR/FR_half(testingUnit),meanForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831])
+hold on
+plot(FR/FR_half(testingUnit),Af_old,'LineWidth',1)
+hold on 
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
 plot(FR_exp,Force_exp,'LineWidth',1)
 xlabel('Frequency (f_{0.5})','FontSize',14)
 ylabel('Force (%)','FontSize',14)
 xlim([0 3.1])
+<<<<<<< HEAD
 hold on
 plot([0 3.1],[0.5 0.5],'k','LineWidth',1)
 plot([1 1],[0 1],'k','LineWidth',1)
@@ -281,6 +411,20 @@ plot(1:100,1:100,'--','LineWidth',1)
 
 %==========================================================================
 % Function used 
+=======
+
+figure(3)
+plot(FR/FR_half(testingUnit),P2PForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831])
+hold on 
+
+figure(4)
+plot(FR/FR_half(testingUnit),meanForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831])
+hold on
+
+% figure(4)
+% plot(FR/FR_half(testingUnit),alpha_vec,'LineWidth',1)
+
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
 function Af = Af_slow_function(f_eff,L,Y)
 a_f = 0.56;
 n_f0 = 2.1;
@@ -297,6 +441,10 @@ n_f = n_f0 + n_f1*(1/L-1);
 Af = 1 - exp(-(S*f_eff/(a_f*n_f))^n_f);
 end
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0b66cca6d8594030f524c4024e01d89b0425a723
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
 
 spikeTrain = zeros(1,length(t));
