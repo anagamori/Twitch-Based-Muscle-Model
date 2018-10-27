@@ -1,5 +1,5 @@
 %==========================================================================
-% activation2force_fit.m
+% activation2force_fit_length.m
 % Author: Akira Nagamori
 % Last update: 10/25/18
 % Descriptions: find parameters, a and b, for non-linear scaling of force
@@ -104,7 +104,7 @@ time = 0:1/Fs:5; %simulation time
 time_active = 0:1/Fs:3; %time window in which a motor unit discharges
 
 testingUnit = 1; %index for the testing motor unit
-Lce = 0.8; % muscle length
+Lce = 1; % muscle length
 
 FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rates
 
@@ -117,11 +117,12 @@ meanForce_2 = length(FR); %mean force
 % Start simulation
 %----------------------------------------------------------------------
 % Parameters for non-linear scaling
-alpha = 2.2;
-beta = 2*rand(1);
+alpha = 4*rand(1);
+beta = 0.3;
 for j = 1:100
-    beta_1 = beta + 0.6./2.^(j-2);
-    beta_2 = beta - 0.6./2.^(j-2);
+    alpha_1 = alpha + 1./2.^(j-2);
+    alpha_2 = alpha - 1./2.^(j-2);
+    
     for i = 1:length(FR)
         %----------------------------------------------------------------------
         % Compute the value of Af (activation-frequency relationship) from
@@ -237,8 +238,8 @@ for j = 1:100
         
         %------------------------------------------------------------------
         % Non-linear scaling of output force
-        Force_1 = Force.^alpha./(Force.^alpha+beta_1^2);
-        Force_2 = Force.^alpha./(Force.^alpha+beta_2^2);
+        Force_1 = Force.^alpha_1./(Force.^alpha_1+beta^2);
+        Force_2 = Force.^alpha_1./(Force.^alpha_2+beta^2);
         
         %----------------------------------------------------------------------
         % Calculate output variables
@@ -248,13 +249,13 @@ for j = 1:100
     error_1 = sum((meanForce_1 - Af).^2);
     error_2 = sum((meanForce_2 - Af).^2);
     if error_1 < error_2
-        beta = beta_1;
+        alpha = alpha_1;
     else
-        beta = beta_2;
+        alpha = alpha_2;
     end
 end
 
-beta
+alpha
 
 %==========================================================================
 % Function used

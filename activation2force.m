@@ -47,8 +47,8 @@ U_th = exp(b_Ur*i_MU)/100; % recruitment threshold for each motor unit [0 1]
 CT_n = 30; %contraction time of first unit [ms]
 CT_1 = 90; %contraction time of lasdt unit [ms]
 RC_MU = CT_1/CT_n; %range of contraction time
-c = log(RP_MU)/log(RC_MU); %scaling factor 
-CT = CT_1*(1./PTf_MU).^(1/c); %assign contraction 
+c = log(RP_MU)/log(RC_MU); %scaling factor
+CT = CT_1*(1./PTf_MU).^(1/c); %assign contraction
 CT = CT/1000; %contraction time [s]
 RT = CT; %half-relaxation time [s]
 
@@ -64,7 +64,7 @@ for n = 1:N_MU
     end
 end
 %--------------------------------------------------------------------------
-% 8) Determine minimum and peak firing rate of each motor unit 
+% 8) Determine minimum and peak firing rate of each motor unit
 % Use the formulation given in Song et al. (2008)
 % Minimum firing rate = half the FR_half
 % Peak firing rate = twitch the FR_half
@@ -103,31 +103,31 @@ Fs = 1000; %sampling frequency
 time = 0:1/Fs:5; %simulation time
 time_active = 0:1/Fs:3; %time window in which a motor unit discharges
 
-testingUnit = 300; %index for the testing motor unit
-Lce = 1; % muscle length
+testingUnit = 1; %index for the testing motor unit
+Lce = 0.8; % muscle length
 
 FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rates
 
 S_vec = zeros(1,length(time)); % vector for sag parameter, S
 Af = length(FR);
-meanForce = length(FR); %mean force 
+meanForce = length(FR); %mean force
 P2PForce = length(FR);
-    
+
 %==========================================================================
 % Start simulation
-for i = 1:length(FR)        
+for i = 1:length(FR)
     %----------------------------------------------------------------------
     % Compute the value of Af (activation-frequency relationship) from
     % Tsianos et al. (2012)
     f_env = FR(i)/FR_half(testingUnit); % normalized frequency Brown & Loeb (1999)
     if testingUnit <= index_slow
-        Af(i) = Af_slow_function(f_env,Lce,Y); %activation-frequency relationship for slow-twitch fibers    
+        Af(i) = Af_slow_function(f_env,Lce,Y); %activation-frequency relationship for slow-twitch fibers
     else
-        Af(i) = Af_fast_function(f_env,Lce,S_temp); %activation-frequency relationship for fast-twitch fibers          
+        Af(i) = Af_fast_function(f_env,Lce,S_temp); %activation-frequency relationship for fast-twitch fibers
     end
     
     %----------------------------------------------------------------------
-    % Generate a spike train at the given frequency 
+    % Generate a spike train at the given frequency
     spikeTrain_temp = spikeTrainGenerator(time_active,Fs,FR(i));
     spikeTrain = [zeros(1,1*Fs) spikeTrain_temp zeros(1,1*Fs)];
     
@@ -173,9 +173,9 @@ for i = 1:length(FR)
     % Testing a new model
     %----------------------------------------------------------------------
     % Create a tiwthc profile
-    T1 = CT(testingUnit)+CT(testingUnit)/2*f_env; % contraction time
-    T2_temp = RT(testingUnit)+RT(testingUnit)/4*f_env; % half-relaxation time
-    T2 = T2_temp/1.68; 
+    T1 = CT(testingUnit)*Lce+CT(testingUnit)/2*f_env; % contraction time
+    T2_temp = RT(testingUnit)*Lce+RT(testingUnit)/4*f_env; % half-relaxation time
+    T2 = T2_temp/1.68;
     t_twitch = 0:1/Fs:5;
     f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
     f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
@@ -187,11 +187,16 @@ for i = 1:length(FR)
     end
     
     %--------------------------------------------------------------------------
-    % Determine twithc-tetanus ratio
+    % Determine twitch-tetanus ratio    
+    % Length-dependence of twitch-tetanus ratio (Stephens et al., 1975)
+    a1 = 1.01;
+    b1 = 0.94;
+    c1 = 0.53;
+    a_t2t = a1*exp(-((Lce-b1)/c1)^2);
     if testingUnit <= index_slow
-        twitch2tetanus_ratio = 0.2; %slow-twitch fibers
+        twitch2tetanus_ratio = 0.2*a_t2t; %slow-twitch fibers
     else
-        twitch2tetanus_ratio = 0.4; %fast-twitch fibers
+        twitch2tetanus_ratio = 0.4*a_t2t; %fast-twitch fibers
     end
     
     % 0.2 for average twitch-tetanus ratio for slow tiwtich
@@ -225,21 +230,21 @@ for i = 1:length(FR)
     
     %----------------------------------------------------------------------
     % Non-linear scaling of output force
-    a = 2.2; % unit 1: 2.2
-    b = 0.52; % unit 1:0.3
-    Force = Force.^a./(Force.^a+b^2);    
-          
+    a = 4; % unit 1: 2.2
+    b = 0.25; % unit 1:0.3
+    Force = Force.^a./(Force.^a+b^2);
+    
     %----------------------------------------------------------------------
     % Plot output
     figure(1)
     plot(time,Force) % new model
     hold on
     plot(time,Af_vec) % Tsianos et al. (2012)
-      
+    
     %----------------------------------------------------------------------
     % Calculate output variables
-    meanForce(i) = mean(Force(3*Fs:4*Fs)); %mean force 
-    P2PForce(i) = max(Force(3*Fs:4*Fs))-min(Force(3*Fs:4*Fs)); %peak-to-peak amplitude in force   
+    meanForce(i) = mean(Force(3*Fs:4*Fs)); %mean force
+    P2PForce(i) = max(Force(3*Fs:4*Fs))-min(Force(3*Fs:4*Fs)); %peak-to-peak amplitude in force
     
 end
 
@@ -247,7 +252,7 @@ end
 P2PForce = (1-P2PForce/P2PForce(1))*100; %convet peak-to-peak amplitude into fusion index (Macefield et al., 1993)
 
 %----------------------------------------------------------------------
-% Plot frequency-force relationship 
+% Plot frequency-force relationship
 figure(2)
 plot(FR/FR_half(testingUnit),meanForce,'LineWidth',1) %; ,'Color',[0.078,0,0.831])
 hold on
@@ -276,7 +281,7 @@ hold on
 plot(1:100,1:100,'--','LineWidth',1)
 
 %==========================================================================
-% Function used 
+% Function used
 function Af = Af_slow_function(f_eff,L,Y)
 a_f = 0.56;
 n_f0 = 2.1;
