@@ -1,9 +1,10 @@
 %==========================================================================
-% activation2force_fit.m
+% activation2force_fit_v2.m
 % Author: Akira Nagamori
-% Last update: 10/25/18
+% Last update: 10/26/18
 % Descriptions: find parameters, a and b, for non-linear scaling of force
 % output, for each motor unit
+% v2: calculate output force by for-loop
 %==========================================================================
 close all
 clear all
@@ -58,7 +59,7 @@ RT = CT; %half-relaxation time [s]
 FR_half = zeros(1,N_MU);
 for n = 1:N_MU
     if n <= index_slow
-        FR_half(n) = 1/(CT(n)*1.25); %slow-twitch fibers
+        FR_half(n) = 1/(CT(n)*1.3); %slow-twitch fibers
     else
         FR_half(n) = 1/(CT(n)*1.8); %fast-twitch fibers
     end
@@ -76,7 +77,7 @@ PFR_MU = FR_half*2;
 T_S = 0.043;
 a_S1 = 1.76;
 a_S2 = 0.96;
-S = 0;
+S = 1.76;
 S_temp = 0.96;
 
 %--------------------------------------------------------------------------
@@ -106,13 +107,31 @@ time_active = 0:1/Fs:3; %time window in which a motor unit discharges
 testingUnit = 1; %index for the testing motor unit
 Lce = 1; % muscle length
 
+
 %FR = 3*FR_half(testingUnit);
-FR = [2 5:3:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rates
+FR = [2 FR_half/2:5:3*FR_half(testingUnit) 3*FR_half(testingUnit)]; % testing firing rates
 
 S_vec = zeros(1,length(time)); % vector for sag parameter, S
 Af = length(FR);
 meanForce = length(FR); %mean force
 P2PForce = length(FR);
+%--------------------------------------------------------------------------
+% Determine twitch-tetanus ratio
+% Length-dependence of twitch-tetanus ratio (Stephens et al., 1975)
+a1 = 1.01;
+b1 = 0.94;
+c1 = 0.53; %0.53
+a_t2t = a1*exp(-((Lce-b1)/c1)^2);
+if testingUnit <= index_slow
+    twitch2tetanus_ratio = 0.22*a_t2t; %slow-twitch fibers
+else
+    twitch2tetanus_ratio = 0.4*a_t2t; %fast-twitch fibers
+end
+
+%--------------------------------------------------------------------------
+% Coefficient for non-linear force scaling 
+a = 2.5; % unit 1: 2.2
+b = 0.3; % unit 1:0.3
 
 %==========================================================================
 % Start simulation
@@ -132,6 +151,7 @@ for i = 1:length(FR)
     spikeTrain_temp = spikeTrainGenerator(time_active,Fs,FR(i));
     spikeTrain = [zeros(1,1*Fs) spikeTrain_temp zeros(1,1*Fs)];
     
+    
     %----------------------------------------------------------------------
     % Initialize vectors for the follwoing sections
     f_env_2 = [zeros(1,1*Fs) f_env*ones(1,length(spikeTrain_temp)) zeros(1,1*Fs)];
@@ -141,6 +161,9 @@ for i = 1:length(FR)
     f_eff_vec = zeros(1,length(f_env_2));
     Af_vec = zeros(1,length(f_env_2));
     
+    spike = zeros(1,length(spikeTrain));
+    Force = zeros(1,length(spikeTrain));
+    Force_vec = zeros(1,length(spikeTrain));
     %----------------------------------------------------------------------
     % Compute a time-series of Af values from Tsianos et al. (2012)
     for t = 1:length(f_env_2)
@@ -165,87 +188,70 @@ for i = 1:length(FR)
         if testingUnit <= index_slow
             Af_temp = Af_slow_function(f_eff,Lce,Y);
         else
-            Af_temp = Af_fast_function(f_eff,Lce,S);
+            Af_temp = Af_fast_function(f_eff,Lce,0.96);
         end
         Af_vec(t) = Af_temp;
-    end
-    
-    %======================================================================
-    % Testing a new model
-    %----------------------------------------------------------------------
-    % Create a tiwthc profile
-    T1 = CT(testingUnit)*Lce+CT(testingUnit)/2*f_env; % contraction time
-    T2_temp = RT(testingUnit)*Lce+RT(testingUnit)/4*f_env; % half-relaxation time
-    T2 = T2_temp/1.68;
-    t_twitch = 0:1/Fs:5;
-    f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
-    f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
-    twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
-    if length(twitch) < length(t_twitch)
-        twitch = [twitch zeros(1,length(t_twitch)-length(twitch))];
-    else
-        twitch = twitch(1:length(t_twitch));
-    end
-    
-    %--------------------------------------------------------------------------
-    % Determine twitch-tetanus ratio    
-    % Length-dependence of twitch-tetanus ratio (Stephens et al., 1975)
-    a1 = 1.01;
-    b1 = 0.94;
-    c1 = 0.53;
-    a_t2t = a1*exp(-((Lce-b1)/c1)^2);
-    if testingUnit <= index_slow
-        twitch2tetanus_ratio = 0.2*a_t2t; %slow-twitch fibers
-    else
-        twitch2tetanus_ratio = 0.4*a_t2t; %fast-twitch fibers
-    end
-    
-    % 0.2 for average twitch-tetanus ratio for slow tiwtich
-    % 0.457 for average tiwtch-tetnaus ratio for fast twitch (both FF and FR):
-    % (Stephens & Stuart, 1975b; Burke et al. 1973; Devanandan et al.,
-    % 1965; Dum & Kennedy 1980; Mayer et al., 1984; Walsh et al., 1978)
-    twitch = twitch2tetanus_ratio*twitch;
-    
-    %----------------------------------------------------------------------
-    % Generate force output by convolving the twitch profile with the spike
-    % train
-    Force_temp = conv(spikeTrain,twitch);
-    Force = Force_temp(1:length(time));
-    
-    %----------------------------------------------------------------------
-    % Apply sag if the unit is fast-twitch
-    if testingUnit > index_slow
-        for t = 1:length(time)
-            if Force(t) < 0.1
-                a_S = a_S1;
-            else
-                a_S = a_S2;
-            end
-            S_dot = (a_S - S)/T_S;
-            S = S_dot*1/Fs + S;
+        %==================================================================
+        % Testing a new model
+        
             
-            S_vec(t) = S;
+        if spikeTrain(t) == 1
+            spike(t) = 1;
+            %--------------------------------------------------------------
+            % Create a tiwthc profile
+            alpha = Force_vec(t-1)/(Force_vec(t-1)+0.25);
+            T1 = CT(testingUnit)*Lce^2+CT(testingUnit)/4*alpha; % contraction time
+            T2_temp = (RT(testingUnit)+RT(testingUnit)*1*alpha)/Lce; % half-relaxation time
+            T2 = T2_temp/1.68;
+            t_twitch = 0:1/Fs:5;
+            f_1 = t_twitch./T1.*exp(1-t_twitch./T1);
+            f_2 = t_twitch./T2.*exp(1-t_twitch./T2);
+            twitch = [f_1(1:round(T1*Fs+1)) f_2(round(T2*Fs+1):end)];
+            if length(twitch) < length(t_twitch)
+                twitch = [twitch zeros(1,length(t_twitch)-length(twitch))];
+            else
+                twitch = twitch(1:length(t_twitch));
+            end
+            %alpha = -0.2*Force(t)+1;
+            %alpha = exp(log(0.3)*Force(t));
+            twitch = twitch2tetanus_ratio*twitch;
+            Force_temp = conv(spike,twitch);
+            Force_temp = Force_temp(1:length(spikeTrain));
+            Force = Force_temp + Force;           
+            
+        else
+            spike = zeros(1,length(spikeTrain));
         end
-        Force = Force.*S_vec;
+        
+        if testingUnit > index_slow
+            Force_vec_temp = Force(t)*S;
+            Force_vec(t) = Force_vec_temp.^a./(Force_vec_temp.^a+b^2);
+        else
+            Force_vec(t) = Force(t).^a./(Force(t).^a+b^2);
+        end    
+        if Force_vec(t) < 0.05
+            a_S = a_S1;
+        else
+            a_S = a_S2;
+        end
+        S_dot = (a_S - S)/T_S;
+        S = S_dot*1/Fs + S;
+        
+        S_vec(t) = S;
     end
     
-    %----------------------------------------------------------------------
-    % Non-linear scaling of output force
-    a = 2.4; % unit 1: 2.2
-    b = 0.34; % unit 1:0.3
-    Force = Force.^a./(Force.^a+b^2);
     
     %----------------------------------------------------------------------
     % Plot output
     figure(1)
-    plot(time,Force) % new model
+    plot(time,Force_vec) % new model
     hold on
     plot(time,Af_vec) % Tsianos et al. (2012)
     
     %----------------------------------------------------------------------
     % Calculate output variables
-    meanForce(i) = mean(Force(3*Fs:4*Fs)); %mean force
-    P2PForce(i) = max(Force(3*Fs:4*Fs))-min(Force(3*Fs:4*Fs)); %peak-to-peak amplitude in force
+    meanForce(i) = mean(Force_vec(3*Fs:4*Fs)); %mean force
+    P2PForce(i) = max(Force_vec(3*Fs:4*Fs))-min(Force_vec(3*Fs:4*Fs)); %peak-to-peak amplitude in force
     
 end
 
