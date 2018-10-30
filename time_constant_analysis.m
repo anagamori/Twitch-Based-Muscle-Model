@@ -21,16 +21,17 @@ g = exp(-b*time); %second linear filter whose time constant depends on the force
 
 q = conv(stim,h); %convolution
 f = conv(q,g); %convolution
+x = conv(f,g);
 
-[pks,locs_peak] = max(f);
+[pks,locs_peak] = max(x);
 CT = locs_peak-1*Fs;
 
 peak_half = pks/2;
-[~,HRT] = min(abs(f(locs_peak:end)-peak_half));
+[~,HRT] = min(abs(x(locs_peak:end)-peak_half));
 locs_hrt = locs_peak+HRT;
 
 figure()
-plot(time,f(1:length(time)),'LineWidth',1)
+plot(time,x(1:length(time)),'LineWidth',1)
 hold on 
 plot([time(locs_peak) time(locs_peak)],[0 pks+10],'--')
 text(time(locs_peak),pks,num2str(CT))
