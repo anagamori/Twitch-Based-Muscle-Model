@@ -20,20 +20,20 @@ b_1 = 0.6;
 
 Fs = 10000;
 T = 1/Fs;
-time = 0:1/Fs:3;
-t_temp = 0:1/Fs:3;
+time = 0:1/Fs:4;
+t_temp = 0:1/Fs:2;
 
 %FR = [2 5 10 15 20 30 40 50]; %round(3*FR_half(testingUnit)); %round(3*FR_half(testingUnit)) %round(2.7*FR_half(testingUnit)); % [2 5 10 15 20 25 30 35 40 45 48];
-FR = 1; %2:100;
+FR = 100; %2:100;
 
 for f = 1:length(FR)
     FR_test = FR(f);
     %--------------------------------------------------------------------------
     % Generate spike train
-    %spikeTrain_temp = spikeTrainGenerator(t_temp,Fs,FR_test);
-    %spikeTrain = [zeros(1,1*Fs) spikeTrain_temp zeros(1,2*Fs)];
-    spikeTrain = zeros(1,length(time));
-    spikeTrain(1*Fs) = 1;
+    spikeTrain_temp = spikeTrainGenerator(t_temp,Fs,FR_test);
+    spikeTrain = [zeros(1,1*Fs) spikeTrain_temp zeros(1,1*Fs)];
+%     spikeTrain = zeros(1,length(time));
+%     spikeTrain(1*Fs) = 1;
     spike_train_temp = zeros(1,length(spikeTrain));
     Force = zeros(1,length(spikeTrain));
     force_2 = zeros(1,length(spikeTrain));
