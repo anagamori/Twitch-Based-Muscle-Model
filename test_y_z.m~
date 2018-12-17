@@ -1,0 +1,14 @@
+%==========================================================================
+% test_y_z.m
+% Author: Akira Nagamori
+% Last update: 12/17/18
+% Descriptions:
+%   Find a value of y (0-1) to get a desired steady state value of
+%   cross-bridge activation, z. 
+%==========================================================================
+
+close all
+clear all
+clc
+
+% 
