@@ -14,14 +14,14 @@ Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:4; %simulation time
 
-simulation_condition = 1;
+simulation_condition = 2;
 
 if simulation_condition == 1
     % Generate a pulse
     FR_test = 1;
 elseif simulation_condition == 2
     % Generate a spike train at a given frequency
-    FR_test = 20;
+    FR_test = 16;
 elseif simulation_condition == 3
     % Generate a set of spike trains at multiple frequencies
     FR_test = [2 5 10 15 20 30 50 100]; %10:10:100];

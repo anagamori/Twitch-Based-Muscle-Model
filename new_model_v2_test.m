@@ -4,18 +4,18 @@
 % Last update: 11/9/18
 %==========================================================================
 
-%close all
+close all
 clear all
 clc
 
 %==========================================================================
 % Simulation parameters
-FR = 10;
+FR = 200;
 Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:4; %simulation time
 
-simulation_condition = 1;
+simulation_condition = 2;
 %==========================================================================
 % Generate spike train
 spike = zeros(1,length(time));
@@ -34,12 +34,12 @@ x = 0; % proportion of Ca2+ bound to troponin (0-1)
 y = 0; % porportion of cross-bridge sites available for binding (0-1)
 z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
 
-T_x_1 = 300*Fs/1000; % forward rate constant for Ca2+ binding to troponin
+T_x_1 = 400*Fs/1000; % forward rate constant for Ca2+ binding to troponin
 T_x_2 = 50*Fs/1000; % backward rate constant for Ca2+ release from troponin 
 T_y_1 = 200*Fs/1000; % forward rate constant for binding sites becoming available 
-T_y_2 = 200*Fs/1000; % backward rate constant for binding sites becoming unavailable 
-T_z_1 = 120*Fs/1000; % forward rate constant for binding sites forming cross-bridge 
-T_z_2 = 100*Fs/1000; % backward rate constant for binding sites detachecing 
+T_y_2 = 80*Fs/1000; % backward rate constant for binding sites becoming unavailable 
+T_z_1 = 10*Fs/1000; % forward rate constant for binding sites forming cross-bridge 
+T_z_2 = 40*Fs/1000; % backward rate constant for binding sites detachecing 
 
 alpha = 10;
 
@@ -59,19 +59,17 @@ act_vec = zeros(1,length(time));
 
 for t = 1:length(time) 
     
-    x_dot = spike(t)*T_x_1 - T_x_2*x;
+    x_dot = spike(t)*(1-x)*T_x_1 - T_x_2*x;
     x = x_dot/Fs + x;
-    y_dot = (1-y)*x*T_y_1-y*T_y_2+alpha*z; %^n/(z^n+k^n);
+    y_dot = (1-y)*x*T_y_1-y*T_y_2 +alpha*z; %^n/(z^n+k^n);
     y = y_dot/Fs + y;
-    %y = y*(2*T_y_1+T_y_2)/T_y_1;
-    y_int = y*(2*T_y_1+T_y_2)/T_y_1;
-    z_dot = (y-z)*T_z_1-z*T_z_2;
+    y_int = y^n/(y^n+k^n);
+    z_dot = (y_int-z)*T_z_1-z*T_z_2;
     z = z_dot/Fs + z;
     act = z; %z^n/(z^n+k^n);
     %R_vec(t) = R; 
     x_vec(t) = x;
     y_vec(t) = y;
-    y_int_vec(t) = y_int;
     z_vec(t) = z;
     act_vec(t) = act;
 end
@@ -94,8 +92,7 @@ figure(1)
 plot(time,x_vec)
 hold on 
 plot(time,y_vec)
-plot(time,y_int_vec)
-legend('x','y','y_int')
+legend('x','y')
 
 figure(2)
 plot(time,act_vec)
