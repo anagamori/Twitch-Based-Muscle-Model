@@ -1,7 +1,8 @@
 %==========================================================================
-% new_model_v4_test.m
+% new_model_v5_test.m
 % Author: Akira Nagamori
-% Last update: 12/17/18
+% Last update: 12/18/18
+% Descriptions: Two-stage model with a two-state cross-bridge model
 %==========================================================================
 
 close all
@@ -14,14 +15,14 @@ Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:4; %simulation time
 
-simulation_condition = 2;
+simulation_condition = 1;
 
 if simulation_condition == 1
     % Generate a pulse
     FR_test = 1;
 elseif simulation_condition == 2
     % Generate a spike train at a given frequency
-    FR_test = 16;
+    FR_test = 20;
 elseif simulation_condition == 3
     % Generate a set of spike trains at multiple frequencies
     FR_test = [2 5 10 15 20 30 50 100]; %10:10:100];
@@ -96,11 +97,11 @@ for f = 1:length(FR_test)
                   
         x = x + x_temp(1:length(time));
         x_int = x(t)^n/(x(t)^n+k^n);
-        beta = tau_3+0.1*act;
-        y_dot = (x_int-y)/beta; %beta; 
-        y = y_dot/Fs + y;
-        y_int = a*exp(b*y);
-        f_app = f_app_max*y_int;
+%         beta = tau_3+0.1*act;
+%         y_dot = (x_int-y)/beta; %beta; 
+%         y = y_dot/Fs + y;
+        y_int = a*exp(b*x_int);
+        f_app = f_app_max*y_int+20*act;
 %         z_dot = (y-z)/tau_4; 
 %         z = z_dot/Fs + z;
         z_dot = (1-z)*f_app - g_app*z; 

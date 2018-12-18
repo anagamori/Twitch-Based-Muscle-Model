@@ -14,7 +14,7 @@ Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:4; %simulation time
 
-simulation_condition = 1;
+simulation_condition = 3;
 
 if simulation_condition == 1
     % Generate a pulse
@@ -54,7 +54,7 @@ for f = 1:length(FR_test)
     z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
     act = 0;
     
-    f_app_max = 400;
+    f_app_max = 30;
     g_app = 10;
     
     tau_1 = 0.05; 
@@ -69,7 +69,7 @@ for f = 1:length(FR_test)
     diffusion2_conv = zeros(1,length(time));
 
     n = 3.5;
-    k = 0.2;
+    k = 0.5;
     
     a = 0.002755;
     b = 5.865;
@@ -100,12 +100,14 @@ for f = 1:length(FR_test)
         y_dot = (x_int-y)/beta; %beta; 
         y = y_dot/Fs + y;
         y_int = a*exp(b*y);
-        f_app = f_app_max*y_int;
+        f_app = f_app_max*y;
 %         z_dot = (y-z)/tau_4; 
 %         z = z_dot/Fs + z;
         z_dot = (1-z)*f_app - g_app*z; 
         z = z_dot/Fs + z;
-        act = z^2; 
+        
+        %act = z^2
+        act = z*(f_app_max+g_app)/f_app_max; 
         x_vec(t) = x(t);
         x_int_vec(t) = x_int;
         y_vec(t) = y;
