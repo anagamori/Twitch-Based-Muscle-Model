@@ -1,7 +1,8 @@
 %==========================================================================
-% new_model_v5_test.m
+% new_model_v6_test.m
 % Author: Akira Nagamori
-% Last update: 12/23/18
+% Last update: 12/30/18
+%   Cambell's formulation of cross-bridge kinetics (Campbell, 1997)
 %==========================================================================
 
 close all
@@ -55,15 +56,18 @@ for f = 1:length(FR_test)
     z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
     act = 0;
     
-    f_app_max = 100; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
-    g_app = 25;
-    K_1 = 300;
-    K_2_max = 100;
-    K_3 = 300;
-    K_4 = 20;
+    alpha = 20;
+    beta = 50;
+    f_app = 40; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
+    g_app = 10;
+    K_1 = 50;
+    K_2 = 30;
+    K_3 = 90;
+    K_4 = 30;
  
-    n_max = 5;
-    k = 0.5;   
+    %n_max = 4;
+    n = 5;
+    k = 0.15;   
     %==========================================================================
     % initialization   
     x_vec = zeros(1,length(time));
@@ -75,7 +79,7 @@ for f = 1:length(FR_test)
     
     for t = 1:length(time)        
         %% Stage 1
-        n = 1+n_max*act;
+        % n = 1+n_max*act;
         % Calcium diffusion to sarcoplasm
         x_dot = K_3*spike(t)*(1-x) - K_4*x;
         x = x_dot/Fs + x;
@@ -83,24 +87,22 @@ for f = 1:length(FR_test)
         
         %% Stage 2
         % Thin filament activation (Gordon et al., 2000)       
-        K_2 = K_2_max/(1+5*act); % cooperativity of calcium binding due to cross-bridge formation       
+        %K_2 = K_2_max/(1+5*act); % cooperativity of calcium binding due to cross-bridge formation       
 
         y_dot = K_1*x_int*(1-y) - y*K_2;
-        y = y_dot/Fs + y;
-        
-        %y_int = y^n/(y^n+k^n);  
-        y_int = y*(K_1+K_2)/(K_1); % Normalize 
+        y = y_dot/Fs + y;        
+        y_int = y^n/(y^n+k^n); 
+        K = alpha*y*(1+beta*act);
         
         %% Stage 3
         % Dynamics of cross-bridge formation (Huxley, 1957)
-        %g_app = g_app_max/(1+5*act);
-        f_app = f_app_max*y_int^2;
-        z_dot = (1-z)*f_app - g_app*z; 
+        z_dot = -(g_app+f_app*(K/(K+1)))*z + f_app*(K/(K+1));       
         z = z_dot/Fs + z;
         
         %% Stage 4
         % 
-        act = (z*(f_app_max+g_app)/f_app_max); 
+        alpha = (f_app)/(g_app+f_app);
+        act = z/alpha; 
         
         
         %% Store variables

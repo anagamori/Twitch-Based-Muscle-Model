@@ -24,7 +24,7 @@ elseif simulation_condition == 2
     FR_test = 20;
 elseif simulation_condition == 3
     % Generate a set of spike trains at multiple frequencies
-    FR_test = [2 5 10 15 20 30 50 100]; %10:10:100];
+    FR_test = [2 5 10 15 20 30 50 100 200]; %10:10:100];
 end
 
 %==========================================================================
@@ -54,12 +54,12 @@ for f = 1:length(FR_test)
     z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
     act = 0;
     
-    f_app_max = 30;
-    g_app = 10;
+    f_app_max = 100; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
+    g_app = 25;
     
-    tau_1 = 0.05; 
-    tau_2 = 0.05;
-    tau_3 = 0.03;
+    tau_1 = 0.003; 
+    tau_2 = 0.015;
+    tau_3 = 0.005;
     tau_4 = 0.01;
     
     time_diffusion = time; % simulated time for changes in permeability
@@ -68,11 +68,9 @@ for f = 1:length(FR_test)
     diffusion1_conv = zeros(1,length(time));
     diffusion2_conv = zeros(1,length(time));
 
-    n = 3.5;
-    k = 0.5;
+    n = 6;
+    k = 0.7;
     
-    a = 0.002755;
-    b = 5.865;
     %==========================================================================
     % initialization
     spike_temp = zeros(1,length(time));
@@ -96,10 +94,9 @@ for f = 1:length(FR_test)
                   
         x = x + x_temp(1:length(time));
         x_int = x(t)^n/(x(t)^n+k^n);
-        beta = tau_3+0.1*act;
+        beta = tau_3+0.1*act^2;
         y_dot = (x_int-y)/beta; %beta; 
         y = y_dot/Fs + y;
-        y_int = a*exp(b*y);
         f_app = f_app_max*y;
 %         z_dot = (y-z)/tau_4; 
 %         z = z_dot/Fs + z;
