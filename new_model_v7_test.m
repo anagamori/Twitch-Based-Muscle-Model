@@ -24,7 +24,7 @@ elseif simulation_condition == 2
     FR_test = 10;
 elseif simulation_condition == 3
     % Generate a set of spike trains at multiple frequencies
-    FR_test = [2 5 10 15 20 30 50 100 200]; %10:10:100];
+    FR_test = [2 5 10 15 20 30 50 100]; %10:10:100];
 end
 
 %==========================================================================
@@ -55,12 +55,12 @@ for f = 1:length(FR_test)
     z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
     act = 0;
     
-    f_app_max = 25; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
-    g_app = 25;
+    f_app_max = 100; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
+    g_app = 30;
     K_1 = 300;
     K_2_max = 200;
-    K_3 = 100;
-    K_4 = 80;
+    K_3 = 120;
+    K_4 = 50;
  
     n = 5;
     k = 0.5;   
@@ -79,12 +79,11 @@ for f = 1:length(FR_test)
     
     for t = 1:length(time)        
         %% Stage 1
-        %n = 1+n_max*act;
         % Calcium diffusion to sarcoplasm
         spike_temp = zeros(1,length(time));
         if spike(t) == 1
             spike_temp(t) = 1;
-            temp = conv(spike_temp,R_temp*(1+2*act^3));
+            temp = conv(spike_temp,R_temp*(1+4*act^5));
             R = R + temp(1:length(time));            
         end
         x_dot = K_3*R(t) - K_4*x;
@@ -93,7 +92,7 @@ for f = 1:length(FR_test)
         
         %% Stage 2
         % Thin filament activation (Gordon et al., 2000)       
-        K_2 = K_2_max/(1+10*act); % cooperativity of calcium binding due to cross-bridge formation       
+        K_2 = K_2_max/(1+2*act); % cooperativity of calcium binding due to cross-bridge formation       
 
         y_dot = K_1*x*(1-y) - y*K_2;
         y = y_dot/Fs + y;
@@ -103,8 +102,7 @@ for f = 1:length(FR_test)
         
         %% Stage 3
         % Dynamics of cross-bridge formation (Huxley, 1957)
-        %g_app = g_app_max/(1+5*act);
-        f_app = f_app_max*y_int^2;
+        f_app = f_app_max*y^2;
         z_dot = (1-z)*f_app - g_app*z; 
         z = z_dot/Fs + z;
         
