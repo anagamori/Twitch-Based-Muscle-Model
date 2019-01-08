@@ -1,7 +1,7 @@
 %==========================================================================
-% new_model_v5_test.m
+% new_model_v7_test.m
 % Author: Akira Nagamori
-% Last update: 12/23/18
+% Last update: 1/7/18
 %==========================================================================
 
 close all
@@ -21,10 +21,10 @@ if simulation_condition == 1
     FR_test = 1;
 elseif simulation_condition == 2
     % Generate a spike train at a given frequency
-    FR_test = 20;
+    FR_test = 10;
 elseif simulation_condition == 3
     % Generate a set of spike trains at multiple frequencies
-    FR_test = [2 5 10 15 20 30 50 100]; %10:10:100];
+    FR_test = [2 5 10 15 20 30 50 100 200]; %10:10:100];
 end
 
 %==========================================================================
@@ -55,16 +55,16 @@ for f = 1:length(FR_test)
     z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
     act = 0;
     
-    f_app_max = 100; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
+    f_app_max = 25; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
     g_app = 25;
     K_1 = 300;
-    K_2_max = 100;
-    K_3 = 300;
-    K_4 = 50;
+    K_2_max = 200;
+    K_3 = 100;
+    K_4 = 80;
  
-    n_max = 5;
+    n = 5;
     k = 0.5;   
-    %==========================================================================
+    %=========================================================================
     % initialization   
     x_vec = zeros(1,length(time));
     x_int_vec = zeros(1,length(time));
@@ -73,19 +73,29 @@ for f = 1:length(FR_test)
     z_vec = zeros(1,length(time));
     act_vec = zeros(1,length(time));
     
+    spike_temp = zeros(1,length(time));
+    R_temp = exp(-time/0.005);
+    R = zeros(1,length(time));
+    
     for t = 1:length(time)        
         %% Stage 1
-        n = 1+n_max*act;
+        %n = 1+n_max*act;
         % Calcium diffusion to sarcoplasm
-        x_dot = K_3*spike(t)*(1-x) - K_4*x;
+        spike_temp = zeros(1,length(time));
+        if spike(t) == 1
+            spike_temp(t) = 1;
+            temp = conv(spike_temp,R_temp*(1+2*act^3));
+            R = R + temp(1:length(time));            
+        end
+        x_dot = K_3*R(t) - K_4*x;
         x = x_dot/Fs + x;
         x_int = x^n/(x^n+k^n);        
         
         %% Stage 2
         % Thin filament activation (Gordon et al., 2000)       
-        K_2 = K_2_max/(1+5*act); % cooperativity of calcium binding due to cross-bridge formation       
+        K_2 = K_2_max/(1+10*act); % cooperativity of calcium binding due to cross-bridge formation       
 
-        y_dot = K_1*x_int*(1-y) - y*K_2;
+        y_dot = K_1*x*(1-y) - y*K_2;
         y = y_dot/Fs + y;
         
         %y_int = y^n/(y^n+k^n);  
@@ -94,7 +104,7 @@ for f = 1:length(FR_test)
         %% Stage 3
         % Dynamics of cross-bridge formation (Huxley, 1957)
         %g_app = g_app_max/(1+5*act);
-        f_app = f_app_max*y_int;
+        f_app = f_app_max*y_int^2;
         z_dot = (1-z)*f_app - g_app*z; 
         z = z_dot/Fs + z;
         

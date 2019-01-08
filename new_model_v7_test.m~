@@ -1,7 +1,7 @@
 %==========================================================================
-% new_model_v5_test.m
+% new_model_v7_test.m
 % Author: Akira Nagamori
-% Last update: 12/23/18
+% Last update: 1/7/18
 %==========================================================================
 
 close all
@@ -73,10 +73,14 @@ for f = 1:length(FR_test)
     z_vec = zeros(1,length(time));
     act_vec = zeros(1,length(time));
     
+    R = exp(-time/0.03);
+    
     for t = 1:length(time)        
         %% Stage 1
         n = 1+n_max*act;
         % Calcium diffusion to sarcoplasm
+        if spike(t) == 1
+             
         x_dot = K_3*spike(t)*(1-x) - K_4*x;
         x = x_dot/Fs + x;
         x_int = x^n/(x^n+k^n);        
