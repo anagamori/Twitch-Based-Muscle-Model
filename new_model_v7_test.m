@@ -2,6 +2,9 @@
 % new_model_v7_test.m
 % Author: Akira Nagamori
 % Last update: 1/7/18
+%   Try to see how removing the stage 2 affects the force-frequency
+%   relationship
+%
 %==========================================================================
 
 close all
@@ -24,7 +27,7 @@ elseif simulation_condition == 2
     FR_test = 10;
 elseif simulation_condition == 3
     % Generate a set of spike trains at multiple frequencies
-    FR_test = [2 5 10 15 20 30 50 100 200]; %10:10:100];
+    FR_test = [2 5 8 10 12 15 18 20 25 30 50 100]; %10:10:100];
 end
 
 %==========================================================================
@@ -41,7 +44,7 @@ for f = 1:length(FR_test)
     if simulation_condition == 1
         % Generate a pulse
         spike(1*Fs) = 1;
-    else 
+    else
         % Generate spike train
         temp =spikeTrainGenerator(0:1/Fs:2,Fs,FR);
         spike(1*Fs:3*Fs) = temp;
@@ -55,17 +58,22 @@ for f = 1:length(FR_test)
     z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
     act = 0;
     
-    f_app_max = 25; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
+    % Stage 1
+    tau_1 = 0.005;
+    K_1 = 150;
+    K_2 = 80;
+    
+    % Stage 1
+    K_3 = 300;
+    K_4_max = 150;
+    alpha = 10;
+    
+    % Stage 3
+    f_app_max = 25; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
     g_app = 25;
-    K_1 = 300;
-    K_2_max = 200;
-    K_3 = 100;
-    K_4 = 80;
- 
-    n = 5;
-    k = 0.5;   
+    
     %=========================================================================
-    % initialization   
+    % initialization
     x_vec = zeros(1,length(time));
     x_int_vec = zeros(1,length(time));
     y_vec = zeros(1,length(time));
@@ -74,49 +82,51 @@ for f = 1:length(FR_test)
     act_vec = zeros(1,length(time));
     
     spike_temp = zeros(1,length(time));
-    R_temp = exp(-time/0.005);
+    R_temp = exp(-time/tau_1);
     R = zeros(1,length(time));
     
-    for t = 1:length(time)        
+    for t = 1:length(time)
         %% Stage 1
         %n = 1+n_max*act;
         % Calcium diffusion to sarcoplasm
         spike_temp = zeros(1,length(time));
         if spike(t) == 1
             spike_temp(t) = 1;
+            %temp = conv(spike_temp,R_temp);
             temp = conv(spike_temp,R_temp*(1+2*act^3));
-            R = R + temp(1:length(time));            
+            %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
+            %             temp = conv(spike_temp,R_temp*R_i);           
+            R = R + temp(1:length(time));
         end
-        x_dot = K_3*R(t) - K_4*x;
+        
+        x_dot = K_1*R(t) - K_2*x;
         x = x_dot/Fs + x;
-        x_int = x^n/(x^n+k^n);        
+        
         
         %% Stage 2
-        % Thin filament activation (Gordon et al., 2000)       
-        K_2 = K_2_max/(1+10*act); % cooperativity of calcium binding due to cross-bridge formation       
-
-        y_dot = K_1*x*(1-y) - y*K_2;
+        % Thin filament activation (Gordon et al., 2000)
+        K_4 = K_4_max/(1+alpha*act); % cooperativity of calcium binding due to cross-bridge formation
+        
+        y_dot = K_3*x*(1-y) - y*K_4;
         y = y_dot/Fs + y;
         
-        %y_int = y^n/(y^n+k^n);  
-        y_int = y*(K_1+K_2)/(K_1); % Normalize 
+        y_int = y*(K_3+K_4)/(K_3); % Normalize
         
         %% Stage 3
         % Dynamics of cross-bridge formation (Huxley, 1957)
         %g_app = g_app_max/(1+5*act);
         f_app = f_app_max*y_int^2;
-        z_dot = (1-z)*f_app - g_app*z; 
+        z_dot = (1-z)*f_app - g_app*z;
         z = z_dot/Fs + z;
         
         %% Stage 4
-        % 
-        act = (z*(f_app_max+g_app)/f_app_max); 
+        %
+        act = (z*(f_app_max+g_app)/f_app_max);
         
         
         %% Store variables
         %x_vec(t) = x(t);
         x_vec(t) = x;
-        x_int_vec(t) = x_int;
         y_vec(t) = y;
         y_int_vec(t) = y_int;
         z_vec(t) = z;
@@ -129,13 +139,13 @@ for f = 1:length(FR_test)
     
     if simulation_condition == 1
         %------------------------------------------------------------------
-        % Twitch analysis        
+        % Twitch analysis
         %------------------------------------------------------------------
         % Find the peak amplitude of twitch and its location
         [pks,locs_0_100] = max(act_vec);
         % Display peak amplitude value
-        pks 
-        % Time it takes from zero force to the peak 
+        pks
+        % Time it takes from zero force to the peak
         t_0_100 = (locs_0_100-1*Fs)*1000/Fs % convert it in the unit of ms
         
         % Find a half peak amplitude
@@ -145,7 +155,7 @@ for f = 1:length(FR_test)
         
         % Find the location of t_100_50
         locs_100_50 = locs_0_100+t_100_50;
-        % Time it takes from peak to half maximum 
+        % Time it takes from peak to half maximum
         t_100_50 = t_100_50*1000/Fs
         
         % Find value of 40% of peak amplitude
@@ -157,7 +167,7 @@ for f = 1:length(FR_test)
         [~,t_40] = min(abs(act_vec(locs_0_100:end)-peak_40));
         % Find time when force reaches 10% maximum after peak
         [~,t_10] = min(abs(act_vec(locs_0_100:end)-peak_10));
-      
+        
         % Time it takes from 40% peak to 10% peak
         t_40_10 = (t_10-t_40)*1000/Fs
         
@@ -178,7 +188,7 @@ for f = 1:length(FR_test)
         plot([time(locs_40_10) time(locs_40_10)],[0 1],'--')
         text(time(locs_100_50),peak_half,num2str(t_100_50))
         text(time(locs_40_10),peak_10,num2str(t_40_10))
-        text(time(locs_0_100)-time(locs_0_100)*0.4,pks,num2str(pks))        
+        text(time(locs_0_100)-time(locs_0_100)*0.4,pks,num2str(pks))
     end
     
 end
@@ -202,8 +212,9 @@ if simulation_condition == 2
     plot(time,y_vec,'LineWidth',1)
     xlabel('Time (s)','FontSize',14)
     ylabel('y','FontSize',14)
-
+    
 elseif simulation_condition == 3
+    
     twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
     fusion = 1-p2p_exc/p2p_exc(1);
     
@@ -213,6 +224,7 @@ elseif simulation_condition == 3
     FR_half = FR_new(loc);
     f_eff = FR_new/FR_half;
     Af_Song = 1-exp(-(f_eff./(0.56*2.1)).^2.1);
+    FR_half
     
     figure(2)
     plot(FR_test/FR_half,mean_exc,'LineWidth',1)
