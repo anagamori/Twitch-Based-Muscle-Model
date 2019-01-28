@@ -4,6 +4,8 @@
 % Last update: 1/7/18
 %   Try to see how removing the stage 2 affects the force-frequency
 %   relationship
+%   May need implementing saturation function in state 1
+%   Add cooperativity (reduction in dissociation constant) in stage 1
 %
 %==========================================================================
 
@@ -92,7 +94,8 @@ for f = 1:length(FR_test)
         if spike(t) == 1
             spike_temp(t) = 1;
             %temp = conv(spike_temp,R_temp);
-            temp = conv(spike_temp,R_temp*(1+2*act^3));
+            % R to depend on the normalized firing rate 
+            temp = conv(spike_temp,R_temp*(1+2*act^4));
             %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
             %             temp = conv(spike_temp,R_temp*R_i);           
             R = R + temp(1:length(time));
@@ -103,32 +106,30 @@ for f = 1:length(FR_test)
         
         
         %% Stage 2
-
         % Thin filament activation (Gordon et al., 2000)
         K_4 = K_4_max/(1+alpha*act); % cooperativity of calcium binding due to cross-bridge formation
         
         y_dot = K_3*x*(1-y) - y*K_4;
-        y = y_dot/Fs + y;
-        
-        y_int = y*(K_3+K_4)/(K_3); % Normalize
+        y = y_dot/Fs + y;       
         
         %% Stage 3
         % Dynamics of cross-bridge formation (Huxley, 1957)
         %g_app = g_app_max/(1+5*act);
-        f_app = f_app_max*y_int^2;
+        %f_app = f_app_max*(y/(y+0.3))^5;
+        f_app = f_app_max*y^2;
         z_dot = (1-z)*f_app - g_app*z;
         z = z_dot/Fs + z;
         
         %% Stage 4
         %
         act = (z*(f_app_max+g_app)/f_app_max);
+       
         
         
         %% Store variables
         %x_vec(t) = x(t);
         x_vec(t) = x;
         y_vec(t) = y;
-        y_int_vec(t) = y_int;
         z_vec(t) = z;
         act_vec(t) = act;
         

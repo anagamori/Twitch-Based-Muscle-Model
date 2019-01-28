@@ -1,9 +1,11 @@
 %==========================================================================
-% new_model_v7_test.m
+% new_model_v8_test.m
 % Author: Akira Nagamori
 % Last update: 1/7/18
 %   Try to see how removing the stage 2 affects the force-frequency
 %   relationship
+%   May need implementing saturation function in state 1
+%   Add cooperativity (reduction in dissociation constant) in stage 1
 %
 %==========================================================================
 
@@ -44,7 +46,7 @@ for f = 1:length(FR_test)
     if simulation_condition == 1
         % Generate a pulse
         spike(1*Fs) = 1;
-    else 
+    else
         % Generate spike train
         temp =spikeTrainGenerator(0:1/Fs:2,Fs,FR);
         spike(1*Fs:3*Fs) = temp;
@@ -57,21 +59,23 @@ for f = 1:length(FR_test)
     y = 0; % porportion of cross-bridge sites available for binding (0-1)
     z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
     act = 0;
-    
+
     % Stage 1
     tau_1 = 0.005;
-    K_1 = 150;
-    K_2 = 80;
+    K_1 = 200;
+    K_2_max = 150;
     
-    f_app_max = 25; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994) 
+    n = 2;
+    k = 0.4;   
+    
+    alpha = 5;
+    
+    % Stage 3
+    f_app_max = 25; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
     g_app = 25;
-    K_3 = 300;
-    K_4_max = 150;
     
- 
- 
     %=========================================================================
-    % initialization   
+    % initialization
     x_vec = zeros(1,length(time));
     x_int_vec = zeros(1,length(time));
     y_vec = zeros(1,length(time));
@@ -83,52 +87,47 @@ for f = 1:length(FR_test)
     R_temp = exp(-time/tau_1);
     R = zeros(1,length(time));
     
-    for t = 1:length(time)        
+    for t = 1:length(time)
         %% Stage 1
-        %n = 1+n_max*act;
         % Calcium diffusion to sarcoplasm
         spike_temp = zeros(1,length(time));
         if spike(t) == 1
             spike_temp(t) = 1;
-            %temp = conv(spike_temp,R_temp*(1+2*act^3));
-            R_i = 1 + (5-1)*exp(-(1/FR)/tau_1);
-            temp = conv(spike_temp,R_temp*R_i);
-            %temp = conv(spike_temp,R_temp);
-            R = R + temp(1:length(time));            
+            temp = conv(spike_temp,R_temp);
+            % R to depend on the normalized firing rate 
+            % temp = conv(spike_temp,R_temp*(1+1*act));
+            %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
+            %             temp = conv(spike_temp,R_temp*R_i);           
+            R = R + temp(1:length(time));
         end
-       
+        
+        K_2 = K_2_max/(1+alpha*act);
+        
         x_dot = K_1*R(t) - K_2*x;
         x = x_dot/Fs + x;
-           
         
-        %% Stage 2
-        % Thin filament activation (Gordon et al., 2000)       
-        K_2 = K_2_max/(1+al*act); % cooperativity of calcium binding due to cross-bridge formation       
+        x_int = x^n/(x^n+k^n);       
+%         if x > 1
+%            x = 1;
 
-        y_dot = K_1*x*(1-y) - y*K_2;
-        y = y_dot/Fs + y;
-        
-        %y_int = y^n/(y^n+k^n);  
-        y_int = y*(K_1+K_2)/(K_1); % Normalize 
-        
-        %% Stage 3
+         %% Stage 3
         % Dynamics of cross-bridge formation (Huxley, 1957)
         %g_app = g_app_max/(1+5*act);
-        f_app = f_app_max*y_int^2;
-        z_dot = (1-z)*f_app - g_app*z; 
+        %f_app = f_app_max*(y/(y+0.3))^5;
+        f_app = f_app_max*x_int;
+        z_dot = (1-z)*f_app - g_app*z;
         z = z_dot/Fs + z;
         
         %% Stage 4
-        % 
-        act = (z*(f_app_max+g_app)/f_app_max); 
+        %
+        act = (z*(f_app_max+g_app)/f_app_max);
+       
         
         
         %% Store variables
         %x_vec(t) = x(t);
         x_vec(t) = x;
-        x_int_vec(t) = x_int;
         y_vec(t) = y;
-        y_int_vec(t) = y_int;
         z_vec(t) = z;
         act_vec(t) = act;
         
@@ -139,13 +138,13 @@ for f = 1:length(FR_test)
     
     if simulation_condition == 1
         %------------------------------------------------------------------
-        % Twitch analysis        
+        % Twitch analysis
         %------------------------------------------------------------------
         % Find the peak amplitude of twitch and its location
         [pks,locs_0_100] = max(act_vec);
         % Display peak amplitude value
-        pks 
-        % Time it takes from zero force to the peak 
+        pks
+        % Time it takes from zero force to the peak
         t_0_100 = (locs_0_100-1*Fs)*1000/Fs % convert it in the unit of ms
         
         % Find a half peak amplitude
@@ -155,7 +154,7 @@ for f = 1:length(FR_test)
         
         % Find the location of t_100_50
         locs_100_50 = locs_0_100+t_100_50;
-        % Time it takes from peak to half maximum 
+        % Time it takes from peak to half maximum
         t_100_50 = t_100_50*1000/Fs
         
         % Find value of 40% of peak amplitude
@@ -167,7 +166,7 @@ for f = 1:length(FR_test)
         [~,t_40] = min(abs(act_vec(locs_0_100:end)-peak_40));
         % Find time when force reaches 10% maximum after peak
         [~,t_10] = min(abs(act_vec(locs_0_100:end)-peak_10));
-      
+        
         % Time it takes from 40% peak to 10% peak
         t_40_10 = (t_10-t_40)*1000/Fs
         
@@ -188,7 +187,7 @@ for f = 1:length(FR_test)
         plot([time(locs_40_10) time(locs_40_10)],[0 1],'--')
         text(time(locs_100_50),peak_half,num2str(t_100_50))
         text(time(locs_40_10),peak_10,num2str(t_40_10))
-        text(time(locs_0_100)-time(locs_0_100)*0.4,pks,num2str(pks))        
+        text(time(locs_0_100)-time(locs_0_100)*0.4,pks,num2str(pks))
     end
     
 end
@@ -212,7 +211,7 @@ if simulation_condition == 2
     plot(time,y_vec,'LineWidth',1)
     xlabel('Time (s)','FontSize',14)
     ylabel('y','FontSize',14)
-
+    
 elseif simulation_condition == 3
     
     twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
