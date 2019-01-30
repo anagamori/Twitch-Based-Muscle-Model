@@ -1,11 +1,8 @@
 %==========================================================================
-% new_model_v8_test.m
+% new_model_v_test.m
 % Author: Akira Nagamori
 % Last update: 1/7/18
-%   Try to see how removing the stage 2 affects the force-frequency
-%   relationship
-%   May need implementing saturation function in state 1
-%   Add cooperativity (reduction in dissociation constant) in stage 1
+%   Modify the v8 to have a sequential bin
 %
 %==========================================================================
 
@@ -63,18 +60,18 @@ for i = 1:2
         act = 0;
         
         % Stage 1
-        tau_1 = 0.01;
-        K_1 = 15;
-        K_2_max = 10;
+        tau_1 = 0.001;
+        K_1 = 80;
+        K_2_max = 150;
         
-        n = 2.1;
-        k = 0.18;
+        n = 2.2;
+        k = 0.05;
         
         alpha = 2;
-        
+        beta = 100;
         % Stage 3
-        f_app_max = 5; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
-        g_app = 18;
+        f_app_max = 20; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
+        g_app = 40;
         
         %=========================================================================
         % initialization
@@ -84,7 +81,7 @@ for i = 1:2
         y_int_vec = zeros(1,length(time));
         z_vec = zeros(1,length(time));
         act_vec = zeros(1,length(time));
-        
+        K_vec = zeros(1,length(time));
         spike_temp = zeros(1,length(time));
         R_temp = exp(-time/tau_1);
         R = zeros(1,length(time));
@@ -97,7 +94,7 @@ for i = 1:2
                 spike_temp(t) = 1;
                 %temp = conv(spike_temp,R_temp);
                 % R to depend on the normalized firing rate
-                temp = conv(spike_temp,R_temp*(1+1*act^4));
+                temp = conv(spike_temp,R_temp*(1+1*act^3));
                 %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
                 %             temp = conv(spike_temp,R_temp*R_i);
                 R = R + temp(1:length(time));
@@ -114,8 +111,10 @@ for i = 1:2
             
             %% Stage 3
             % Dynamics of cross-bridge formation (Huxley, 1957)
-            f_app = f_app_max*x_int;
-            z_dot = (1-z)*f_app - g_app*z; 
+%             f_app = f_app_max*x_int;
+%             z_dot = (1-z)*f_app - g_app*z; 
+            K = beta*x_int;
+            z_dot  = -(g_app+f_app_max*(K/(K+1)))*z+f_app_max*(K/(K+1));
             z = z_dot/Fs + z;
             
             %% Stage 4
@@ -125,9 +124,11 @@ for i = 1:2
             %% Store variables
             %x_vec(t) = x(t);
             x_vec(t) = x;
+            x_int_vec(t) = x_int;
             y_vec(t) = y;
             z_vec(t) = z;
             act_vec(t) = act;
+            K_vec (t) = K;
             
         end
         
