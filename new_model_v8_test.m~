@@ -58,9 +58,9 @@ for i = 1:2
         act = 0;
         
         % Stage 1
-        tau_1 = 0.017;
-        K_1 = 13;
-        K_2_max = 8;
+        tau_1 = 0.01;
+        K_1 = 15;
+        K_2_max = 5;
         
         n = 2.1;
         k = 0.18;
@@ -68,7 +68,7 @@ for i = 1:2
         alpha = 2;
         
         % Stage 3
-        f_app_max = 3; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
+        f_app_max = 5; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
         g_app = 20;
         
         %=========================================================================
