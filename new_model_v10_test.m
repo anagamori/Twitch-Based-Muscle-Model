@@ -58,18 +58,18 @@ for i = 1:2
         act = 0;
         
         % Stage 1
-        tau_1 = 0.02;
-        K_1 = 10;
-        K_2_max = 8;
+        tau_1 = 0.003;
+        K_1 = 30;
+        K_2_max = 20;
         
-        n = 2.3;
-        k = 0.22;
+        n = 6;
+        k = 0.13;
         
-        alpha = 4;
+        alpha = 5;
         
         % Stage 3
-        f_app_max = 1; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
-        g_app = 17;
+        f_app_max = 500; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
+        g_app = 20;
         
         %=========================================================================
         % initialization
@@ -92,7 +92,7 @@ for i = 1:2
                 spike_temp(t) = 1;
                 %temp = conv(spike_temp,R_temp);
                 % R to depend on the normalized firing rate
-                temp = conv(spike_temp,R_temp*(1+1*act^4));
+                temp = conv(spike_temp,R_temp*(1+1*act^5));
                 %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
                 %             temp = conv(spike_temp,R_temp*R_i);
                 R = R + temp(1:length(time));
@@ -115,7 +115,7 @@ for i = 1:2
             
             %% Stage 4
             %
-            act = (z*(f_app_max+g_app)/f_app_max);           
+            act = z; % (z*(f_app_max+g_app)/f_app_max);           
             
             %% Store variables
             %x_vec(t) = x(t);

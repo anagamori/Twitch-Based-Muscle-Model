@@ -1,7 +1,16 @@
 %==========================================================================
 % new_model_v8_test.m
 % Author: Akira Nagamori
-% Last update: 2/3/119
+% Last update: 2/18/19
+% Descriptions:
+%   Fit the new model to frequency-force relationship at different muscle
+%   lengths.
+% Note: 
+%   Refer to Kim et al., (2017), where the forward rate constant for
+%   binding of calcium to troponin is altered as a function of muscle
+%   length (original article Williams et al., 1998)
+%   Williams et al. (1998) used a the ratio of forward and backward rate
+%   constants to be proportional to muscle length
 %==========================================================================
 
 close all
@@ -13,6 +22,8 @@ clc
 Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:4; %simulation time
+
+Lce = 0.8;
 
 for i = 1:2
     if i == 1
@@ -58,18 +69,18 @@ for i = 1:2
         act = 0;
         
         % Stage 1
-        tau_1 = 0.01;
-        K_1 = 15;
-        K_2_max = 5;
+        tau_1 = 0.014;
+        K_1 = 10;
+        K_2_max = 8;
         
-        n = 2.1;
-        k = 0.18;
+        n = 2.3;
+        k = 0.22;
         
-        alpha = 2;
+        alpha = 4;
         
         % Stage 3
-        f_app_max = 5; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
-        g_app = 20;
+        f_app_max = 1; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
+        g_app = 17;
         
         %=========================================================================
         % initialization
@@ -216,11 +227,18 @@ for i = 1:2
         fusion = 1-p2p_exc/p2p_exc(1);
         
         FR_new = FR_test(1):0.1:FR_test(end);
-        Af_new = spline(FR_test,mean_exc,FR_new);
-        [~,loc] = min(abs(Af_new-0.5));
-        FR_half = FR_new(loc);
+%         Af_new = spline(FR_test,mean_exc,FR_new);
+%         [~,loc] = min(abs(Af_new-0.5));
+        FR_half = 8.1; % FR_new(loc);
+        
+        %%
+        % Activation-frequency relationship from Song et al. (2008)
+        a_f = 0.56;
+        n_f0 = 2.1;
+        n_f1 = 5;
+        n_f = n_f0 +n_f1* (1/Lce-1);
         f_eff = FR_new/FR_half;
-        Af_Song = 1-exp(-(f_eff./(0.56*2.1)).^2.1);
+        Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
         FR_half
         
         figure(6)

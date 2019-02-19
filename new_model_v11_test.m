@@ -1,7 +1,9 @@
 %==========================================================================
-% new_model_v8_test.m
+% new_model_v11_test.m
 % Author: Akira Nagamori
-% Last update: 2/3/119
+% Last update: 2/18/119
+% Descriptions
+%   Inspired by Williams et al. 1998
 %==========================================================================
 
 close all
@@ -51,25 +53,28 @@ for i = 1:2
         
         %==========================================================================
         % Model parameters
-        % x = zeros(1,length(time)); % proportion of Ca2+ bound to troponin (0-1)
-        x = 0;
-        y = 0; % porportion of cross-bridge sites available for binding (0-1)
+        x = 0; % free calcium concentration
+        y = 0; % concentraction of calcium bound to troponin
         z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
         act = 0;
         
+        k_1 = 300;
+        k_2 = 250;
+        k_3 = 120;
+        k_4 = 100;
         % Stage 1
-        tau_1 = 0.02;
-        K_1 = 10;
-        K_2_max = 8;
+        tau_1 = 0.003;
+        K_1 = 30;
+        K_2_max = 20;
         
-        n = 2.3;
-        k = 0.22;
+        n = 2;
+        k = 0.1;
         
-        alpha = 4;
+        alpha = 5;
         
         % Stage 3
-        f_app_max = 1; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
-        g_app = 17;
+        f_app_max = 500; % See eq. 3 and 4 and subsequent texts on Westerblad & Allen (1994)
+        g_app = 10;
         
         %=========================================================================
         % initialization
@@ -92,30 +97,29 @@ for i = 1:2
                 spike_temp(t) = 1;
                 %temp = conv(spike_temp,R_temp);
                 % R to depend on the normalized firing rate
-                temp = conv(spike_temp,R_temp*(1+1*act^4));
+                temp = conv(spike_temp,R_temp*(1+1*act^5));
                 %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
                 %             temp = conv(spike_temp,R_temp*R_i);
                 R = R + temp(1:length(time));
             end
             
-            K_2 = K_2_max; %/(1+alpha*act);
-            
-            x_dot = K_1*R(t) - K_2*x;
+            x_dot = k_1*(2-x-y)*R(t) - k_2*x*(6+x+y)-(k_3*x+k_4*y)*(1-y);
+            y_dot = (1-y)*(k_3*x-k_4*y);
             x = x_dot/Fs + x;
-            
-            x_int = x^n/(x^n+k^n);
+            y = y_dot/Fs + y;
+            y_int = y^n/(y^n+k^n);
             %         if x > 1
             %            x = 1;
             
             %% Stage 3
             % Dynamics of cross-bridge formation (Huxley, 1957)
-            f_app = f_app_max*x_int;
+            f_app = f_app_max*y_int;
             z_dot = (1-z)*f_app - g_app*z; 
             z = z_dot/Fs + z;
             
             %% Stage 4
             %
-            act = (z*(f_app_max+g_app)/f_app_max);           
+            act = z; % (z*(f_app_max+g_app)/f_app_max);           
             
             %% Store variables
             %x_vec(t) = x(t);
