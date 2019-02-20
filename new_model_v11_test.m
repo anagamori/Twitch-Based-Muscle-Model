@@ -58,17 +58,17 @@ for i = 1:2
         z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
         act = 0;
         
-        k_1 = 300;
-        k_2 = 250;
-        k_3 = 120;
-        k_4 = 100;
+        k_1 = 100;
+        k_2 = 80;
+        k_3 = 80;
+        k_4 = 50;
         % Stage 1
-        tau_1 = 0.003;
+        tau_1 = 0.01;
         K_1 = 30;
         K_2_max = 20;
         
-        n = 2;
-        k = 0.1;
+        n = 2.5;
+        k = 0.08;
         
         alpha = 5;
         
@@ -97,7 +97,7 @@ for i = 1:2
                 spike_temp(t) = 1;
                 %temp = conv(spike_temp,R_temp);
                 % R to depend on the normalized firing rate
-                temp = conv(spike_temp,R_temp*(1+1*act^5));
+                temp = conv(spike_temp,R_temp*(1+2*act^2));
                 %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
                 %             temp = conv(spike_temp,R_temp*R_i);
                 R = R + temp(1:length(time));
@@ -114,7 +114,7 @@ for i = 1:2
             %% Stage 3
             % Dynamics of cross-bridge formation (Huxley, 1957)
             f_app = f_app_max*y_int;
-            z_dot = (1-z)*f_app - g_app*z; 
+            z_dot = (y_int-z)/0.02; %(1-z)*f_app - g_app*z; 
             z = z_dot/Fs + z;
             
             %% Stage 4
