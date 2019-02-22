@@ -19,8 +19,8 @@ Lce = 1;
 %% Parameters to be searched
 target_CT = 90;
 
-        
-for m = 1001:1500
+
+for m = 1501
     S = 7;
     C = 1;
     k_1 = 20;
@@ -34,30 +34,53 @@ for m = 1001:1500
     alpha = 4;
     
     r = randi([1 11],1,1);
-    if r == 1
-        S = 7+ (-S*0.8 + (S*0.8+S*0.8)*rand(1,1));
-    elseif r == 2
-        C = (1 + (4-1)*rand(1,1));
-    elseif r == 3
-        k_1 = 20 + (-k_1*0.8 + (k_1*0.8+k_1*0.8)*rand(1,1));
-    elseif r == 4    
-        k_2 = 5 + (-k_2*0.8 + (k_2*0.8+k_2*0.8)*rand(1,1));
-    elseif r == 5
-        k_3 = 15 + (-k_3*0.8 + (k_3*0.8+k_3*0.8)*rand(1,1));
-    elseif r == 6    
-        k_4 = 7 + (-k_4*0.8 + (k_4*0.8+k_4*0.8)*rand(1,1));
-    elseif r == 7    
-        tau_1 = 0.005 + (-tau_1*0.8 + (tau_1*0.8+tau_1*0.8)*rand(1,1));
-    elseif r == 8
-        tau_2 = 0.04 + (-tau_2*0.8 + (tau_2*0.8+tau_2*0.8)*rand(1,1));
-    elseif r == 9
-        n = 1.8 + (-n*0.8 + (n*0.8+n*0.8)*rand(1,1));
-    elseif r == 10
-        k = 0.04 + (-k*0.8 + (k*0.8+k*0.8)*rand(1,1));
-    elseif r == 11    
-        alpha = 4 + (-alpha*0.8 + (alpha*0.8+alpha*0.8)*rand(1,1));
-    end
-   
+    %     if r == 1
+    %         S = 7+ (-S*0.8 + (S*0.8+S*0.8)*rand(1,1));
+    %     elseif r == 2
+    %         C = (1 + (4-1)*rand(1,1));
+    %     elseif r == 3
+    %         k_1 = 20 + (-k_1*0.8 + (k_1*0.8+k_1*0.8)*rand(1,1));
+    %     elseif r == 4
+    %         k_2 = 5 + (-k_2*0.8 + (k_2*0.8+k_2*0.8)*rand(1,1));
+    %     elseif r == 5
+    %         k_3 = 15 + (-k_3*0.8 + (k_3*0.8+k_3*0.8)*rand(1,1));
+    %     elseif r == 6
+    %         k_4 = 7 + (-k_4*0.8 + (k_4*0.8+k_4*0.8)*rand(1,1));
+    %     elseif r == 7
+    %         tau_1 = 0.005 + (-tau_1*0.8 + (tau_1*0.8+tau_1*0.8)*rand(1,1));
+    %     elseif r == 8
+    %         tau_2 = 0.04 + (-tau_2*0.8 + (tau_2*0.8+tau_2*0.8)*rand(1,1));
+    %     elseif r == 9
+    %         n = 1.8 + (-n*0.8 + (n*0.8+n*0.8)*rand(1,1));
+    %     elseif r == 10
+    %         k = 0.04 + (-k*0.8 + (k*0.8+k*0.8)*rand(1,1));
+    %     elseif r == 11
+    %         alpha = 4 + (-alpha*0.8 + (alpha*0.8+alpha*0.8)*rand(1,1));
+    %     end
+    
+    S = 7+ (-S*0.8 + (S*0.8+S*0.8)*rand(1,1));
+    
+    C = (1 + (4-1)*rand(1,1));
+    
+    k_1 = 20 + (-k_1*0.8 + (k_1*0.8+k_1*0.8)*rand(1,1));
+    
+    k_2 = 5 + (-k_2*0.8 + (k_2*0.8+k_2*0.8)*rand(1,1));
+    
+    k_3 = 15 + (-k_3*0.8 + (k_3*0.8+k_3*0.8)*rand(1,1));
+    
+    k_4 = 7 + (-k_4*0.8 + (k_4*0.8+k_4*0.8)*rand(1,1));
+    
+    tau_1 = 0.005 + (-tau_1*0.8 + (tau_1*0.8+tau_1*0.8)*rand(1,1));
+    
+    tau_2 = 0.04 + (-tau_2*0.8 + (tau_2*0.8+tau_2*0.8)*rand(1,1));
+    
+    n = 1.8 + (-n*0.8 + (n*0.8+n*0.8)*rand(1,1));
+    
+    k = 0.04 + (-k*0.8 + (k*0.8+k*0.8)*rand(1,1));
+    
+    alpha = 4 + (-alpha*0.8 + (alpha*0.8+alpha*0.8)*rand(1,1));
+    
+    
     %% Run a twitch simulation and sweep simulation
     for i = 1:2
         if i == 1

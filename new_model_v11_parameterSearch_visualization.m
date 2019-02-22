@@ -14,11 +14,13 @@ code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
     
 %%
-for m = 1:1000
+j = 1;
+for m = 1001:1500
     cd (data_folder)
     load(['Data_' num2str(m)])   
     cd(code_folder)
-    error_long(m) = Data{2,8};
+    error_long(j) = Data{2,8};
+    j = j + 1;
 end
 
 %%
