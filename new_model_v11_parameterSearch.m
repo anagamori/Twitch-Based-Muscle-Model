@@ -310,8 +310,8 @@ for m = 1:1000
     Data{2,11} = fusion;
     Data{2,12} = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,n,k,alpha];
     
-    code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-    data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
+    code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
+    data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
     
     cd(data_folder)
     save(['Data_' num2str(m)],'Data')
