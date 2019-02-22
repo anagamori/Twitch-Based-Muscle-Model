@@ -1,5 +1,5 @@
 %==========================================================================
-% new_model_v11_test.m
+% new_model_v11_length_test.m
 % Author: Akira Nagamori
 % Last update: 2/18/119
 % Descriptions
@@ -16,7 +16,8 @@ Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
-Lce = 1;
+Lce = 1.2;
+FR_half = 9.9; 
 
 for i = 1:2
     if i == 1
@@ -64,12 +65,12 @@ for i = 1:2
         C = 1;
         k_1 = 20;
         k_2 = 5;
-        k_3 = 15;
+        k_3 = 35;
         k_4 = 7;
         tau_1 = 0.005;
-        tau_2 = 0.04;
-        n = 1.8;
-        k = 0.04;
+        tau_2 = 0.055;
+        n = 1.3;
+        k = 0.03;
         
         %=========================================================================
         % initialization
@@ -223,10 +224,7 @@ for i = 1:2
         twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
         fusion = 1-p2p_exc/p2p_exc(1);
         
-        FR_new = FR_test(1):0.1:FR_test(end);
-        Af_new = spline(FR_test,mean_exc,FR_new);
-        [~,loc] = min(abs(Af_new-0.5));
-        FR_half = FR_new(loc);
+        FR_new = FR_test(1):0.1:FR_test(end);        
         f_eff = FR_new/FR_half;
         
         a_f = 0.56;
@@ -237,6 +235,12 @@ for i = 1:2
         
         FR_half
         
+        for j = 1:length(FR_test)
+            [val,loc] = min(abs(FR_new-FR_test(j)));
+            error_temp(j) = abs(Af_Song(loc)-mean_exc(j));  
+        end
+        
+        error = sum(error_temp)
         figure(6)
         plot(FR_test/FR_half,mean_exc,'LineWidth',1)
         xlabel('Frequency (Hz)','FontSize',14)

@@ -16,8 +16,6 @@ Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
-Lce = 1;
-
 for i = 1:2
     if i == 1
         simulation_condition = 1;
@@ -50,7 +48,7 @@ for i = 1:2
         else
             % Generate spike train
             temp =spikeTrainGenerator(0:1/Fs:3,Fs,FR);
-            spike(1*Fs:4*Fs) = temp;
+            spike(1*Fs:*Fs) = temp;
         end
         
         %==========================================================================
@@ -66,6 +64,7 @@ for i = 1:2
         k_2 = 5;
         k_3 = 15;
         k_4 = 7;
+        % Stage 1
         tau_1 = 0.005;
         tau_2 = 0.04;
         n = 1.8;
@@ -134,8 +133,8 @@ for i = 1:2
             
         end
         
-        mean_exc(f) = mean(act_vec(3.5*Fs:4*Fs));
-        p2p_exc(f) = max(act_vec(3.5*Fs:4*Fs))-min(act_vec(3.5*Fs:4*Fs));
+        mean_exc(f) = mean(act_vec(2*Fs:3*Fs));
+        p2p_exc(f) = max(act_vec(2*Fs:3*Fs))-min(act_vec(2*Fs:3*Fs));
         
         if simulation_condition == 1
             %------------------------------------------------------------------
