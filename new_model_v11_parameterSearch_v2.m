@@ -216,7 +216,7 @@ for k = 1:6
                     
                 elseif simulation_condition == 3
                     %% Calculate twitch-tetanus ratio
-                    twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
+                    twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f);
                     %% Calculate the degree of fusion
                     fusion = 1-p2p_exc/p2p_exc(1);
                     
@@ -225,7 +225,6 @@ for k = 1:6
                     Af_new = spline(FR_test,mean_exc,FR_new);
                     [~,loc] = min(abs(Af_new-0.5));
                     FR_half = FR_new(loc);
-                    FR_half
                     
                     %% Calculate the desired activation-frequency relationship bassed on Song et al. (2008)
                     f_eff = FR_new/FR_half;
@@ -534,7 +533,7 @@ code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
 
 cd(data_folder)
-save(['Data_' num2str(k)],'Data')
+save(['Data_' num2str(1)],'Data')
 cd(code_folder)
 
 %%
@@ -552,6 +551,7 @@ end
 
 function Y = annealing_curve(x,k)
 
+perturbation_amp = 0.2/2;
 S = 7;
 C = 1;
 k_1 = 20;
@@ -564,48 +564,48 @@ N = 1.8;
 K = 0.04;
 alpha = 4;
 
-Y(1,1) = x(1) +  (S*0.2)./2.^(k-2);
-Y(2,1) = x(1) -  (S*0.2)./2.^(k-2);
+Y(1,1) = x(1) +  (S*perturbation_amp)./2.^(k-2);
+Y(2,1) = x(1) -  (S*perturbation_amp)./2.^(k-2);
 Y(3,1) = x(1);
 
-Y(1,2) = x(2) +  (C*0.2)./2.^(k-2);
-Y(2,2) = x(2) -  (C*0.2)./2.^(k-2);
+Y(1,2) = x(2) +  (C*perturbation_amp)./2.^(k-2);
+Y(2,2) = x(2) -  (C*perturbation_amp)./2.^(k-2);
 Y(3,2) = x(2);
 
-Y(1,3) = x(3) +  (k_1*0.2)./2.^(k-2);
-Y(2,3) = x(3) -  (k_1*0.2)./2.^(k-2);
+Y(1,3) = x(3) +  (k_1*perturbation_amp)./2.^(k-2);
+Y(2,3) = x(3) -  (k_1*perturbation_amp)./2.^(k-2);
 Y(3,3) = x(3);
 
-Y(1,4) = x(4) +  (k_2*0.2)./2.^(k-2);
-Y(2,4) = x(4) -  (k_2*0.2)./2.^(k-2);
+Y(1,4) = x(4) +  (k_2*perturbation_amp)./2.^(k-2);
+Y(2,4) = x(4) -  (k_2*perturbation_amp)./2.^(k-2);
 Y(3,4) = x(4);
 
-Y(1,5) = x(5) +  (k_3*0.2)./2.^(k-2);
-Y(2,5) = x(5) -  (k_3*0.2)./2.^(k-2);
+Y(1,5) = x(5) +  (k_3*perturbation_amp)./2.^(k-2);
+Y(2,5) = x(5) -  (k_3*perturbation_amp)./2.^(k-2);
 Y(3,5) = x(5);
 
-Y(1,6) = x(6) +  (k_4*0.2)./2.^(k-2);
-Y(2,6) = x(6) -  (k_4*0.2)./2.^(k-2);
+Y(1,6) = x(6) +  (k_4*perturbation_amp)./2.^(k-2);
+Y(2,6) = x(6) -  (k_4*perturbation_amp)./2.^(k-2);
 Y(3,6) = x(6);
 
-Y(1,7) = x(7) +  (tau_1*0.2)./2.^(k-2);
-Y(2,7) = x(7) -  (tau_1*0.2)./2.^(k-2);
+Y(1,7) = x(7) +  (tau_1*perturbation_amp)./2.^(k-2);
+Y(2,7) = x(7) -  (tau_1*perturbation_amp)./2.^(k-2);
 Y(3,7) = x(7);
 
-Y(1,8) = x(8) +  (tau_2*0.2)./2.^(k-2);
-Y(2,8) = x(8) -  (tau_2*0.2)./2.^(k-2);
+Y(1,8) = x(8) +  (tau_2*perturbation_amp)./2.^(k-2);
+Y(2,8) = x(8) -  (tau_2*perturbation_amp)./2.^(k-2);
 Y(3,8) = x(8);
 
-Y(1,9) = x(9) +  (N*0.2)./2.^(k-2);
+Y(1,9) = x(9) +  (N*perturbation_amp)./2.^(k-2);
 Y(2,9) = x(9) -  (N*0.2)./2.^(k-2);
 Y(3,9) = x(9);
 
-Y(1,10) = x(10) +  (K*0.2)./2.^(k-2);
-Y(2,10) = x(10) -  (K*0.2)./2.^(k-2);
+Y(1,10) = x(10) +  (K*perturbation_amp)./2.^(k-2);
+Y(2,10) = x(10) -  (K*perturbation_amp)./2.^(k-2);
 Y(3,10) = x(10);
 
-Y(1,11) = x(11) +  (alpha*0.2)./2.^(k-2);
-Y(2,11) = x(11) -  (alpha*0.2)./2.^(k-2);
+Y(1,11) = x(11) +  (alpha*perturbation_amp)./2.^(k-2);
+Y(2,11) = x(11) -  (alpha*perturbation_amp)./2.^(k-2);
 Y(3,11) = x(11);
 
 end
