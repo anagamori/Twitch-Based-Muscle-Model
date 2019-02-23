@@ -18,7 +18,7 @@ Lce = 1;
 target_CT = 90;
 
 param = [7,1,20,5,15,7,0.005,0.04,1.8,0.04,4];
-for k = 1
+for k = 1:6
     rng shuffle
     Param_matrix = annealing_curve(param,k);
     
@@ -292,8 +292,8 @@ for k = 1
     Data{2,11} = fusion;
     Data{2,12} = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
     
-    code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-    data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
+    code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
+    data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
     
     cd(data_folder)
     save(['Data_' num2str(k)],'Data')
