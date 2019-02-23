@@ -1,0 +1,10 @@
+function [var1,var2,var3,var4,var5,var6,var7,var8,var9,var10,var11] = parameter_Matrix(x,M,index)
+    
+var1 = x(1);
+var2 = x(2);
+var3 = x(3);
+var4 = x(4);
+var5 = x(5);
+var6 = x(6);
+var = x(1);
+end

@@ -15,7 +15,7 @@ data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/D
     
 %%
 j = 1;
-for m = 1001:1500
+for m = 1501:2000
     cd (data_folder)
     load(['Data_' num2str(m)])   
     cd(code_folder)

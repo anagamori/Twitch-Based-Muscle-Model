@@ -60,17 +60,30 @@ for i = 1:2
         z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
         act = 0;
         
-        S = 7;
-        C = 1;
-        k_1 = 20;
-        k_2 = 5;
-        k_3 = 15;
-        k_4 = 7;
-        tau_1 = 0.005;
-        tau_2 = 0.04;
+        %param = [7,1,20,5,15,7,0.005,0.04,1.8,0.04,4];
+        S = 9.8;
+        C = 1.4;
+        k_1 = 12;
+        k_2 = 7;
+        k_3 = 21;
+        k_4 = 9.8;
+        tau_1 = 0.007;
+        tau_2 = 0.056;
         n = 1.8;
-        k = 0.04;
+        k = 0.056;
+        alpha = 4;
         
+%         S = 7;
+%         C = 1;
+%         k_1 = 20;
+%         k_2 = 5;
+%         k_3 = 15;
+%         k_4 = 7;
+%         tau_1 = 0.005;
+%         tau_2 = 0.04;
+%         n = 1.8;
+%         k = 0.04;
+%         alpha = 4;
         %=========================================================================
         % initialization
         x_vec = zeros(1,length(time));
@@ -92,7 +105,7 @@ for i = 1:2
                 spike_temp(t) = 1;
                 %temp = conv(spike_temp,R_temp);
                 % R to depend on the normalized firing rate
-                temp = conv(spike_temp,R_temp*(1+2*act^4));
+                temp = conv(spike_temp,R_temp*(1+2*act^alpha));
                 %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
                 %             temp = conv(spike_temp,R_temp*R_i);
                 R = R + temp(1:length(time));
@@ -223,7 +236,7 @@ for i = 1:2
         twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
         fusion = 1-p2p_exc/p2p_exc(1);
         
-        FR_new = FR_test(1):0.1:FR_test(end);
+        FR_new = 0.1:0.1:FR_test(end);
         Af_new = spline(FR_test,mean_exc,FR_new);
         [~,loc] = min(abs(Af_new-0.5));
         FR_half = FR_new(loc);
@@ -237,13 +250,21 @@ for i = 1:2
         
         FR_half
         
+        %% Calculate error between the desired and generated activation-frequency relationship
+        for j = 1:length(find(f_eff<3.5))
+            error_temp(j) = abs(Af_Song(j)-Af_new(j));
+        end
+        error = sum(error_temp)
+        
         figure(6)
         plot(FR_test/FR_half,mean_exc,'LineWidth',1)
         xlabel('Frequency (Hz)','FontSize',14)
         ylabel('Activation','FontSize',14)
         hold on
-        plot(f_eff,Af_Song)
+        plot(f_eff,Af_new)
+        plot(f_eff,Af_Song,'color','k')
         xlim([0 3])
+        legend('New','New Fit','Song')
         
         figure(7)
         plot(FR_test/FR_half,fusion,'LineWidth',1)
@@ -257,7 +278,7 @@ for i = 1:2
         xlabel('Activation','FontSize',14)
         ylabel('Fusion','FontSize',14)
         hold on
-        plot(0:0.1:1,0:0.1:1,'--')
+        plot(0:0.1:1,0:0.1:1,'--','color','k')
     end
     
 end
