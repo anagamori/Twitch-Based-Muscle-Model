@@ -12,7 +12,7 @@ clc
 Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
-Lce = 1;
+
 
 %% Parameters to be searched
 target_CT = 30;
