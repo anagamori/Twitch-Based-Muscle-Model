@@ -217,7 +217,7 @@ for k = 1:6
     end
 end
 
-[Data] = model_test(param,Lce,0);
+[Data] = model_test(param,Lce,0,'fast');
 
 cd(data_folder)
 save(['Data_' num2str(1)],'Data')

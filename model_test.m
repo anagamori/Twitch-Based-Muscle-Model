@@ -1,5 +1,5 @@
 
-function [Data] = model_test(param,Lce,FR_half_temp)
+function [Data] = model_test(param,Lce,FR_half_temp,fiber_type)
 %==========================================================================
 % model_test.m
 % Author: Akira Nagamori
@@ -183,9 +183,15 @@ for i = 1:2
         end
         f_eff = FR_new/FR_half;
         
-        a_f = 0.56;
-        n_f0 = 2.1;
-        n_f1 = 5;
+        if fiber_type == 'slow'
+            a_f = 0.56;
+            n_f0 = 2.1;
+            n_f1 = 5;
+        elseif fiber_type == 'fast'
+            a_f = 0.56;
+            n_f0 = 2.1;
+            n_f1 = 3.3;
+        end
         n_f = n_f0 +n_f1* (1/Lce-1);
         Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);        
         

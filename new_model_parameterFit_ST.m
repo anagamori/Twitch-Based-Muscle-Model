@@ -221,7 +221,7 @@ for k = 1:6
 end
 
 %% Run a twitch simulation and sweep simulation
-[Data] = model_test(param,Lce,0);
+[Data] = model_test(param,Lce,0,'slow');
 
 cd(data_folder)
 save(['Data_' num2str(1)],'Data')
