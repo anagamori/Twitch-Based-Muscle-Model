@@ -17,7 +17,8 @@ T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-Lce = 0.9;
+Lce = 1.2;
+condition = 4;
 trialN = 1;
 cd(data_folder)
 load(['Data_' num2str(trialN)])
@@ -468,7 +469,7 @@ Data{2,11} = fusion;
 Data{2,12} = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
 
 cd(data_folder)
-save(['Data_' num2str(trialN) '_' num2str(2)],'Data')
+save(['Data_' num2str(trialN) '_' num2str(condition)],'Data')
 cd(code_folder)
 
 %%
