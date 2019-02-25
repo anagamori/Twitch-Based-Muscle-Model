@@ -209,15 +209,15 @@ for k = 1:6
                     end
                     
                 end
-                
-                error_long(l) = error;
-                [min_error,loc_min_error] = min(error_long);
             end
-            [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,r(n),loc_min_error);
-            param =  [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
+            error_long(l) = error;
+            [min_error,loc_min_error] = min(error_long);
         end
+        [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,r(n),loc_min_error);
+        param =  [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
     end
 end
+
 
 %% Run a new set of twitch and sweep simulations with a new parameter set
 for i = 1:2
