@@ -1,7 +1,7 @@
 %==========================================================================
-% new_model_parameterFit_FT.m
+% new_model_parameterFit_FT_length.m
 % Author: Akira Nagamori
-% Last update: 2/24/119
+% Last update: 2/25/119
 %==========================================================================
 
 close all
@@ -11,25 +11,30 @@ clc
 %% Folder name
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
-
 %% Simulation parameters
 Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-target_CT = 30;
-Lce = 1;
+Lce = 1.2;
+condition = 11;
+trialN = 1;
+cd(data_folder)
+load(['Data_' num2str(trialN)])
+cd(code_folder)
 
-param = [4,2,40,30,50,40,0.005,0.03,1.7,0.04,5];
+FR_half = Data{2,6};
+param = Data{2,12};
+
 for k = 1:6
     rng shuffle
     Param_matrix = annealing_curve(param,k);
     
-    r = randperm(11);
+    r = randperm(6)+4;
     
     %% Loop through all parameters
-    for n = 1:11
+    for n = 1:5
         
         %% Loop through all perturbations
         error_long = zeros(1,3);
@@ -122,8 +127,6 @@ for k = 1:6
                         z_dot = (y_int-z)/tau_2; %(tau_temp/1000); %(1-z)*f_app - g_app*z;
                         z = z_dot/Fs + z;
                         
-                        %% Stage 4
-                        %
                         act = z; % (z*(f_app_max+g_app)/f_app_max);
                         
                         %% Store variables
@@ -144,7 +147,7 @@ for k = 1:6
                         %------------------------------------------------------------------
                         % Find the peak amplitude of twitch and its location
                         [pks,locs_0_100] = max(act_vec);
-
+                        
                         % Time it takes from zero force to the peak
                         t_0_100 = (locs_0_100-1*Fs)*1000/Fs; % convert it in the unit of ms
                         
@@ -178,40 +181,34 @@ for k = 1:6
                         P =  pks/T;
                         twitch_Milner_temp = P.*time.*exp(1-time/T);
                         twitch_Milner = conv(spike,twitch_Milner_temp);
+                        
+                    elseif simulation_condition == 3
+                        %% Calculate twitch-tetanus ratio
+                        twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f);
+                        %% Calculate the degree of fusion
+                        fusion = 1-p2p_exc/p2p_exc(1);
+                        
+                        %% Calculate FR_half
+                        FR_new = 0.1:0.1:FR_test(end);
+                        Af_new = spline(FR_test,mean_exc,FR_new);
+                        
+                        %% Calculate the desired activation-frequency relationship bassed on Song et al. (2008)
+                        f_eff = FR_new/FR_half;
+                        a_f = 0.56;
+                        n_f0 = 2.1;
+                        n_f1 = 3.3;
+                        n_f = n_f0 +n_f1* (1/Lce-1);
+                        Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
+                        
+                        %% Calculate error between the desired and generated activation-frequency relationship
+                        for j = 1:length(find(f_eff<3.5))
+                            error_temp(j) = abs(Af_Song(j)-Af_new(j));
+                        end
+                        error = sum(error_temp);
                     end
-
-                end
-         
-                if simulation_condition == 3
-                    %% Calculate twitch-tetanus ratio
-                    twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f);
-                    %% Calculate the degree of fusion
-                    fusion = 1-p2p_exc/p2p_exc(1);
-                    
-                    %% Calculate FR_half
-                    FR_new = 0.1:0.1:FR_test(end);
-                    Af_new = spline(FR_test,mean_exc,FR_new);
-                    [~,loc] = min(abs(Af_new-0.5));
-                    FR_half = FR_new(loc);
-                    
-                    %% Calculate the desired activation-frequency relationship bassed on Song et al. (2008)
-                    f_eff = FR_new/FR_half;
-                    a_f = 0.56;
-                    n_f0 = 2.1;
-                    n_f1 = 5;
-                    n_f = n_f0 +n_f1* (1/Lce-1);
-                    Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
-                    
-                    %% Calculate error between the desired and generated activation-frequency relationship
-                    for j = 1:length(find(f_eff<3.5))
-                        error_temp(j) = abs(Af_Song(j)-Af_new(j));
-                    end
-                    error = sum(error_temp) + abs(target_CT-t_0_100);
                     
                 end
-                
             end
-            
             error_long(l) = error;
             [min_error,loc_min_error] = min(error_long);
         end
@@ -220,10 +217,10 @@ for k = 1:6
     end
 end
 
-[Data] = model_test(param,Lce,0,'fast');
+[Data] = model_test(param,Lce,FR_half,'fast');
 
 cd(data_folder)
-save(['Data_' num2str(1)],'Data')
+save(['Data_' num2str(trialN) '_' num2str(condition)],'Data')
 cd(code_folder)
 
 %%
