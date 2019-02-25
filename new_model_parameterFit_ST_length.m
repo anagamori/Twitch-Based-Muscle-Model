@@ -17,8 +17,8 @@ T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-Lce = 1.2;
-condition = 4;
+Lce = 0.8;
+condition = 20;
 trialN = 1;
 cd(data_folder)
 load(['Data_' num2str(trialN)])
