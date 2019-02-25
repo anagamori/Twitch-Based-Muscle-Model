@@ -8,6 +8,9 @@ close all
 clear all
 clc
 
+%% Folder name
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
 %% Simulation parameters
 Fs = 1000; %sampling frequency
 T = 1/Fs;
@@ -468,9 +471,6 @@ Data{2,9} = FR_test/FR_half;
 Data{2,10} = mean_exc;
 Data{2,11} = fusion;
 Data{2,12} = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
-
-code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
 
 cd(data_folder)
 save(['Data_' num2str(trialN) '_' num2str(1)],'Data')
