@@ -17,7 +17,7 @@ T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-Lce = 0.8;
+Lce = 0.9;
 trialN = 1;
 cd(data_folder)
 load(['Data_' num2str(trialN)])
@@ -190,8 +190,6 @@ for k = 1:6
                         %% Calculate FR_half
                         FR_new = 0.1:0.1:FR_test(end);
                         Af_new = spline(FR_test,mean_exc,FR_new);
-                        [~,loc] = min(abs(Af_new-0.5));
-                        FR_half = FR_new(loc);
                         
                         %% Calculate the desired activation-frequency relationship bassed on Song et al. (2008)
                         f_eff = FR_new/FR_half;
@@ -410,10 +408,7 @@ for i = 1:2
         
         %% Calculate FR_half
         FR_new = 0.1:0.1:FR_test(end);
-        Af_new = spline(FR_test,mean_exc,FR_new);
-        [~,loc] = min(abs(Af_new-0.5));
-        FR_half = FR_new(loc);
-        FR_half
+        Af_new = spline(FR_test,mean_exc,FR_new);        
         
         %% Calculate the desired activation-frequency relationship bassed on Song et al. (2008)
         f_eff = FR_new/FR_half;
@@ -465,7 +460,7 @@ Data{2,3} = t_40_10;
 Data{2,4} = pks;
 Data{2,5} = twitch2tetanus_ratio;
 Data{2,6} = FR_half;
-Data{2,7} = target_CT-t_0_100;
+Data{2,7} = 0; 
 Data{2,8} = error;
 Data{2,9} = FR_test/FR_half;
 Data{2,10} = mean_exc;
@@ -473,7 +468,7 @@ Data{2,11} = fusion;
 Data{2,12} = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
 
 cd(data_folder)
-save(['Data_' num2str(trialN) '_' num2str(1)],'Data')
+save(['Data_' num2str(trialN) '_' num2str(2)],'Data')
 cd(code_folder)
 
 %%
