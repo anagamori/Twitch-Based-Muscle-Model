@@ -12,4 +12,7 @@ clc
 % Take its parameter and use new_model_parameterFit to fine-tune the
 % parameters
 new_model_parameterFit_ST
+% Use the fitted model to then fit it to length-dependence of
+% activation-frequency relationship using new_model_parameterFit_ST_length
 new_model_parameterFit_ST_length
+% run multiple times at each length to fit a function 
