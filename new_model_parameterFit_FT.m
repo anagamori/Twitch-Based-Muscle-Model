@@ -1,5 +1,5 @@
 %==========================================================================
-% new_model_parameterFit_ST.m
+% new_model_parameterFit_FT.m
 % Author: Akira Nagamori
 % Last update: 2/24/119
 %==========================================================================
@@ -15,9 +15,9 @@ time = 0:1/Fs:5; %simulation time
 Lce = 1;
 
 %% Parameters to be searched
-target_CT = 90;
+target_CT = 30;
 
-param = [7,1,20,5,15,7,0.005,0.04,1.8,0.04,4];
+param = [4,2,40,30,50,40,0.005,0.03,1.7,0.04,5];
 for k = 1:6
     rng shuffle
     Param_matrix = annealing_curve(param,k);
@@ -175,46 +175,10 @@ for k = 1:6
                         twitch_Milner_temp = P.*time.*exp(1-time/T);
                         twitch_Milner = conv(spike,twitch_Milner_temp);
                     end
-                    
-%                     figure(i)
-%                     plot(time,act_vec,'LineWidth',1)
-%                     hold on
-%                     if simulation_condition == 1
-%                         plot(time,twitch_Milner(1:length(time)))
-%                         hold on
-%                         plot([time(locs_0_100) time(locs_0_100)],[0 1],'--')
-%                         text(time(locs_0_100),pks,num2str(t_0_100))
-%                         hold on
-%                         plot([time(locs_100_50) time(locs_100_50)],[0 1],'--')
-%                         plot([time(locs_40_10) time(locs_40_10)],[0 1],'--')
-%                         text(time(locs_100_50),peak_half,num2str(t_100_50))
-%                         text(time(locs_40_10),peak_10,num2str(t_40_10))
-%                         text(time(locs_0_100)-time(locs_0_100)*0.4,pks,num2str(pks))
-%                     end
-                    
+
                 end
-                
-%                 figure(i)
-%                 xlabel('Time (s)','FontSize',14)
-%                 ylabel('Activation','FontSize',14)
-                
-                if simulation_condition == 2
-%                     figure(3)
-%                     plot(time,x_vec,'LineWidth',1)
-%                     xlabel('Time (s)','FontSize',14)
-%                     ylabel('x','FontSize',14)
-%                     
-%                     figure(4)
-%                     plot(time,x_int_vec,'LineWidth',1)
-%                     xlabel('Time (s)','FontSize',14)
-%                     ylabel('x_{int}','FontSize',14)
-%                     
-%                     figure(5)
-%                     plot(time,y_vec,'LineWidth',1)
-%                     xlabel('Time (s)','FontSize',14)
-%                     ylabel('y','FontSize',14)
-                    
-                elseif simulation_condition == 3
+         
+                if simulation_condition == 3
                     %% Calculate twitch-tetanus ratio
                     twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f);
                     %% Calculate the degree of fusion
@@ -240,30 +204,6 @@ for k = 1:6
                     end
                     error = sum(error_temp) + abs(target_CT-t_0_100);
                     
-                    %% Plot results
-%                     figure(6)
-%                     plot(FR_test/FR_half,mean_exc,'LineWidth',1)
-%                     xlabel('Frequency (Hz)','FontSize',14)
-%                     ylabel('Activation','FontSize',14)
-%                     hold on
-%                     plot(f_eff,Af_new)
-%                     plot(f_eff,Af_Song,'color','k')
-%                     xlim([0 3])
-%                     legend('New','New Fit','Song')
-%                     
-%                     figure(7)
-%                     plot(FR_test/FR_half,fusion,'LineWidth',1)
-%                     xlabel('Frequency (Hz)','FontSize',14)
-%                     ylabel('Fusion','FontSize',14)
-%                     hold on
-%                     xlim([0 3])
-%                     
-%                     figure(8)
-%                     plot(mean_exc./max(mean_exc),fusion,'LineWidth',1)
-%                     xlabel('Activation','FontSize',14)
-%                     ylabel('Fusion','FontSize',14)
-%                     hold on
-%                     plot(0:0.1:1,0:0.1:1,'--','color','k')
                 end
                 
             end

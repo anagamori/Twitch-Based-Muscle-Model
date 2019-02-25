@@ -1,7 +1,7 @@
 %==========================================================================
-% new_model_parameterFit_ST.m
+% new_model_parameterFit_ST_length.m
 % Author: Akira Nagamori
-% Last update: 2/24/119
+% Last update: 2/22/119
 %==========================================================================
 
 close all
