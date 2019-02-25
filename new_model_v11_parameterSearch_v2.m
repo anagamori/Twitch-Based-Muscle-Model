@@ -15,7 +15,7 @@ time = 0:1/Fs:5; %simulation time
 Lce = 1;
 
 %% Parameters to be searched
-target_CT = 90;
+target_CT = 110;
 
 param = [7,1,20,5,15,7,0.005,0.04,1.8,0.04,4];
 for k = 1:6
@@ -533,7 +533,7 @@ code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
 
 cd(data_folder)
-save(['Data_' num2str(1)],'Data')
+save(['Data_' num2str(8)],'Data')
 cd(code_folder)
 
 %%
