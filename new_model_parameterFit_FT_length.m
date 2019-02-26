@@ -17,31 +17,40 @@ T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-Lce = 0.8;
+Lce = 1.2;
 
 trialN = 1;
-cd(data_folder)
-load(['Data_' num2str(trialN)])
-cd(code_folder)
-
-FR_half = Data{2,6};
-param = Data{2,12};
 
 for j = 1:10
-    condition = 10+j;
+    condition = 40+j;
+    cd(data_folder)
+    load(['Data_' num2str(trialN)])
+    cd(code_folder)
+    
+    FR_half = Data{2,6};
+    param = Data{2,12};
+    
     for k = 1:6
         rng shuffle
         Param_matrix = annealing_curve(param,k);
         
-        r = randperm(6)+4;
+        r = randperm(4);
         
         %% Loop through all parameters
-        for n = 1:5
-            
+        for n = 1:length(r)
+            if r(n) == 1
+                index = 5;
+            elseif r(n) == 2
+                index = 6;
+            elseif r(n) == 3
+                index = 9;
+            elseif r(n) == 4
+                index = 10;
+            end
             %% Loop through all perturbations
             error_long = zeros(1,3);
             for l = 1:3
-                [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,r(n),l);
+                [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,index,l);
                 
                 %% Run a twitch simulation and sweep simulation
                 for i = 1:2
@@ -214,7 +223,7 @@ for j = 1:10
                 error_long(l) = error;
                 [min_error,loc_min_error] = min(error_long);
             end
-            [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,r(n),loc_min_error);
+            [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,index,loc_min_error);
             param =  [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
         end
     end
