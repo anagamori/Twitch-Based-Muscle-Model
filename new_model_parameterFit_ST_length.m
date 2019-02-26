@@ -31,15 +31,25 @@ for k = 1:6
     rng shuffle
     Param_matrix = annealing_curve(param,k);
     
-    r = randperm(6)+4;
+    r = randperm(5);
     
     %% Loop through all parameters
     for n = 1:5
-        
+        if r(n) == 1
+            index = 5;
+        elseif r(n) == 2
+            index = 6;
+        elseif r(n) == 3
+            index = 8;  
+        elseif r(n) == 4
+            index = 9; 
+        elseif r(n) == 5
+            index = 10; 
+        end
         %% Loop through all perturbations
         error_long = zeros(1,3);
         for l = 1:3
-            [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,r(n),l);
+            [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,index,l);
             
             %% Run a twitch simulation and sweep simulation
             for i = 1:2
@@ -219,9 +229,9 @@ end
 
 [Data] = model_test(param,Lce,FR_half,'slow');
 
-cd(data_folder)
-save(['Data_' num2str(trialN) '_' num2str(condition)],'Data')
-cd(code_folder)
+% cd(data_folder)
+% save(['Data_' num2str(trialN) '_' num2str(condition)],'Data')
+% cd(code_folder)
 
 %%
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
