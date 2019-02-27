@@ -18,7 +18,7 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-trialN = 5;
+for trialN = 19:23
 
 for j = 1:40
     
@@ -239,6 +239,7 @@ for j = 1:40
     
 end
 
+end
 %%
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
 

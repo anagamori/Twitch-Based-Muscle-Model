@@ -13,7 +13,7 @@ code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
 
 %% 
-trialN = 5;
+for trialN = 19:23
 param_Matrix_1 = zeros(10,11);
 param_Matrix_2 = zeros(10,11);
 param_Matrix_3 = zeros(10,11);
@@ -81,3 +81,4 @@ cd(data_folder)
 save(['MU_' num2str(trialN)],'parameter')
 cd(code_folder)
 
+end

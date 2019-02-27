@@ -10,16 +10,18 @@ clc
 
 %% Folders
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
 
 %% Simulation parameters
 Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 Lce = 1;
-
+load('CT')
 %% Parameters to be searched
-target_CT = 90;
+for j = 15
+MU_No = j+8;
+target_CT = CT_sorted(2+j);
 
 param = [7,1,20,5,15,7,0.005,0.04,1.8,0.04,4];
 for k = 1:6
@@ -203,9 +205,7 @@ for k = 1:6
                     Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
                     
                     %% Calculate error between the desired and generated activation-frequency relationship
-                    for j = 1:length(find(f_eff<3.5))
-                        error_temp(j) = abs(Af_Song(j)-Af_new(j));
-                    end
+                    error_temp = error_calculation(Af_Song,Af_new,f_eff);
                     error = sum(error_temp) + abs(target_CT-t_0_100);
                     
                 end
@@ -224,9 +224,10 @@ end
 [Data] = model_test(param,Lce,0,'slow');
 
 cd(data_folder)
-save(['Data_' num2str(1)],'Data')
+save(['Data_' num2str(MU_No)],'Data')
 cd(code_folder)
 
+end
 %%
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
 
@@ -315,4 +316,10 @@ var8 = x(8);
 var9 = x(9);
 var10 = x(10);
 var11 = x(11);
+end
+
+function error = error_calculation(vec_1,vec_2,reference)
+for i = 1:length(find(reference<3.5))
+    error(i) = abs(vec_1(i)-vec_2(i));
+end
 end

@@ -55,6 +55,7 @@ CT_fastest_slow = CT_sorted(index_slow);
 mean(CT_sorted(1:index_slow)); %average contraction time of slow-twitch MUs
 mean(CT_sorted(index_slow+1:end)); %average contraction time of fast-twitch MUs
 
+save('CT','CT_sorted')
 %% Contraction time
 % Generate a distribution of contraction time across motor units based on
 % Rayleigh distribution
