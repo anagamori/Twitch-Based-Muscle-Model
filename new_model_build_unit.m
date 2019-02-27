@@ -10,7 +10,7 @@ clc
 
 %% Create a template
 % Create a templatee using new_model_test.m
-
+new_model
 %% Fine-tune parameters
 % Take its parameter and use new_model_parameterFit to fine-tune the
 % parameters

@@ -10,18 +10,27 @@ clc
 
 %% Folder name
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
 %% Simulation parameters
 Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-Lce = 0.8;
-trialN = 1;
+%Lce = 1.1;
+trialN = 5;
 
-
-for j = 6
+for j = 1:40
+    
+    if j <= 10
+        Lce = 0.8;
+    elseif j > 10 && j <= 20
+        Lce = 0.9;
+    elseif j > 20 && j <= 30
+        Lce = 1.1;
+    elseif j > 30
+        Lce = 1.2;
+    end
     condition = 10+j;
     cd(data_folder)
     load(['Data_' num2str(trialN)])
@@ -61,9 +70,6 @@ for j = 6
                     if simulation_condition == 1
                         % Generate a pulse
                         FR_test = 1;
-                    elseif simulation_condition == 2
-                        % Generate a spike train at a given frequency
-                        FR_test = 10;
                     elseif simulation_condition == 3
                         % Generate a set of spike trains at multiple frequencies
                         FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
@@ -211,9 +217,7 @@ for j = 6
                             Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
                             
                             %% Calculate error between the desired and generated activation-frequency relationship
-                            for j = 1:length(find(f_eff<3.5))
-                                error_temp(j) = abs(Af_Song(j)-Af_new(j));
-                            end
+                            error_temp = error_calculation(Af_Song,Af_new,f_eff);
                             error = sum(error_temp);
                         end
                         
@@ -323,4 +327,10 @@ var8 = x(8);
 var9 = x(9);
 var10 = x(10);
 var11 = x(11);
+end
+
+function error = error_calculation(vec_1,vec_2,reference)
+for i = 1:length(find(reference<3.5))
+    error(i) = abs(vec_1(i)-vec_2(i));
+end
 end

@@ -3,9 +3,9 @@ clc
 clear all
 
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
 
-trialN = 1;
+trialN = 3;
 MU_type = 'slow';
 
 cd(data_folder)
