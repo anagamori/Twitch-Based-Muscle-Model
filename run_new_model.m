@@ -1,11 +1,11 @@
 close all
 clc
-clear all
+% clear all
 
-code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
+code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
 
-trialN = 3;
+trialN = 1;
 MU_type = 'slow';
 
 cd(data_folder)

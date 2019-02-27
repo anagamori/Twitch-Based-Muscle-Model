@@ -46,16 +46,16 @@ PTi = P_MU./sum(P_MU)*F0; % peak tetanic force for individual units
 %--------------------------------------------------------------------------
 % Fractional PSCA
 F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
-[~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); 
-
-%% Contraction time
-% Generate a distribution of contraction time across motor units based on
-% Rayleigh distribution
-rng(1)
+[~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); rng(1)
 min_CT = 20; %minimum contraction time [ms]
 CT = round(raylrnd(23,1,N_MU)+min_CT); %contraction time of individual motor units [ms]
 histogram(CT)
 CT_sorted = sort(CT,'descend');
 CT_fastest_slow = CT_sorted(index_slow);
-mean(CT_sorted(1:index_slow)) %average contraction time of slow-twitch MUs
-mean(CT_sorted(index_slow+1:end)) %average contraction time of fast-twitch MUs
+mean(CT_sorted(1:index_slow)); %average contraction time of slow-twitch MUs
+mean(CT_sorted(index_slow+1:end)); %average contraction time of fast-twitch MUs
+
+%% Contraction time
+% Generate a distribution of contraction time across motor units based on
+% Rayleigh distribution
+
