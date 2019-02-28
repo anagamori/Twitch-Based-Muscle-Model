@@ -19,11 +19,13 @@ time = 0:1/Fs:5; %simulation time
 Lce = 1;
 load('CT')
 %% Parameters to be searched
-for j = 15
-MU_No = j+8;
-target_CT = CT_sorted(2+j);
+last_MU = 30;
+parfor j =21:last_MU
+
+target_CT = CT_sorted(j);
 
 param = [7,1,20,5,15,7,0.005,0.04,1.8,0.04,4];
+%param = [6,2,18,8,18,14,0.005,0.03,1.7,0.04,4];
 for k = 1:6
     rng shuffle
     Param_matrix = annealing_curve(param,k);
@@ -206,7 +208,8 @@ for k = 1:6
                     
                     %% Calculate error between the desired and generated activation-frequency relationship
                     error_temp = error_calculation(Af_Song,Af_new,f_eff);
-                    error = sum(error_temp) + abs(target_CT-t_0_100);
+                    weight = ((40-5)*rand(1,1)+5);
+                    error = sum(error_temp) + abs(target_CT-t_0_100) + twitch2tetanus_ratio*weight;
                     
                 end
                 
@@ -221,8 +224,12 @@ for k = 1:6
 end
 
 %% Run a twitch simulation and sweep simulation
-[Data] = model_test(param,Lce,0,'slow');
+[Data_temp] = model_test(param,Lce,0,'slow');
+Data_cell{j} = Data_temp
+end
 
+for MU_No = 1:last_MU
+Data = Data_cell{MU_No};    
 cd(data_folder)
 save(['Data_' num2str(MU_No)],'Data')
 cd(code_folder)
@@ -319,7 +326,7 @@ var11 = x(11);
 end
 
 function error = error_calculation(vec_1,vec_2,reference)
-for i = 1:length(find(reference<3.5))
+for i = 1:length(find(reference<2.5))
     error(i) = abs(vec_1(i)-vec_2(i));
 end
 end

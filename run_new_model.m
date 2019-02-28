@@ -5,7 +5,7 @@ clc
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
 
-trialN = 23;
+for trialN = 1:30
 MU_type = 'slow';
 
 cd(data_folder)
@@ -14,6 +14,7 @@ cd(code_folder)
 
 [Data] = new_model_test(parameter,1,0,MU_type);
 FR_half = Data{2,6};
+t2t(trialN) = Data{2,5};
 
 for i = 1:4
    if i == 1
@@ -26,5 +27,9 @@ for i = 1:4
        Lce = 1.2;
    end
    [Data] = new_model_test(parameter,Lce,FR_half,MU_type);
+   
 end
 
+close all
+
+end
