@@ -19,8 +19,15 @@ time = 0:1/Fs:5; %simulation time
 %% Parameters to be searched
 %Lce = 1.1;
 for trialN = 21:30
+    cd(data_folder)
+    load(['Data_' num2str(trialN)])
+    cd(code_folder)
     
-    for j = 1:40
+    FR_half_initial = Data{2,6};
+    param_initial = Data{2,12};
+    
+    Data_temp = cell(1,40);
+    parfor j = 1:40
         
         if j <= 10
             Lce = 0.8;
@@ -32,12 +39,8 @@ for trialN = 21:30
             Lce = 1.2;
         end
         condition = 10+j;
-        cd(data_folder)
-        load(['Data_' num2str(trialN)])
-        cd(code_folder)
-        
-        FR_half = Data{2,6};
-        param = Data{2,12};
+        FR_half = FR_half_initial;
+        param = param_initial; 
         for k = 1:6
             rng shuffle
             Param_matrix = annealing_curve(param,k);
@@ -231,14 +234,15 @@ for trialN = 21:30
             end
         end
         
-        [Data] = model_test(param,Lce,FR_half,'slow');
-        
-        cd(data_folder)
-        save(['Data_' num2str(trialN) '_' num2str(condition)],'Data')
-        cd(code_folder)
+        [Data_temp{j}] = model_test(param,Lce,FR_half,'slow');
         
     end
-    
+    for trial = 1:40
+        Data  = Data_temp{trial};
+        cd(data_folder)
+        save(['Data_' num2str(trialN) '_' num2str(trial+10)],'Data')
+        cd(code_folder)
+    end
 end
 %%
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
