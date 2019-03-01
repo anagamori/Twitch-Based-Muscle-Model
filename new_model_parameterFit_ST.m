@@ -19,8 +19,9 @@ time = 0:1/Fs:5; %simulation time
 Lce = 1;
 load('CT')
 %% Parameters to be searched
+first_MU = 41;
 last_MU = 100;
-parfor j =41:last_MU
+parfor j =first_MU:last_MU
 
 target_CT = CT_sorted(j);
 
@@ -228,7 +229,7 @@ end
 Data_cell{j} = Data_temp
 end
 
-for MU_No = 1:last_MU
+for MU_No = first_MU:last_MU
 Data = Data_cell{MU_No};    
 cd(data_folder)
 save(['Data_' num2str(MU_No)],'Data')

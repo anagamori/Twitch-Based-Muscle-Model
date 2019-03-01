@@ -18,7 +18,9 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-for trialN = 41:100
+first_MU = 41;
+last_MU = 100;
+for trialN = first_MU:last_MU
     trialN
     cd(data_folder)
     load(['Data_' num2str(trialN)])
