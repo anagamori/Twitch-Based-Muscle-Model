@@ -18,8 +18,15 @@ T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-target_CT = 30;
 Lce = 1;
+load('CT')
+
+first_MU = 41;
+last_MU = 100;
+Data_cell = cell(1,last_MU);
+parfor j = first_MU:last_MU
+target_CT = CT_sorted(j);
+
 
 param = [4,2,40,30,50,40,0.005,0.03,1.7,0.04,5];
 for k = 1:6
@@ -219,11 +226,18 @@ for k = 1:6
     end
 end
 
-[Data] = model_test(param,Lce,0,'fast');
+[Data_temp] = model_test(param,Lce,0,'slow');
+Data_cell{j} = Data_temp
 
+end
+
+for MU_No = first_MU:last_MU
+Data = Data_cell{MU_No};    
 cd(data_folder)
-save(['Data_' num2str(1)],'Data')
+save(['Data_' num2str(MU_No)],'Data')
 cd(code_folder)
+
+end
 
 %%
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
