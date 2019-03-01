@@ -13,7 +13,7 @@ code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akirai/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
 
 %% 
-for trialN = 21:30
+for trialN = 101:196
 param_Matrix_1 = zeros(10,11);
 param_Matrix_2 = zeros(10,11);
 param_Matrix_3 = zeros(10,11);
