@@ -10,7 +10,7 @@ clc
 
 %% Folder name
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akirai/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
 
 %% 
 for trialN = 101:196
