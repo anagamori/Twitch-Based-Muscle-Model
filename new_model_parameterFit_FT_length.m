@@ -9,19 +9,19 @@ clear all
 clc
 
 %% Folder name
-code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
+code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
 %% Simulation parameters
 Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-Lce = 1.2;
+Lce = 0.8;
 
 trialN = 1;
 
-for j = 1:10
+for j = 1 %:10
     condition = 40+j;
     cd(data_folder)
     load(['Data_' num2str(trialN)])
@@ -228,9 +228,9 @@ for j = 1:10
     
     [Data] = model_test(param,Lce,FR_half,'fast');
     
-    cd(data_folder)
-    save(['Data_' num2str(trialN) '_' num2str(condition)],'Data')
-    cd(code_folder)
+%     cd(data_folder)
+%     save(['Data_' num2str(trialN) '_' num2str(condition)],'Data')
+%     cd(code_folder)
     
 end
 %%
@@ -324,7 +324,7 @@ var11 = x(11);
 end
 
 function error = error_calculation(vec_1,vec_2,reference)
-for i = 1:length(find(reference<3.5))
+for i = 1:length(find(reference<2.5))
     error(i) = abs(vec_1(i)-vec_2(i));
 end
 end

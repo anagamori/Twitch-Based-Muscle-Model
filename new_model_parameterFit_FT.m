@@ -203,9 +203,8 @@ for k = 1:6
                     Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
                     
                     %% Calculate error between the desired and generated activation-frequency relationship
-                    for j = 1:length(find(f_eff<3.5))
-                        error_temp(j) = abs(Af_Song(j)-Af_new(j));
-                    end
+                    error_temp = error_calculation(Af_Song,Af_new,f_eff);
+                    %weight = ((70-40)*rand(1,1)+40);
                     error = sum(error_temp) + abs(target_CT-t_0_100);
                     
                 end
@@ -314,4 +313,10 @@ var8 = x(8);
 var9 = x(9);
 var10 = x(10);
 var11 = x(11);
+end
+
+function error = error_calculation(vec_1,vec_2,reference)
+for i = 1:length(find(reference<2.5))
+    error(i) = abs(vec_1(i)-vec_2(i));
+end
 end
