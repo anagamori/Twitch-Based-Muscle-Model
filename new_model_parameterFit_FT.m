@@ -21,9 +21,11 @@ time = 0:1/Fs:5; %simulation time
 Lce = 1;
 load('CT')
 
-first_MU = 41;
-last_MU = 100;
+first_MU = 221;
+last_MU = 300;
 Data_cell = cell(1,last_MU);
+weight_temp = ((70-5)*rand(1,last_MU)+5);
+%parpool(10)
 parfor j = first_MU:last_MU
 target_CT = CT_sorted(j);
 
@@ -211,8 +213,9 @@ for k = 1:6
                     
                     %% Calculate error between the desired and generated activation-frequency relationship
                     error_temp = error_calculation(Af_Song,Af_new,f_eff);
-                    %weight = ((70-40)*rand(1,1)+40);
-                    error = sum(error_temp) + abs(target_CT-t_0_100);
+                    
+                    weight = weight_temp(j);
+                    error = sum(error_temp) + abs(target_CT-t_0_100) + weight*twitch2tetanus_ratio;
                     
                 end
                 
