@@ -9,16 +9,16 @@ clear all
 clc
 
 %% Folder name
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
 %% Simulation parameters
 Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
-first_MU = 171;
-last_MU = 196;
+first_MU = 251;
+last_MU = 300;
 parpool(10)
 for trialN = first_MU:last_MU
     trialN
