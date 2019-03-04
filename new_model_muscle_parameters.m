@@ -59,7 +59,7 @@ mean(CT_sorted(1:index_slow)); %average contraction time of slow-twitch MUs
 mean(CT_sorted(index_slow+1:end)); %average contraction time of fast-twitch MUs
 
 load('CT_vec')
-CT_new = sort(CT_vec,'descend');
+[CT_new,index_CT] = sort(CT_vec,'descend');
 %% Motor unit parameter
 load('pool_parameter_matrix')
 parameter_Matrix; %matrix of [N_MU,15]
@@ -89,8 +89,9 @@ U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment thre
 
 %% Minimum and maximum firing rate
 load('FR_half')
+FR_half_new = FR_half(index_CT);
 MFR = FR_half/2;
 PFR = FR_half*2;
 
-
+%%
 
