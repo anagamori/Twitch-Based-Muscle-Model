@@ -18,9 +18,9 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-first_MU = 171;
-last_MU = 196;
-parpool(10)
+first_MU = 31;
+last_MU = 40;
+%parpool(10)
 for trialN = first_MU:last_MU
     trialN
     cd(data_folder)

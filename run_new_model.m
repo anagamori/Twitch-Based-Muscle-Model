@@ -1,6 +1,6 @@
 close all
 clc
-% clear all
+clear all
 
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
