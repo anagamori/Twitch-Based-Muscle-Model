@@ -5,7 +5,7 @@ clc
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
 
-for trialN = 230
+for trialN = 300
 MU_type = 'fast';
 
 cd(data_folder)
