@@ -1,7 +1,7 @@
 %==========================================================================
 % new_model_muscle_parameters.m
 % Author: Akira Nagamori
-% Last update: 2/24/119
+% Last update: 3/4/19
 % Descriptions:
 %   Define parameters related to muscle 
 %       - muscle architecture (e.g., muscle length, tendon length)
@@ -21,7 +21,7 @@ density = 1.06; %
 L0 = modelParameter.optimalLength; % optimal muscle length [cm]
 mass = modelParameter.mass; % muscle mass [kg]
 PCSA = (mass*1000)/(density*L0); % PCSA of muscle
-sigma = 22.4; % specific tension
+sigma = 31.8; % specific tension
 F0 = PCSA * sigma; % maximal force
 
 L_tendon = modelParameter.tendonSlackLength;
