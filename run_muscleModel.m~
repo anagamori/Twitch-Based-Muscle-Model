@@ -1,0 +1,29 @@
+%==========================================================================
+% run_muscleModel.m
+% Author: Akira Nagamori
+% Last update: 3/5/19
+% Descriptions:
+%   Run muscle model simulation
+%==========================================================================
+close all
+clear all
+
+%% Muscle architectural parameters
+modelParameter.pennationAngle = 9.6*pi/180; %[radians]
+modelParameter.optimalLength = 6.8; % [cm]
+modelParameter.tendonSlackLength = 24.1; % [cm]
+modelParameter.mass = 0.01; % [g]
+modelParameter.muscleInitialLength = 6.8; % [cm]
+modelParameter.tendonInitialLength = 24.1; % [cm]
+
+load('CT_vec')
+modelParameter.CT = CT_vec;
+
+load('pool_parameter_matrix')
+modelParameter.parameterMatrix = parameter_Matrix;
+
+load('FR_half')
+modelParameter.FR_half = FR_half;
+
+%%
+[output] = muscleModel_noTendon(modelParameter)

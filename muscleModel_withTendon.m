@@ -1,11 +1,11 @@
 %==========================================================================
-% muscleModel_noTendon.m
+% muscleModel_withTendon.m
 % Author: Akira Nagamori
 % Last update: 3/5/19
 % Descriptions:
 %   Full model without tendon
 %==========================================================================
-function [output] = muscleModel_noTendon(Fs,time,input,modelParameter)
+function [output] = muscleModel_withTendon(Fs,time,input,modelParameter)
 %% Simulation parameters
 synaptic_drive = input;
 
@@ -23,6 +23,7 @@ alpha = modelParameter.pennationAngle;
 Lm_initial = modelParameter.muscleInitialLength; % muscle initial length
 Lt_initial = modelParameter.tendonInitialLength; % tendon initial length
 Lmt = Lm_initial*cos(alpha)+Lt_initial; % intial musculotendon length
+[L_ce,L_se,Lmax] =  InitialLength_function(modelParameter);
 
 %--------------------------------------------------------------------------
 % Motor unit architecture
@@ -81,7 +82,7 @@ T_U = 0.03;
 
 tau_1 = parameter_Matrix(:,9);
 R_temp = exp(-time./tau_1);
-alpha = parameter_Matrix(:,15);
+alpha_MU = parameter_Matrix(:,15);
 
 %% Sag parameter
 a_s = ones(N_MU,1)*0.96;
@@ -89,13 +90,15 @@ a_s = ones(N_MU,1)*0.96;
 cv_MU = modelParameter.CV_MU; % coefficient of variation for interspike intervals
 
 %% Muscle length
-Lce = 1;
-Vce = 0;
+V_ce = 0;
 %% Initilization
 spike_time = zeros(N_MU,1);
 spike_train = zeros(N_MU,length(time));
 force = zeros(N_MU,length(time));
-Force = zeros(1,length(time));
+F_ce = zeros(1,length(time));
+F_se = zeros(1,length(time));
+F_total = zeros(1,length(time));
+
 R = zeros(N_MU,length(time));
 x = zeros(N_MU,1);
 y = zeros(N_MU,1);
@@ -113,6 +116,11 @@ Y_mat = zeros(N_MU,length(time));
 FL = zeros(N_MU,1);
 FV = zeros(N_MU,1);
 
+MuscleVelocity = zeros(1,length(time));
+MuscleLength = zeros(1,length(time));
+MuscleLength(1) = L_ce*L0/100;
+
+h = 1/Fs;
 %% Simulation
 for t = 1:length(time)
     %% Effective activation (Song et al., 2008)
@@ -131,7 +139,7 @@ for t = 1:length(time)
     S_MU = sag_function(S_MU,f_eff,a_s,Fs);
     S_MU(1:index_slow) = 1;
     S_mat(:,t) = S_MU;
-    Y = yield_function(Y,Vce,Fs);
+    Y = yield_function(Y,V_ce,Fs);
     Y(index_slow+1:end) = 1;
     Y_mat(:,t) = Y;
     
@@ -148,7 +156,7 @@ for t = 1:length(time)
             spike_time_temp = (mu + mu*cv_MU*Z)*Fs;
             spike_time(n) = round(spike_time_temp) + t;
             
-            temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha(n)));
+            temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
             R(n,:) = R(n,:) + temp(1:length(time));
         else % when the motor unit have already fired at least once
             if spike_time(n) == t % when the motor unit fires
@@ -163,7 +171,7 @@ for t = 1:length(time)
                 spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
                 spike_time(n) = round(spike_time_temp) + t;
                 
-                temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha(n)));
+                temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
                 R(n,:) = R(n,:) + temp(1:length(time));
             elseif t > spike_time(n) + round(1/DR_MU(n)*Fs)
                 spike_train(n,t) = 1;
@@ -176,43 +184,79 @@ for t = 1:length(time)
                 spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
                 spike_time(n) = round(spike_time_temp) + t;
                 
-                temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha(n)));
+                temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
                 R(n,:) = R(n,:) + temp(1:length(time));
             end
         end
     end
     
     %% Convert spikes into activation
-    [x,y,z] = spike2activation(R(:,t),x,y,z,parameter_Matrix,Lce,Fs);
+    [x,y,z] = spike2activation(R(:,t),x,y,z,parameter_Matrix,L_ce,Fs);
     
     x_mat(:,t) = x;
     y_mat(:,t) = y;
     z_mat(:,t) = z;
     
     %% Force-length and force-velocity
-    FL(1:index_slow) = FL_slow_function(Lce);
-    FL(index_slow+1:end) = FL_fast_function(Lce);
+    FL(1:index_slow) = FL_slow_function(L_ce);
+    FL(index_slow+1:end) = FL_fast_function(L_ce);
     
-    if Vce > 0
-        FV(1:index_slow) = FVecc_slow_function(Lce,Vce);
-        FV(index_slow+1:end) = FVecc_fast_function(Lce,Vce);
+    if V_ce > 0
+        FV(1:index_slow) = FVecc_slow_function(L_ce,V_ce);
+        FV(index_slow+1:end) = FVecc_fast_function(L_ce,V_ce);
     else
-        FV(1:index_slow) = FVcon_slow_function(Lce,Vce);
-        FV(index_slow+1:end) = FVcon_fast_function(Lce,Vce);
+        FV(1:index_slow) = FVcon_slow_function(L_ce,V_ce);
+        FV(index_slow+1:end) = FVcon_fast_function(L_ce,V_ce);
     end
-    %%
+    
+    %% Passive element 1
+    F_pe1 = Fpe1_function(L_ce/Lmax,V_ce);
+    
+    %% Passive element 2
+    F_pe2 = Fpe2_function(L_ce);
+    if F_pe2 > 0
+        F_pe2 = 0;
+    end
+    
     f_i = z.*PTi_new'.*S_MU.*Y.*FL.*FV;
     force(:,t) = f_i;
     
-    Force(t) = sum(f_i);
+    F_ce(t) = sum(f_i);
+    F_total(t) = F_ce(t) + F_pe1*F0 + F_pe2*F0; 
+    
+    F_se(t) = Fse_function(L_se) * F0;
+    
+    k_0_de = h*MuscleVelocity(t);
+    l_0_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+        + (MuscleVelocity(t)).^2*tan(alpha).^2/(MuscleLength(t)));
+    k_1_de = h*(MuscleVelocity(t)+l_0_de/2);
+    l_1_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+        + (MuscleVelocity(t)+l_0_de/2).^2*tan(alpha).^2/(MuscleLength(t)+k_0_de/2));
+    k_2_de = h*(MuscleVelocity(t)+l_1_de/2);
+    l_2_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+        + (MuscleVelocity(t)+l_1_de/2).^2*tan(alpha).^2/(MuscleLength(t)+k_1_de/2));
+    k_3_de = h*(MuscleVelocity(t)+l_2_de);
+    l_3_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+        + (MuscleVelocity(t)+l_2_de).^2*tan(alpha).^2/(MuscleLength(t)+k_2_de));
+    MuscleLength(t+1) = MuscleLength(t) + 1/6*(k_0_de+2*k_1_de+2*k_2_de+k_3_de);
+    MuscleVelocity(t+1) = MuscleVelocity(t) + 1/6*(l_0_de+2*l_1_de+2*l_2_de+l_3_de);
+    
+    % normalize each variable to optimal muscle length or tendon length
+    V_ce = MuscleVelocity(t+1)/(L0/100);
+    L_ce = MuscleLength(t+1)/(L0/100);
+    L_se = (Lmt - L_ce*L0*cos(alpha))/L0T;
 end
 
 %%
 figure(1)
-plot(time,Force)
+plot(time,F_ce)
 
-output.Force = Force;
+output.Force = F_ce;
 output.force = force;
+output.ForceTendon = F_se;
+output.Lce = MuscleLength./(L0/100);
+output.Vce = MuscleVelocity./(L0/100);
+
 %% Convert spike trian into activation
     function [x,y,z] = spike2activation(R,x,y,z,parameter_Matrix,Lce,Fs)
         S = parameter_Matrix(:,1); %7;
@@ -389,6 +433,56 @@ output.force = force;
         
         Fse = cT_se * kT_se * log(exp((LT - LrT_se)/kT_se)+1);
         
+    end
+
+    function [Lce_initial,Lse_initial,Lmax] =  InitialLength_function(modeParameter)
+        %---------------------------
+        % Determine the initial lengths of muscle and tendon and maximal
+        % muscle length 
+        %---------------------------
+        
+        % serires elastic element parameters 
+        cT = 27.8;
+        kT = 0.0047;
+        LrT = 0.964;
+        % parallel passive element parameters 
+        c1 = 23;
+        k1 = 0.046;
+        Lr1 = 1.17;
+        
+        % passive force produced by parallel passive element at maximal
+        % muscle length
+        PassiveForce = c1 * k1 * log(exp((1 - Lr1)/k1)+1);
+        % tendon length at the above passive force 
+        Normalized_SE_Length = kT*log(exp(PassiveForce/cT/kT)-1)+LrT;
+        
+        % maximal musculotendon length defined by joint range of motion
+        Lmt_temp_max = modeParameter.optimalLength*cos(modeParameter.pennationAngle) ...
+            +modeParameter.tendonSlackLength + 1;
+        
+        % optimal muscle length 
+        L0_temp = modeParameter.optimalLength;
+        % optimal tendon length (Song et al. 2008)
+        L0T_temp = modeParameter.tendonSlackLength*1.05;
+        
+        % tendon length at maximal muscle length
+        SE_Length =  L0T_temp * Normalized_SE_Length;
+        % maximal fasicle length
+        FasclMax = (Lmt_temp_max - SE_Length)/L0_temp;
+        % maximal muscle fiber length
+        Lmax = FasclMax/cos(modeParameter.pennationAngle);
+        
+        % initial musculotendon length defined by the user input
+        Lmt_temp = modeParameter.muscleInitialLength * cos(modeParameter.pennationAngle) + modeParameter.tendonInitialLength;
+        
+        % initial muscle length determined by passive muscle force and
+        % tendon force
+        InitialLength =  (Lmt_temp-(-L0T_temp*(kT/k1*Lr1-LrT-kT*log(c1/cT*k1/kT))))/(100*(1+kT/k1*L0T_temp/Lmax*1/L0_temp)*cos(modeParameter.pennationAngle));
+        % normalize the muscle legnth to optimal muscle length
+        Lce_initial = InitialLength/(L0_temp/100);
+        % calculate initial length of tendon and normalize it to optimal
+        % tendon length
+        Lse_initial = (Lmt_temp - InitialLength*cos(modeParameter.pennationAngle)*100)/L0T_temp;
     end
 
 end
