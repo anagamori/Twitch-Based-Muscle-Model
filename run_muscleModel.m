@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon';
+data_folder = '/Volumes/DATA2/New_Model/withTendon';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
@@ -41,19 +41,21 @@ load('FR_half')
 modelParameter.FR_half = FR_half;
 
 %% Simlulation parameters
-Fs = 5000;
+Fs = 10000;
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
-for j = 1:length(amp_vec)
+for j = 1 ;%:length(amp_vec)
+j
 amp = amp_vec(j);
 input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
 %%
+tic
 parfor i = 1:10
 
-    [output_temp{i}] = muscleModel_noTendon(Fs,time,input,modelParameter);
+    [output_temp{i}] = muscleModel_withTendon(Fs,time,input,modelParameter);
 
 end
-
+toc
 for trialN = 1:10
     output = output_temp{trialN};
     cd(data_folder)

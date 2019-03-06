@@ -29,7 +29,7 @@ for j = 1:length(amp_vec)
         Force =  output.Force;
         mean_Force(i,j) = mean(Force(5*Fs+1:end));
         std_Force(i,j) = std(Force(5*Fs+1:end));
-        cov_Force(i,j) =  std_Force(i,j)/mean_Force(i,j)*100;
+        cov_Force(i,j) =  std_Force(i,j)/mean_Force(i,j);
     end
 end
 
@@ -41,5 +41,4 @@ plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end))
 figure(2)
 plot(amp_vec,mean(std_Force))
 
-figure(3)
-plot(amp_vec,mean(cov_Force))
+figure(
