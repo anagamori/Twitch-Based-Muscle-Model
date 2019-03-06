@@ -81,7 +81,7 @@ T_U = 0.03;
 
 tau_1 = parameter_Matrix(:,9);
 R_temp = exp(-time./tau_1);
-alpha = parameter_Matrix(:,15);
+alpha_MU = parameter_Matrix(:,15);
 
 %% Sag parameter
 a_s = ones(N_MU,1)*0.96;
@@ -113,98 +113,107 @@ Y_mat = zeros(N_MU,length(time));
 FL = zeros(N_MU,1);
 FV = zeros(N_MU,1);
 
+DR_mat = zeros(N_MU,length(time));
 %% Simulation
 for t = 1:length(time)
-    %% Effective activation (Song et al., 2008)
-    U_eff_dot = (synaptic_drive(t) - U_eff)/T_U;
-    U_eff = U_eff_dot*1/Fs + U_eff;
-    
-    %% Calculate firing rate
-    % Linear increase in discharge rate up to Ur
-    DR_MU = (PDR-MDR)./(1-U_th).*(U_eff-U_th) + MDR;
-    % Zero the discharge rate of a MU if it is smaller than its minimum
-    % firing rate
-    DR_MU(DR_MU<MDR) = 0;
-    
-    %% Sag & Yield (Song et al., 2008)
-    f_eff = DR_MU./FR_half_new;
-    S_MU = sag_function(S_MU,f_eff,a_s,Fs);
-    S_MU(1:index_slow) = 1;
-    S_mat(:,t) = S_MU;
-    Y = yield_function(Y,Vce,Fs);
-    Y(index_slow+1:end) = 1;
-    Y_mat(:,t) = Y;
-    
-    %% Convert activation into spike trains
-    for n = 1:length(find(DR_MU>=MDR)) % loop through motor units whose firing rate is greater than minimum firing rate defined by the user
-        spike_train_temp = zeros(1,length(t));
-        if ~any(spike_train(n,:)) % when the motor unit fires at the first time
-            spike_train(n,t) = 1; % add a spike to the vector
-            spike_train_temp(t) = 1;
-            mu = 1/DR_MU(n);
-            Z = randn(1);
-            Z(Z>3.9) = 3.9;
-            Z(Z<-3.9) = -3.9;
-            spike_time_temp = (mu + mu*cv_MU*Z)*Fs;
-            spike_time(n) = round(spike_time_temp) + t;
-            
-            temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha(n)));
-            R(n,:) = R(n,:) + temp(1:length(time));
-        else % when the motor unit have already fired at least once
-            if spike_time(n) == t % when the motor unit fires
-                spike_train(n,t) = 1;
+    if t > 1
+        %% Effective activation (Song et al., 2008)
+        U_eff_dot = (synaptic_drive(t) - U_eff)/T_U;
+        U_eff = U_eff_dot*1/Fs + U_eff;
+        
+        %% Calculate firing rate
+        % Linear increase in discharge rate up to Ur
+        DR_MU = (PDR-MDR)./(1-U_th).*(U_eff-U_th) + MDR;
+        % Zero the discharge rate of a MU if it is smaller than its minimum
+        % firing rate
+        DR_MU(DR_MU<MDR) = 0;
+        
+        DR_mat(:,t) = DR_MU;
+        %% Sag & Yield (Song et al., 2008)
+        f_eff = DR_MU./FR_half_new;
+        S_MU = sag_function(S_MU,f_eff,a_s,Fs);
+        S_MU(1:index_slow) = 1;
+        S_mat(:,t) = S_MU;
+        Y = yield_function(Y,Vce,Fs);
+        Y(index_slow+1:end) = 1;
+        Y_mat(:,t) = Y;
+        
+        %% Convert activation into spike trains
+        index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1)' == 0);
+        index_2 = i_MU(DR_MU >= MDR & spike_time'==t);
+        index = [index_1 index_2];
+        
+        for j = 1:length(index) % loop through motor units whose firing rate is greater than minimum firing rate defined by the user
+            n = index(j);
+            spike_train_temp = zeros(1,length(t));
+            if ~any(spike_train(n,:)) % when the motor unit fires at the first time
+                spike_train(n,t) = 1; % add a spike to the vector
                 spike_train_temp(t) = 1;
-                % update mean firing rate of the motor unit given the
-                % current value of input
-                mu = 1/DR_MU(n); % interspike interval
+                mu = 1/DR_MU(n);
                 Z = randn(1);
                 Z(Z>3.9) = 3.9;
                 Z(Z<-3.9) = -3.9;
-                spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
+                spike_time_temp = (mu + mu*cv_MU*Z)*Fs;
                 spike_time(n) = round(spike_time_temp) + t;
                 
-                temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha(n)));
+                temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
                 R(n,:) = R(n,:) + temp(1:length(time));
-            elseif t > spike_time(n) + round(1/DR_MU(n)*Fs)
-                spike_train(n,t) = 1;
-                spike_train_temp(t) = 1;
-                spike_time(n) = t;
-                mu = 1/DR_MU(n); % interspike interval
-                Z = randn(1);
-                Z(Z>3.9) = 3.9;
-                Z(Z<-3.9) = -3.9;
-                spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
-                spike_time(n) = round(spike_time_temp) + t;
-                
-                temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha(n)));
-                R(n,:) = R(n,:) + temp(1:length(time));
+            else % when the motor unit have already fired at least once
+                if spike_time(n) == t % when the motor unit fires
+                    spike_train(n,t) = 1;
+                    spike_train_temp(t) = 1;
+                    % update mean firing rate of the motor unit given the
+                    % current value of input
+                    mu = 1/DR_MU(n); % interspike interval
+                    Z = randn(1);
+                    Z(Z>3.9) = 3.9;
+                    Z(Z<-3.9) = -3.9;
+                    spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
+                    spike_time(n) = round(spike_time_temp) + t;
+                    
+                    temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
+                    R(n,:) = R(n,:) + temp(1:length(time));
+                elseif t > spike_time(n) + round(1/DR_MU(n)*Fs)
+                    spike_train(n,t) = 1;
+                    spike_train_temp(t) = 1;
+                    spike_time(n) = t;
+                    mu = 1/DR_MU(n); % interspike interval
+                    Z = randn(1);
+                    Z(Z>3.9) = 3.9;
+                    Z(Z<-3.9) = -3.9;
+                    spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
+                    spike_time(n) = round(spike_time_temp) + t;
+                    
+                    temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
+                    R(n,:) = R(n,:) + temp(1:length(time));
+                end
             end
         end
+        
+        %% Convert spikes into activation
+        [x,y,z] = spike2activation(R(:,t),x,y,z,parameter_Matrix,Lce,Fs);
+        
+        x_mat(:,t) = x;
+        y_mat(:,t) = y;
+        z_mat(:,t) = z;
+        
+        %% Force-length and force-velocity
+        FL(1:index_slow) = FL_slow_function(Lce);
+        FL(index_slow+1:end) = FL_fast_function(Lce);
+        
+        if Vce > 0
+            FV(1:index_slow) = FVecc_slow_function(Lce,Vce);
+            FV(index_slow+1:end) = FVecc_fast_function(Lce,Vce);
+        else
+            FV(1:index_slow) = FVcon_slow_function(Lce,Vce);
+            FV(index_slow+1:end) = FVcon_fast_function(Lce,Vce);
+        end
+        %%
+        f_i = z.*PTi_new'.*S_MU.*Y.*FL.*FV;
+        force(:,t) = f_i;
+        
+        Force(t) = sum(f_i);
     end
-    
-    %% Convert spikes into activation
-    [x,y,z] = spike2activation(R(:,t),x,y,z,parameter_Matrix,Lce,Fs);
-    
-    x_mat(:,t) = x;
-    y_mat(:,t) = y;
-    z_mat(:,t) = z;
-    
-    %% Force-length and force-velocity
-    FL(1:index_slow) = FL_slow_function(Lce);
-    FL(index_slow+1:end) = FL_fast_function(Lce);
-    
-    if Vce > 0
-        FV(1:index_slow) = FVecc_slow_function(Lce,Vce);
-        FV(index_slow+1:end) = FVecc_fast_function(Lce,Vce);
-    else
-        FV(1:index_slow) = FVcon_slow_function(Lce,Vce);
-        FV(index_slow+1:end) = FVcon_fast_function(Lce,Vce);
-    end
-    %%
-    f_i = z.*PTi_new'.*S_MU.*Y.*FL.*FV;
-    force(:,t) = f_i;
-    
-    Force(t) = sum(f_i);
 end
 
 %%
