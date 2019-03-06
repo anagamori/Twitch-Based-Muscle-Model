@@ -198,7 +198,7 @@ for t = 1:length(time)
                 end
             end
         end
-        
+    end
         %% Convert spikes into activation
         [x,y,z] = spike2activation(R(:,t),x,y,z,parameter_Matrix,L_ce,Fs);
         
@@ -254,13 +254,13 @@ for t = 1:length(time)
         V_ce = MuscleVelocity(t+1)/(L0/100);
         L_ce = MuscleLength(t+1)/(L0/100);
         L_se = (Lmt - L_ce*L0*cos(alpha))/L0T;
-    end
 end
 
 %%
 figure(1)
 plot(time,F_ce)
 
+output.spike_train = spike_train;
 output.Force = F_ce;
 output.force = force;
 output.ForceTendon = F_se;

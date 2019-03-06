@@ -41,8 +41,8 @@ load('FR_half')
 modelParameter.FR_half = FR_half;
 
 %% Simlulation parameters
-Fs = 1000;
-time = 0:1/Fs:15;
+Fs = 5000;
+time = 0:1/Fs:5;
 amp_vec = 0.1:0.1:1;
 for j = 1 %:length(amp_vec)
 amp = amp_vec(j);
@@ -50,7 +50,7 @@ input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*
 %%
 for i = 1
     tic
-    [output_temp{i}] = muscleModel_noTendon(Fs,time,input,modelParameter);
+    [output_temp{i}] = muscleModel_withTendon(Fs,time,input,modelParameter);
     toc
 end
 
