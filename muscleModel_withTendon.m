@@ -69,6 +69,7 @@ Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
+U_th_new = U_th(index_MU_PTi);
 
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
@@ -124,6 +125,7 @@ MuscleLength(1) = L_ce*L0/100;
 
 h = 1/Fs;
 %% Simulation
+rng('shuffle')
 for t = 1:length(time)
     if t > 1
         %% Effective activation (Song et al., 2008)
@@ -132,7 +134,7 @@ for t = 1:length(time)
         
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
-        DR_MU = (PDR-MDR)./(1-U_th).*(U_eff-U_th) + MDR;
+        DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
         DR_MU(DR_MU<MDR) = 0;
@@ -259,6 +261,10 @@ end
 %%
 figure(1)
 plot(time,F_ce)
+xlabel('Time (s)')
+ylabel('Force (N)')
+hold on
+
 
 output.spike_train = spike_train;
 output.Force = F_ce;

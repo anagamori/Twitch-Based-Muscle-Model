@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/Model_1';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 
 %% 
@@ -43,3 +43,5 @@ plot(amp_vec,mean(std_Force))
 
 figure(3)
 plot(amp_vec,mean(cov_Force))
+hold on 
+plot(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force))

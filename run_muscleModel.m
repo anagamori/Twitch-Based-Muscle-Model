@@ -41,25 +41,26 @@ load('FR_half')
 modelParameter.FR_half = FR_half;
 
 %% Simlulation parameters
-Fs = 10000;
+Fs = 20000;
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
-for j = 1 ;%:length(amp_vec)
-j
-amp = amp_vec(j);
-input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
-%%
-tic
-parfor i = 1:10
-
-    [output_temp{i}] = muscleModel_withTendon(Fs,time,input,modelParameter);
-
-end
-toc
-for trialN = 1:10
-    output = output_temp{trialN};
-    cd(data_folder)
-    save(['Data_' num2str(j) '_' num2str(trialN)],'output')
-    cd(code_folder)
-end
+for j = 1 %:length(amp_vec)
+    j
+    amp = amp_vec(j);
+    input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
+    %%
+    output_temp = cell(1,10);
+    
+    for i = 1:10
+        tic
+        [output_temp{i}] = muscleModel_withTendon(Fs,time,input,modelParameter);
+        toc
+    end
+    
+    for trialN = 1:10
+        output = output_temp{trialN};
+        cd(data_folder)
+        save(['Data_' num2str(j) '_' num2str(trialN)],'output')
+        cd(code_folder)
+    end
 end

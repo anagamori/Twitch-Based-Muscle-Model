@@ -116,7 +116,9 @@ FV = zeros(N_MU,1);
 
 DR_mat = zeros(N_MU,length(time));
 %% Simulation
+rng('shuffle')
 for t = 1:length(time)
+    
     if t > 1
         %% Effective activation (Song et al., 2008)
         U_eff_dot = (synaptic_drive(t) - U_eff)/T_U;
@@ -220,6 +222,9 @@ end
 %%
 figure(1)
 plot(time,Force)
+xlabel('Time (s)')
+ylabel('Force (N)')
+hold on
 
 output.Force = Force;
 output.force = force;
