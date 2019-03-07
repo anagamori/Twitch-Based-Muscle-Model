@@ -75,6 +75,7 @@ index_fast = index_slow+1:N_MU;
 R_fast_temp = randperm(length(index_fast));
 R_fast = index_fast(R_fast_temp);
 index_MU_PTi = [R_slow R_fast]; % vector of indexes to match peak tetanic tension to appropriate contraction time
+PTi_new = PTi (index_MU_PTi);
 % plot(CT_sorted,PTi(index_MU_PTi),'o')
 
 %% Recruitment threshold
@@ -86,6 +87,7 @@ Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
+U_th_new = U_th(index_MU_PTi);
 
 %% Minimum and maximum firing rate
 load('FR_half')
