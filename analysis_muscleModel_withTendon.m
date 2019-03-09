@@ -12,6 +12,7 @@ clc
 %%
 data_folder = '/Volumes/DATA2/New_Model/withTendon';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 %% 
 amp_vec = 0.1:0.1:1;
@@ -45,11 +46,21 @@ figure(1)
 plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2)
 xlabel('Activation (%)','FontSize',14)
 ylabel('Force (%MVC)','FontSize',14)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+cd (figure_folder)
+saveas(gcf,'activation2meanForce_withTendon','pdf')
+cd (code_folder)
 
 figure(2)
 plot(amp_vec,mean(std_Force),'LineWidth',2)
-xlabel('Activation (%)','FontSize',14)
+xlabel('Mean Force (%)','FontSize',14)
 ylabel('SD (N)','FontSize',14)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+cd (figure_folder)
+saveas(gcf,'meanForce2SD_withTendon','pdf')
+cd (code_folder)
 
 figure(3)
 % plot(amp_vec,mean(cov_Force),'LineWidth',2)
@@ -57,6 +68,11 @@ figure(3)
 plot(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),'LineWidth',2)
 xlabel('Mean Force (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+cd (figure_folder)
+saveas(gcf,'meanForce2CoV_withTendon','pdf')
+cd (code_folder)
 
 figure(4)
 plot(f,mean_pxx,'LineWidth',2)
