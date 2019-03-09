@@ -75,6 +75,12 @@ saveas(gcf,'meanForce2CoV_withTendon','pdf')
 cd (code_folder)
 
 figure(4)
-plot(f,mean_pxx,'LineWidth',2)
+plot(f,mean_pxx([1 3 5 8],:),'LineWidth',2)
 xlabel('Frequency (Hz)','FontSize',14)
 ylabel('Power (N^2)','FontSize',14)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+legend('10% MVC','30% MVC','50% MVC','80% MVC')
+cd (figure_folder)
+saveas(gcf,'pxx_withTendon','pdf')
+cd (code_folder)
