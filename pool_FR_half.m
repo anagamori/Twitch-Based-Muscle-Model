@@ -10,7 +10,7 @@ close all
 clc
 clear all
 
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 
 N_MU = 300; % number of motor units in a pool
 load('index_slow') % index for the largest slow-twitch MU
@@ -18,10 +18,10 @@ load('index_slow') % index for the largest slow-twitch MU
 parameter_Matrix = zeros(N_MU,15);
 for i = 1:N_MU
     if i <= index_slow
-        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
+        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
         MU_type = 'slow';
     else
-        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
+        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
         MU_type = 'fast';
     end
     
@@ -33,11 +33,13 @@ for i = 1:N_MU
     FR_half(i) = Data{2,6};
     t2t(i) = Data{2,5};
     CT_vec(i) = Data{2,1};
+    twitch_force(i) = Data{2,4};
     
 end
 
 %% 
 %save('CT_vec','CT_vec')
-save('t2t','t2t')
+%save('t2t','t2t')
+save('twitch_force','twitch_force')
 MFR_MU = FR_half./2;
 PFR_MU = FR_half.*2;

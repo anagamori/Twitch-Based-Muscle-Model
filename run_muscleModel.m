@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/30_CoV';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
@@ -21,7 +21,7 @@ modelParameter.muscleInitialLength = 6.8; % [cm]
 modelParameter.tendonInitialLength = 24.1; % [cm]
 
 %% MU simulation parameters
-modelParameter.CV_MU = 0.1;
+modelParameter.CV_MU = 0.3;
 %% Contraction time
 % Generate a distribution of contraction time across motor units based on
 % Rayleigh distribution
@@ -44,7 +44,7 @@ modelParameter.FR_half = FR_half;
 Fs = 20000;
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
-for j = 6:length(amp_vec)
+for j = 2:length(amp_vec)
     j
     amp = amp_vec(j);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
