@@ -40,9 +40,6 @@ PTi = P_MU./sum(P_MU)*F0; % peak tetanic force for individual units
 F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
 [~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); rng(1)
 
-%% Contraction time
-CT_vec = modelParameter.CT;
-[~,index_CT] = sort(CT_vec,'descend');
 %% Motor unit parameter
 parameter_Matrix = modelParameter.parameterMatrix;
 %matrix of [N_MU,15]
@@ -73,9 +70,8 @@ U_th_new = U_th(index_MU_PTi);
 
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
-FR_half_new = FR_half(index_CT);
-MDR = FR_half_new/2;
-PDR = FR_half_new*2;
+MDR = FR_half/2;
+PDR = FR_half*2;
 
 %% Activation dynamics (Song et al., 2008)
 U_eff = 0;
@@ -141,7 +137,7 @@ for t = 1:length(time)
         
         DR_mat(:,t) = DR_MU;
         %% Sag & Yield (Song et al., 2008)
-        f_eff = DR_MU./FR_half_new;
+        f_eff = DR_MU./FR_half;
         S_MU = sag_function(S_MU,f_eff,a_s,Fs);
         S_MU(1:index_slow) = 1;
         S_mat(:,t) = S_MU;
@@ -166,7 +162,7 @@ for t = 1:length(time)
                 Z(Z<-3.9) = -3.9;                
                 spike_time_temp = (mu + mu*cv_MU*Z)*Fs;
                 if spike_time_temp <= 0 
-                    spike_time_temp = 1;
+                    spike_time_temp = 0.002*Fs;
                 end
                 spike_time(n) = round(spike_time_temp) + t;
                 
@@ -184,7 +180,7 @@ for t = 1:length(time)
                     Z(Z<-3.9) = -3.9;
                     spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
                     if spike_time_temp <= 0
-                        spike_time_temp = 1;
+                        spike_time_temp = 0.002*Fs;
                     end
                     spike_time(n) = round(spike_time_temp) + t;
                     
@@ -200,7 +196,7 @@ for t = 1:length(time)
                     Z(Z<-3.9) = -3.9;
                     spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
                     if spike_time_temp <= 0
-                        spike_time_temp = 1;
+                        spike_time_temp = 0.002*Fs;
                     end
                     spike_time(n) = round(spike_time_temp) + t;
                     
