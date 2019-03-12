@@ -38,8 +38,8 @@ for i = 1:N_MU
 end
 
 %% 
-%save('CT_vec','CT_vec')
-%save('t2t','t2t')
+save('CT_vec','CT_vec')
+save('t2t','t2t')
 save('twitch_force','twitch_force')
 MFR_MU = FR_half./2;
 PFR_MU = FR_half.*2;
