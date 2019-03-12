@@ -42,7 +42,7 @@ PTi = P_MU./sum(P_MU)*F0; % peak tetanic force for individual units
 %% Fractional PSCA
 F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
 [~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); rng(1)
-
+%index_slow = 196;
 %% Motor unit parameter
 parameter_Matrix = modelParameter.parameterMatrix;
 %matrix of [N_MU,15]
@@ -77,7 +77,7 @@ FR_half = modelParameter.FR_half;
 MDR = FR_half/2;
 PDR = FR_half*2;
 
-g_e = (PDR(loc_max_U_th)-MDR(loc_max_U_th))/(1-U
+g_e = (PDR(loc_max_U_th)-MDR(loc_max_U_th))/(1-Ur);
 
 %% Activation dynamics (Song et al., 2008)
 U_eff = 0;
