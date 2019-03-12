@@ -72,9 +72,8 @@ U_th_new = U_th(index_MU_PTi);
 
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
-FR_half_new = FR_half(index_CT);
-MDR = FR_half_new/2;
-PDR = FR_half_new*2;
+MDR = FR_half/2;
+PDR = FR_half*2;
 
 %% Activation dynamics (Song et al., 2008)
 U_eff = 0;
@@ -94,6 +93,7 @@ Lce = 1;
 Vce = 0;
 %% Initilization
 spike_time = zeros(N_MU,1);
+spike_time_mat = zeros(N_MU,length(time));
 spike_train = zeros(N_MU,length(time));
 force = zeros(N_MU,length(time));
 Force = zeros(1,length(time));
@@ -133,7 +133,7 @@ for t = 1:length(time)
         
         DR_mat(:,t) = DR_MU;
         %% Sag & Yield (Song et al., 2008)
-        f_eff = DR_MU./FR_half_new;
+        f_eff = DR_MU./FR_half;
         S_MU = sag_function(S_MU,f_eff,a_s,Fs);
         S_MU(1:index_slow) = 1;
         S_mat(:,t) = S_MU;
@@ -157,7 +157,7 @@ for t = 1:length(time)
                 Z(Z>3.9) = 3.9;
                 Z(Z<-3.9) = -3.9;
                 spike_time_temp = (mu + mu*cv_MU*Z)*Fs;
-                if spike_time_temp <= 0
+                if spike_time_temp <= 0.002*Fs
                     spike_time_temp = 0.002*Fs;
                 end
                 spike_time(n) = round(spike_time_temp) + t;
@@ -175,7 +175,7 @@ for t = 1:length(time)
                     Z(Z>3.9) = 3.9;
                     Z(Z<-3.9) = -3.9;
                     spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
-                    if spike_time_temp <= 0
+                    if spike_time_temp <= 0.002*Fs
                         spike_time_temp = 0.002*Fs;
                     end
                     spike_time(n) = round(spike_time_temp) + t;
@@ -191,7 +191,7 @@ for t = 1:length(time)
                     Z(Z>3.9) = 3.9;
                     Z(Z<-3.9) = -3.9;
                     spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
-                    if spike_time_temp <= 0
+                    if spike_time_temp <= 0.002*Fs
                         spike_time_temp = 0.002*Fs;
                     end
                     spike_time(n) = round(spike_time_temp) + t;
@@ -226,6 +226,7 @@ for t = 1:length(time)
         
         Force(t) = sum(f_i);
     end
+    spike_time_mat(:,t) = spike_time;
 end
 
 %%
@@ -237,6 +238,7 @@ hold on
 
 output.Force = Force;
 output.force = force;
+output.spike_time = spike_time_mat;
 %% Convert spike trian into activation
     function [x,y,z] = spike2activation(R,x,y,z,parameter_Matrix,Lce,Fs)
         S = parameter_Matrix(:,1); %7;
