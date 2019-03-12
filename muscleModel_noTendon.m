@@ -63,7 +63,7 @@ PTi_new = PTi (index_MU_PTi);
 % Find recruitment threshold for individual units using exponential fit
 % Recruitment threshold is correlated to peak tetanic tension
 %   Use index_MU_PTi to appropriately index each MU
-Ur = 0.8; % recruitment threshold for the lastly recruited motor unit
+Ur = 0.5; % recruitment threshold for the lastly recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);

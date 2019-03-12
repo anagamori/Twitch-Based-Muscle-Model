@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/50_Ur';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
@@ -48,8 +48,6 @@ for j = 1:length(amp_vec)
     j
     amp = amp_vec(j);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
-    %%
-    output_temp = cell(1,10);
     
     for i = 1:10
         tic
