@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/50_Ur';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/Recruitment_2';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
@@ -41,7 +41,7 @@ load('FR_half')
 modelParameter.FR_half = FR_half;
 
 %% Recruitment Type
-modelParameter.recruitment = 1; % 1: Loeb's formulation, 2: Fuglevand's formulation
+modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulation
 
 
 %% Simlulation parameters
