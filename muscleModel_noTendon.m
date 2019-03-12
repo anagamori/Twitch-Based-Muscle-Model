@@ -157,6 +157,9 @@ for t = 1:length(time)
                 Z(Z>3.9) = 3.9;
                 Z(Z<-3.9) = -3.9;
                 spike_time_temp = (mu + mu*cv_MU*Z)*Fs;
+                if spike_time_temp <= 0
+                    spike_time_temp = 0.002*Fs;
+                end
                 spike_time(n) = round(spike_time_temp) + t;
                 
                 temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
@@ -172,6 +175,9 @@ for t = 1:length(time)
                     Z(Z>3.9) = 3.9;
                     Z(Z<-3.9) = -3.9;
                     spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
+                    if spike_time_temp <= 0
+                        spike_time_temp = 0.002*Fs;
+                    end
                     spike_time(n) = round(spike_time_temp) + t;
                     
                     temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
@@ -185,6 +191,9 @@ for t = 1:length(time)
                     Z(Z>3.9) = 3.9;
                     Z(Z<-3.9) = -3.9;
                     spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
+                    if spike_time_temp <= 0
+                        spike_time_temp = 0.002*Fs;
+                    end
                     spike_time(n) = round(spike_time_temp) + t;
                     
                     temp = conv(spike_train_temp,R_temp(n,:)*(1+2*z(n)^alpha_MU(n)));
