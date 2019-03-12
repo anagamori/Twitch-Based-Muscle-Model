@@ -238,7 +238,7 @@ hold on
 
 output.Force = Force;
 output.force = force;
-output.spike_time = spike_time_mat;
+
 %% Convert spike trian into activation
     function [x,y,z] = spike2activation(R,x,y,z,parameter_Matrix,Lce,Fs)
         S = parameter_Matrix(:,1); %7;

@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/30_CoV';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
@@ -21,7 +21,7 @@ modelParameter.muscleInitialLength = 6.8; % [cm]
 modelParameter.tendonInitialLength = 24.1; % [cm]
 
 %% MU simulation parameters
-modelParameter.CV_MU = 0.3;
+modelParameter.CV_MU = 0.1;
 %% Contraction time
 % Generate a distribution of contraction time across motor units based on
 % Rayleigh distribution
@@ -51,16 +51,12 @@ for j = 1:length(amp_vec)
     %%
     output_temp = cell(1,10);
     
-    for i = 1 %:10
+    for i = 1:10
         tic
-        [output_temp{i}] = muscleModel_noTendon(Fs,time,input,modelParameter);
+        output = muscleModel_noTendon(Fs,time,input,modelParameter);
         toc
-    end
-    
-    for trialN = 1:10
-        output = output_temp{trialN};
         cd(data_folder)
-        save(['Data_' num2str(j) '_' num2str(trialN)],'output')
+        save(['Data_' num2str(j) '_' num2str(i)],'output')
         cd(code_folder)
     end
 end
