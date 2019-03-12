@@ -265,6 +265,7 @@ cd (code_folder)
 %% Twitch amplitude
 load('twitch_force')
 Pt_i = twitch_force.*PTi_new;
+range_Pt_i = max(Pt_i)/min(Pt_i);
 figure(10)
 loglog(U_th_new,Pt_i ,'o')
 xlabel('Recruitment Threshold (log(%MVC))','FontSize',14)
