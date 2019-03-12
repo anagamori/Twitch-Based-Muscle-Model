@@ -43,6 +43,7 @@ F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
 
 %% Contraction time
 CT_vec = modelParameter.CT;
+[~,index_CT] = sort(CT_vec,'descend');
 %% Motor unit parameter
 parameter_Matrix = modelParameter.parameterMatrix;
 %matrix of [N_MU,15]
@@ -70,13 +71,13 @@ f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
 U_th_new = U_th(index_MU_PTi);
-[~,loc_max_U_th] = max(U_th_new);
+
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
 MDR = FR_half/2;
 PDR = FR_half*2;
 
-g_e = (PDR(loc_max_U_th)-MDR(loc_max_U_th))/(1-Ur);
+g_e = (PDR(end)-MDR)/(1-Ur);
 
 %% Activation dynamics (Song et al., 2008)
 U_eff = 0;
@@ -131,13 +132,11 @@ for t = 1:length(time)
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
             DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
-        elseif recruitmentType == 2
-            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
-        end
+        elseif 
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
         DR_MU(DR_MU<MDR) = 0;
-        DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
+        
         DR_mat(:,t) = DR_MU;
         %% Sag & Yield (Song et al., 2008)
         f_eff = DR_MU./FR_half;

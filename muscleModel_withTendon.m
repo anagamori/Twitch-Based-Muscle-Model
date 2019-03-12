@@ -9,6 +9,9 @@ function [output] = muscleModel_withTendon(Fs,time,input,modelParameter)
 %% Simulation parameters
 synaptic_drive = input;
 
+%% 
+recruitmentType = modelParameter.recruitment;
+
 %% Muscle architectural parameters
 density = 1.06; %
 L0 = modelParameter.optimalLength; % optimal muscle length [cm]
@@ -67,11 +70,14 @@ f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
 U_th_new = U_th(index_MU_PTi);
+[~,loc_max_U_th] = max(U_th_new);
 
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
 MDR = FR_half/2;
 PDR = FR_half*2;
+
+g_e = (PDR(loc_max_U_th)-MDR(loc_max_U_th))/(1-U
 
 %% Activation dynamics (Song et al., 2008)
 U_eff = 0;
@@ -130,11 +136,15 @@ for t = 1:length(time)
         
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
-        DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
+        if recruitmentType == 1
+            DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
+        elseif recruitmentType == 2
+            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+        end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
         DR_MU(DR_MU<MDR) = 0;
-        
+        DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         DR_mat(:,t) = DR_MU;
         %% Sag & Yield (Song et al., 2008)
         f_eff = DR_MU./FR_half;

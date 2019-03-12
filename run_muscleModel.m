@@ -40,6 +40,9 @@ modelParameter.parameterMatrix = parameter_Matrix;
 load('FR_half')
 modelParameter.FR_half = FR_half;
 
+%% Recruitment Type
+modelParameter.recruitment = 1; % 1: Loeb's formulation, 2: Fuglevand's formulation
+
 %% Simlulation parameters
 Fs = 20000;
 time = 0:1/Fs:15;
