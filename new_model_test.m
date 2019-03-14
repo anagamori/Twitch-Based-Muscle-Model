@@ -215,26 +215,32 @@ for i = 1:2
         error = sum(error_temp)
         
         figure(6)
-        plot(FR_test/FR_half,mean_exc,'LineWidth',1,'color','b')
-        xlabel('Frequency (Hz)','FontSize',14)
+        plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
+        xlabel('Frequency (f_{0.5})','FontSize',14)
         ylabel('Activation','FontSize',14)
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
         hold on
         %plot(f_eff,Af_new,'color','r')
-        plot(f_eff,Af_Song,'color','k')
+        plot(f_eff,Af_Song,'color','k','LineWidth',1)
         xlim([0 3])
         legend('New','Song')
         
         figure(7)
-        plot(FR_test/FR_half,fusion,'LineWidth',1,'color','b')
-        xlabel('Frequency (Hz)','FontSize',14)
+        plot(FR_test/FR_half,fusion,'LineWidth',2,'color','b')
+        xlabel('Frequency (f_{0.5})','FontSize',14)
         ylabel('Fusion','FontSize',14)
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
         hold on
         xlim([0 3])
         
         figure(8)
-        plot(mean_exc./max(mean_exc),fusion,'LineWidth',1,'color','b')
+        plot(mean_exc./max(mean_exc),fusion,'LineWidth',2,'color','b')
         xlabel('Activation','FontSize',14)
         ylabel('Fusion','FontSize',14)
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
         hold on
         plot(0:0.1:1,0:0.1:1,'--','color','k')
     end
