@@ -16,16 +16,16 @@ figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures
 
 %% 
 amp_vec = 0.1:0.1:1;
-Fs = 20000;
+Fs = 25000;
 
-Force_mat = zeros(10,15*Fs+1);
+Force_mat = zeros(10,15*20000+1);
 mean_Force = zeros(10,length(amp_vec));
 std_Force = zeros(10,length(amp_vec));
 cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 %% 
-for j = 1:5 %1:9 %:length(amp_vec)
+for j = 10 %6:9 %1:9 %:length(amp_vec)
     for i = 1:10
         cd(data_folder)
         load(['Data_' num2str(j) '_' num2str(i)])
@@ -40,7 +40,8 @@ for j = 1:5 %1:9 %:length(amp_vec)
         plot(Force)
         hold on
         
-        Force_mat(i,:) = Force;
+        idx = linspace(1,length(Force),20000*15+1);
+        Force_mat(i,:) = interp1(1:length(Force),Force,idx,'linear');
     end
     mean_pxx(j,:) = mean(pxx); 
     cd(data_folder)
