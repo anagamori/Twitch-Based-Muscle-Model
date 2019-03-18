@@ -244,11 +244,11 @@ for t = 1:length(time)
             F_pe2 = 0;
         end
         
-        f_i = z.*PTi_new'.*S_MU.*Y.*(FL.*FV+F_pe2);
+        f_i = z.*PTi_new'.*S_MU.*Y.*(FL.*FV+F_);
         force(:,t) = f_i;
         
         F_ce(t) = sum(f_i);
-        F_total(t) = F_ce(t) + F_pe1*F0;
+        F_total(t) = F_ce(t) + F_pe1*F0 + F_pe2*F0;
         
         F_se(t) = Fse_function(L_se) * F0;
         

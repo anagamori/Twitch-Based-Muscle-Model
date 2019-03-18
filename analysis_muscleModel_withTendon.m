@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/30_CoV';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -26,6 +26,8 @@ pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 %% 
 for j = 10 %6:9 %1:9 %:length(amp_vec)
+    j
+    tic
     for i = 1:10
         cd(data_folder)
         load(['Data_' num2str(j) '_' num2str(i)])
@@ -43,6 +45,7 @@ for j = 10 %6:9 %1:9 %:length(amp_vec)
         idx = linspace(1,length(Force),20000*15+1);
         Force_mat(i,:) = interp1(1:length(Force),Force,idx,'linear');
     end
+    toc
     mean_pxx(j,:) = mean(pxx); 
     cd(data_folder)
     save(['Force_mat_' num2str(j)],'Force_mat')
