@@ -3,9 +3,10 @@ clc
 clear all
 
 code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/FT';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
 
-for trialN = 250 %1:300
+for trialN = 40
+    %1:300
 MU_type = 'fast';
 
 cd(data_folder)
@@ -16,19 +17,19 @@ cd(code_folder)
 FR_half = Data{2,6};
 t2t(trialN) = Data{2,5};
 
-for i = 1:4
-    if i == 1
-        Lce = 0.8;
-    elseif i == 2
-        Lce = 0.9;
-    elseif i == 3
-        Lce = 1.1;
-    elseif i == 4
-        Lce = 1.2;
-    end
-    [Data] = new_model_test(parameter,Lce,FR_half,MU_type);
-    
-end
+% for i = 1:4
+%     if i == 1
+%         Lce = 0.8;
+%     elseif i == 2
+%         Lce = 0.9;
+%     elseif i == 3
+%         Lce = 1.1;
+%     elseif i == 4
+%         Lce = 1.2;
+%     end
+%     [Data] = new_model_test(parameter,Lce,FR_half,MU_type);
+%     
+% end
 
 %close all
 

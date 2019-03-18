@@ -9,7 +9,8 @@ clear all
 clc
 
 %%
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/30_CoV';
+condition = '10_CoV';
+data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -43,6 +44,12 @@ for j = 1:10
     %clear Force_mat
 end
 
+cd(data_folder)
+save('mean_Force','mean_Force')
+save('std_Force','std_Force')
+save('cov_Force','cov_Force')
+save('mean_pxx','mean_pxx')
+cd(code_folder)
 %%
 close all
 mean_mean_Force = mean(mean_Force);
@@ -53,7 +60,7 @@ ylabel('Force (%MVC)','FontSize',14)
 set(gca,'TickDir','out');
 set(gca,'box','off')
 cd (figure_folder)
-saveas(gcf,'activation2meanForce_noTendon_30CoV','pdf')
+saveas(gcf,['activation2meanForce_noTendon_' condition],'pdf')
 cd (code_folder)
 
 %%
@@ -68,7 +75,7 @@ yticks([0.05 0.1 0.15 0.2 0.25])
 set(gca,'TickDir','out');
 set(gca,'box','off')
 cd (figure_folder)
-saveas(gcf,'meanForce2SD_noTendon_30CoV','pdf')
+saveas(gcf,['meanForce2SD_noTendon_' condition],'pdf')
 cd (code_folder)
 
 %%
@@ -82,7 +89,7 @@ legend('Activation Level','Force Level')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 cd (figure_folder)
-saveas(gcf,'meanForce2CoV_noTendon_30CoV','pdf')
+saveas(gcf,['meanForce2CoV_noTendon_' condition],'pdf')
 cd (code_folder)
 
 %%
@@ -94,5 +101,5 @@ set(gca,'TickDir','out');
 set(gca,'box','off')
 legend('10% MVC','30% MVC','50% MVC','80% MVC')
 cd (figure_folder)
-saveas(gcf,'pxx_noTendon_30CoV','pdf')
+saveas(gcf,['pxx_noTendon_' condition],'pdf')
 cd (code_folder)
