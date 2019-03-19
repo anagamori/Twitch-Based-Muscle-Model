@@ -10,8 +10,8 @@ clc
 
 %%
 condition = '10_CoV_50_Ur_Rec_2';
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
+figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 
 amp_vec = 0.1:0.1:1;
@@ -26,7 +26,7 @@ for i = 1:6
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -36,7 +36,7 @@ for i = 1:6
     elseif i == 2
         Fs = 10000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')

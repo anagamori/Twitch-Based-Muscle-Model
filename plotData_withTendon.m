@@ -10,9 +10,9 @@ clc
 
 %%
 condition = '10_CoV_50_Ur_Rec_2';
-data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
+figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 Fs = 10000;
 amp_vec = 0.1:0.1:1;
