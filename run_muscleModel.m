@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
@@ -32,6 +32,12 @@ modelParameter.CV_MU = 0.1;
 load('CT_vec')
 modelParameter.CT = CT_vec;
 
+%% Recruitment threshold
+modelParameter.Ur = 0.5;
+
+%% Range of peak tetanic tension
+modelParameter.RP = 25;
+
 %% Model parameters for activation-frequency relationship
 load('pool_parameter_matrix')
 modelParameter.parameterMatrix = parameter_Matrix;
@@ -41,14 +47,17 @@ load('FR_half')
 modelParameter.FR_half = FR_half;
 
 %% Recruitment Type
-modelParameter.recruitment = 1; % 1: Loeb's formulation, 2: Fuglevand's formulation
+modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulation
 
 %% Simlulation parameters
 
 amp_vec = 0.1:0.1:1;
-for j = 5:10 %6:length(amp_vec)
+for j = 4:10 %6:length(amp_vec)
     j
-    if j <= 9
+    if j <= 3
+        Fs = 10000;
+        time = 0:1/Fs:15;
+    elseif j > 3 && j <= 9
         Fs = 20000;
         time = 0:1/Fs:15;
     elseif j == 10
