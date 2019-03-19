@@ -69,13 +69,13 @@ f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
 U_th_new = U_th(index_MU_PTi);
-[~,loc_max_U_th] = max(U_th_new);
+
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
 MDR = FR_half/2;
 PDR = FR_half*2;
 
-g_e = (PDR(loc_max_U_th)-MDR(loc_max_U_th))/(1-Ur);
+g_e = max((PDR-MDR)./(1-U_th_new));
 
 %% Activation dynamics (Song et al., 2008)
 U_eff = 0;

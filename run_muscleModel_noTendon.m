@@ -54,7 +54,7 @@ modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulat
 Fs = 1000;
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
-for j = 3:length(amp_vec)
+for j = 1:length(amp_vec)
     j
     amp = amp_vec(j);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
