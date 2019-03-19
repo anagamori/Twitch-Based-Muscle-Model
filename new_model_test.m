@@ -33,9 +33,9 @@ for i = 1:2
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
-        %FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
+        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
         %FR_test = [2 10 20  50 200]; Fast twitch
-        FR_test = [2 5 10 20  50 100]; % slow twitch
+        % FR_test = [2 5 10 20  50 100]; % slow twitch
         
     end
     %==========================================================================
@@ -252,8 +252,8 @@ for i = 1:2
     
 end
 
-Data = cell(2,12);
-Data(1,:) = {'t_0_100','t_100_50','t_40_10','P_t','t2t','FR_half','Error_CT','Error_Af','Test frequencies','Af','Fusion','Parameters'};
+Data = cell(2,13);
+Data(1,:) = {'t_0_100','t_100_50','t_40_10','P_t','t2t','FR_half','Error_CT','Error_Af','Test frequencies','Af','Fusion','Parameters','p2p'};
 Data{2,1} = t_0_100;
 Data{2,2} = t_100_50;
 Data{2,3} = t_40_10;
@@ -266,6 +266,7 @@ Data{2,9} = FR_test/FR_half;
 Data{2,10} = mean_exc;
 Data{2,11} = fusion;
 Data{2,12} = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
+Data{2,13} =  p2p_exc;
 
     function spikeTrain = spikeTrainGenerator(t,Fs,freq)
         

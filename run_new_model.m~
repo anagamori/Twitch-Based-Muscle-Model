@@ -16,27 +16,22 @@ cd(code_folder)
 [Data] = new_model_test(parameter,1,0,MU_type);
 FR_half = Data{2,6};
 t2t = Data{2,5};
-p2p(1,:) = Data{2,13};
+p2p = Data{2,13};
 
-for i = 1:4
-    if i == 1
-        Lce = 0.8;
-    elseif i == 2
-        Lce = 0.9;
-    elseif i == 3
-        Lce = 1.1;
-    elseif i == 4
-        Lce = 1.2;
-    end
-    [Data] = new_model_test(parameter,Lce,FR_half,MU_type);
-    p2p(i+1,:) = Data{2,13};
-end
+% for i = 1:4
+%     if i == 1
+%         Lce = 0.8;
+%     elseif i == 2
+%         Lce = 0.9;
+%     elseif i == 3
+%         Lce = 1.1;
+%     elseif i == 4
+%         Lce = 1.2;
+%     end
+%     [Data] = new_model_test(parameter,Lce,FR_half,MU_type);
+%     
+% end
 
 %close all
 
 end
-
-freq = Data{2,9};
-fusion = 1-p2p/p2p(5,1);
-plot(freq,fusion','LineWidth',2,'color','b')
-xlim([0 3])

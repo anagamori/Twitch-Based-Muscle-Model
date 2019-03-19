@@ -22,9 +22,9 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 for k = 1:2
     if k == 1
-        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/10_CoV';
-    else
         data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/10_CoV_50_Ur_Rec_2';
+    else
+        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_1';
     end
 for j = 1:10
     cd(data_folder)
@@ -58,11 +58,11 @@ cd (code_folder)
 
 %%
 figure(2)
-errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2);
+errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force/mean_mean_Force(end)*100),std(std_Force/mean_mean_Force(end)),'LineWidth',2);
 xlabel('Mean Force (%)','FontSize',14)
-ylabel('SD (N)','FontSize',14)
+ylabel('SD (%MVC)','FontSize',14)
 hold on 
-yticks([0.05 0.1 0.15 0.2 0.25])
+%yticks([0.05 0.1 0.15 0.2 0.25])
 set(gca,'TickDir','out');
 set(gca,'box','off')
 cd (figure_folder)
@@ -96,10 +96,10 @@ cd (code_folder)
 end
 
 figure(1)
-legend('Recruitment Type 1','Recruitment Type 2')
+legend('New Model','Fuglevand Model','Location','northwest')
 
 figure(2)
-legend('Recruitment Type 1','Recruitment Type 2')
+legend('New Model','Fuglevand Model','Location','northwest')
 
 figure(3)
-legend('Recruitment Type 1','Recruitment Type 2')
+legend('New Model','Fuglevand Model')
