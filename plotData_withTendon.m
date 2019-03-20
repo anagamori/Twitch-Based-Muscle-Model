@@ -48,6 +48,7 @@ cd(data_folder)
 save('mean_Force','mean_Force')
 save('std_Force','std_Force')
 save('cov_Force','cov_Force')
+save('mean_pxx','mean_pxx')
 cd(code_folder)
 %%
 close all
