@@ -16,7 +16,6 @@ figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures
 
 %% 
 amp_vec = 0.1:0.1:1;
-Fs = 20000;
 
 Force_mat = zeros(10,15*10000+1);
 mean_Force = zeros(10,length(amp_vec));
@@ -25,7 +24,20 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 %% 
-for j = 4:6 %6:9 %1:9 %:length(amp_vec)
+for j = 1:3 %6:9 %1:9 %:length(amp_vec)
+    if j <= 2
+        Fs = 10000;
+        time = 0:1/Fs:15;
+    elseif j > 2 && j <= 5
+        Fs = 15000;
+        time = 0:1/Fs:15;
+    elseif j > 5 && j <= 9
+        Fs = 20000;
+        time = 0:1/Fs:15;
+    elseif j == 10
+        Fs = 25000;
+        time = 0:1/Fs:15;
+    end
     j
     tic
     for i = 1:10
@@ -39,11 +51,16 @@ for j = 4:6 %6:9 %1:9 %:length(amp_vec)
         [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),gausswin(5*Fs),0.9*5*Fs,0:0.1:100,Fs,'power');
         
         figure(11)
-        plot(Force)
+        plot(time,Force)
         hold on
         
+        
         idx = linspace(1,length(Force),10000*15+1);
-        Force_mat(i,:) = interp1(1:length(Force),Force,idx,'linear');
+        if j <= 2
+            Force_mat(i,:) = Force; 
+        else
+            Force_mat(i,:) = interp1(1:length(Force),Force,idx,'linear');
+        end
         %Force_mat(i,:) = Force; 
     end
     toc
