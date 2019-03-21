@@ -22,7 +22,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:6
+for i = 1:2
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
@@ -46,7 +46,8 @@ for i = 1:6
     end
     mean_mean_Force = mean(mean_Force);
     figure(1)
-    plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2)
+    %plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2)
+    plot([0 amp_vec],[0 mean(mean_Force)],'LineWidth',2)
     xlabel('Activation (%)','FontSize',14)
     ylabel('Force (%MVC)','FontSize',14)
     set(gca,'TickDir','out');
@@ -54,7 +55,8 @@ for i = 1:6
     hold on
     
     figure(2)
-    errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2);
+    %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2);
+    errorbar(amp_vec,mean(std_Force),std(std_Force),'LineWidth',2);
     xlabel('Mean Force (%)','FontSize',14)
     ylabel('SD (N)','FontSize',14)
     hold on
@@ -63,7 +65,8 @@ for i = 1:6
     set(gca,'box','off')
 
     figure(3)
-    errorbar(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),std(cov_Force),'LineWidth',2);
+    %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),std(cov_Force),'LineWidth',2);
+    errorbar(amp_vec,mean(cov_Force),std(cov_Force),'LineWidth',2);
     xlabel('Mean Force (%)','FontSize',14)
     ylabel('CoV (%)','FontSize',14)
     hold on
