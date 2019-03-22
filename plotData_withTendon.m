@@ -51,7 +51,7 @@ save('cov_Force','cov_Force')
 save('mean_pxx','mean_pxx')
 cd(code_folder)
 %%
-close all
+%close all
 mean_mean_Force = mean(mean_Force);
 figure(1)
 plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2)
