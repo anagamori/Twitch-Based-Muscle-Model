@@ -1,5 +1,5 @@
 %==========================================================================
-% analysis_comparison.m
+% analysis_Comparison_ThreeWay.m
 % Author: Akira Nagamori
 % Last update: 3/11/19
 % Descriptions:
@@ -22,8 +22,18 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:2
+for i = 1:3
     if i == 1
+        Fs = 1000;
+        time =0:1/Fs:15;
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_1'];
+        cd(data_folder)
+        load('mean_Force')
+        load('std_Force')
+        load('cov_Force')
+        load('mean_pxx')
+        cd(code_folder)
+    elseif i == 2
         Fs = 1000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
@@ -33,7 +43,7 @@ for i = 1:2
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-    elseif i == 2
+    elseif i == 3
         Fs = 10000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
@@ -55,7 +65,7 @@ for i = 1:2
     hold on
     
     figure(2)
-    errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2);
+    errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force/mean_mean_Force(end)),std(std_Force/mean_mean_Force(end)),'LineWidth',2);
     %errorbar(amp_vec,mean(std_Force),std(std_Force),'LineWidth',2);
     xlabel('Mean Force (%)','FontSize',14)
     ylabel('SD (N)','FontSize',14)
@@ -76,9 +86,11 @@ for i = 1:2
     %%
     figure(4)
     if i == 1
-        ax1 = subplot(1,2,i);
-    else
-        ax2 = subplot(1,2,2);
+        ax1 = subplot(1,3,1);
+    elseif i == 2
+        ax2 = subplot(1,3,2);
+    elseif i == 3
+        ax3 = subplot(1,3,3);
     end
     plot(f,mean_pxx([1 3 5 8],:),'LineWidth',2)
     xlim([0 50])
@@ -91,11 +103,11 @@ for i = 1:2
 end
 
 figure(1)
-legend('Without Tendon','With Tendon')
+legend('Fuglevand','Without Tendon','With Tendon')
 figure(2)
-legend('Without Tendon','With Tendon')
+legend('Fuglevand','Without Tendon','With Tendon')
 figure(3)
-legend('Without Tendon','With Tendon')
+legend('Fuglevand','Without Tendon','With Tendon')
 figure(4)
-linkaxes([ax1,ax2,],'y')
+linkaxes([ax2,ax3],'y')
 
