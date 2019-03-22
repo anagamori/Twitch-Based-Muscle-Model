@@ -52,7 +52,7 @@ modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulat
 %% Simlulation parameters
 
 amp_vec = 0.1:0.1:1;
-for j = 10 %:length(amp_vec)
+for j = 9 %:length(amp_vec)
     j
     if j <= 2
         Fs = 10000;
@@ -60,10 +60,10 @@ for j = 10 %:length(amp_vec)
     elseif j > 2 && j <= 4
         Fs = 15000;
         time = 0:1/Fs:15;
-    elseif j >= 5 && j <= 9
+    elseif j >= 5 && j <8
         Fs = 20000;
         time = 0:1/Fs:15;
-    elseif j == 10
+    elseif j >= 8
         Fs = 25000;
         time = 0:1/Fs:15;
     end
@@ -72,7 +72,7 @@ for j = 10 %:length(amp_vec)
     %%
     output_temp = cell(1,10);
     
-    for i = 1:3
+    for i = 1:10
         tic
         output = muscleModel_withTendon(Fs,time,input,modelParameter);
         toc

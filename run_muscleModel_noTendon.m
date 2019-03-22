@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_50_Ur_Rec_2';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_80_Ur_Rec_2';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
@@ -21,7 +21,7 @@ modelParameter.muscleInitialLength = 6.8; % [cm]
 modelParameter.tendonInitialLength = 24.1; % [cm]
 
 %% MU simulation parameters
-modelParameter.CV_MU = 0.1;
+modelParameter.CV_MU = 0.3;
 %% Contraction time
 % Generate a distribution of contraction time across motor units based on
 % Rayleigh distribution
@@ -33,7 +33,7 @@ load('CT_vec')
 modelParameter.CT = CT_vec;
 
 %% Recruitment threshold
-modelParameter.Ur = 0.5;
+modelParameter.Ur = 0.8;
 
 %% Range of peak tetanic tension
 modelParameter.RP = 25;
