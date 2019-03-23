@@ -52,33 +52,44 @@ modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulat
 %% Simlulation parameters
 
 amp_vec = 0.1:0.1:1;
-for j = 8:10 %:length(amp_vec)
-    j
-    if j <= 2
+trial_vec = [7 10];
+for j = 1:2 %:length(amp_vec)
+    trial_vec(j)
+    if trial_vec(j) <= 2
         Fs = 10000;
         time = 0:1/Fs:15;
-    elseif j > 2 && j <= 4
+    elseif trial_vec(j) > 2 && trial_vec(j) <= 4
         Fs = 15000;
         time = 0:1/Fs:15;
-    elseif j >= 5 && j <8
+    elseif trial_vec(j) >= 5 && trial_vec(j) <8
         Fs = 20000;
         time = 0:1/Fs:15;
-    elseif j >= 8
+    elseif trial_vec(j) >= 8
         Fs = 25000;
         time = 0:1/Fs:15;
     end
-    amp = amp_vec(j);
+    amp = amp_vec(trial_vec(j));
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
-    output_temp = cell(1,10);
     
-    for i = 1:10
-        tic
-        output = muscleModel_withTendon(Fs,time,input,modelParameter);
-        toc
-        cd(data_folder)
-        save(['Data_' num2str(j) '_' num2str(i)],'output')
-        cd(code_folder)
+    if j == 1
+        for i = 5:10
+            tic
+            output = muscleModel_withTendon(Fs,time,input,modelParameter);
+            toc
+            cd(data_folder)
+            save(['Data_' num2str(trial_vec(j)) '_' num2str(i)],'output')
+            cd(code_folder)
+        end
+    elseif j == 2
+        for i = 7:10
+            tic
+            output = muscleModel_withTendon(Fs,time,input,modelParameter);
+            toc
+            cd(data_folder)
+            save(['Data_' num2str(trial_vec(j)) '_' num2str(i)],'output')
+            cd(code_folder)
+        end
     end
     
 end
