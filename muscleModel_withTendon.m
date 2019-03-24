@@ -244,7 +244,8 @@ for t = 1:length(time)
             F_pe2 = 0;
         end
         
-        f_i = z.*PTi_new'.*S_MU.*Y.*(FL.*FV+F_pe2);
+        %f_i = z.*PTi_new'.*S_MU.*Y.*(FL.*FV+F_pe2);
+        f_i = z.*PTi_new'.*S_MU.*Y.*(FL+F_pe2);
         force(:,t) = f_i;
         
         F_ce(t) = sum(f_i);
