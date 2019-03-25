@@ -10,15 +10,15 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_noFV';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_shortTendon';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
-modelParameter.tendonSlackLength = 24.1; % [cm]
+modelParameter.tendonSlackLength = 12.1; % [cm]
 modelParameter.mass = 0.01; % [g]
 modelParameter.muscleInitialLength = 6.8; % [cm]
-modelParameter.tendonInitialLength = 24.1; % [cm]
+modelParameter.tendonInitialLength = 12.1; % [cm]
 
 %% MU simulation parameters
 modelParameter.CV_MU = 0.1;
@@ -53,7 +53,7 @@ modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulat
 
 amp_vec = 0.1:0.1:1;
 trial_vec = [7 10];
-for j = 7 %:length(amp_vec)
+for j = 9 %:length(amp_vec)
     j
     if j <= 2
         Fs = 10000;
@@ -73,7 +73,7 @@ for j = 7 %:length(amp_vec)
     %%
     
     
-    for i = 5
+    for i = 3:10
         tic
         output = muscleModel_withTendon(Fs,time,input,modelParameter);
         toc
