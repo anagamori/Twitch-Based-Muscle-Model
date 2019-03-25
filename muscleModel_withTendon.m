@@ -77,6 +77,7 @@ FR_half = modelParameter.FR_half;
 MDR = FR_half/2;
 PDR = FR_half*2;
 
+%% Gain for frequency-activation relationship
 g_e = max((PDR-MDR)./(1-U_th_new));
 
 %% Activation dynamics (Song et al., 2008)
