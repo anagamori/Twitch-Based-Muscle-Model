@@ -12,7 +12,7 @@ clc
 %%
 data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_80_Ur_Rec_2';
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_N_100_sameF0';
 
 %% 
 cd(model_parameter_folder)
@@ -25,8 +25,7 @@ modelParameter.CV_MU = 0.3;
 modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulation
 
 
-%% Simlulation parameters
-Fs = 1000;
+%% Simlulation parameters3
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
 for j = 1:length(amp_vec)

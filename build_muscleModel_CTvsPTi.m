@@ -1,5 +1,5 @@
 %==========================================================================
-% build_muscleModel_NoMU.m
+% build_muscleModel_CTvsPTi.m
 % Author: Akira Nagamori
 % Last update: 3/25/19
 % Descriptions:
@@ -14,7 +14,7 @@ clear all
 clc
 
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_N_100_sameF0';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
@@ -39,7 +39,7 @@ modelParameter.Lmt = Lm_initial*cos(alpha)+Lt_initial; % intial musculotendon le
 [modelParameter.L_ce,modelParameter.L_se,modelParameter.Lmax] =  InitialLength_function(modelParameter);
 
 %% Motor unit parameters
-modelParameter.N_MU = 100; % number of motor units
+modelParameter.N_MU = 300; % number of motor units
 modelParameter.i_MU = 1:modelParameter.N_MU; % index for motor units
 
 %% Peak tetanic force
@@ -55,13 +55,23 @@ F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
 %% Model parameters for activation-frequency relationship
 cd(model_parameter_folder )
 load('pool_parameter_matrix')
-modelParameter.parameterMatrix = parameter_Matrix(1:300/modelParameter.N_MU:300,:);
+modelParameter.parameterMatrix = parameter_Matrix;
 cd(code_folder)
 
+%% Contraction time
+cd(model_parameter_folder )
+load('CT_vec')
+cd(code_folder)
 %% Assign peak tetanic force into each unit
 % shuffle indexes within each fiber type with respect to contraction time
 % this will allow us to randomly assign peak tetanic tension to each motor
 % unit with different contraction time
+M = [PTi' CT_vec'];
+R = [1 0.5; 0.5 1];
+L = chol(R);
+M = M*L;
+
+%%
 rng(1)
 R_slow = randperm(modelParameter.index_slow);
 index_fast = modelParameter.index_slow+1:modelParameter.N_MU;
@@ -85,7 +95,7 @@ modelParameter.U_th_new = U_th(index_MU_PTi);
 cd(model_parameter_folder )
 load('FR_half')
 cd(code_folder)
-modelParameter.FR_half = FR_half(1:300/modelParameter.N_MU:300);
+modelParameter.FR_half = FR_half;
 modelParameter.MDR = modelParameter.FR_half/2;
 modelParameter.PDR = modelParameter.FR_half*2;
 
