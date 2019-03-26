@@ -10,9 +10,9 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/No_100_sameForce';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/No_100_adjustedForce';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_N_100_sameF0';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_N_100_adjustedF0';
 
 %% 
 cd(model_parameter_folder)
