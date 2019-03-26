@@ -10,22 +10,23 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_80_Ur_Rec_2';
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_N_100_sameF0';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/No_100_sameForce';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_N_100_sameF0';
 
 %% 
 cd(model_parameter_folder)
 load('modelParameter')
 cd(code_folder)
 %% MU simulation parameters
-modelParameter.CV_MU = 0.3;
+modelParameter.CV_MU = 0.1;
 
 %% Recruitment Type
 modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulation
 
 
-%% Simlulation parameters3
+%% Simlulation parameters
+Fs = 1000;
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
 for j = 1:length(amp_vec)
