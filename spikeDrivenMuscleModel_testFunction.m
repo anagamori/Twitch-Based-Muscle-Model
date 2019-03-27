@@ -1,5 +1,5 @@
 
-function [Data] = model_test(param,Lce,FR_half_temp,fiber_type)
+function [Data] = spikeDrivenMuscleModel_testFunction(param,Lce,FR_half_temp,fiber_type)
 %==========================================================================
 % model_test.m
 % Author: Akira Nagamori
@@ -9,29 +9,31 @@ function [Data] = model_test(param,Lce,FR_half_temp,fiber_type)
 %   generate associated data with figures
 %==========================================================================
 %% Simulation parameters
-Fs = 1000; %sampling frequency
+Fs = 5000; %sampling frequency
 time = 0:1/Fs:5; %simulation time
 [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param);
 
-%% 
+%%
 for i = 1:2
     if i == 1
         % Generate a pulse
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
-        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
+        if strcmp(fiber_type,'fast')
+            FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
+        else
+            FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100];
+        end
     end
     %==========================================================================
     % initialization
     mean_exc = zeros(1,length(FR_test));
     p2p_exc = zeros(1,length(FR_test));
     for f = 1:length(FR_test)
-        
         %% Generate spike train
         FR = FR_test(f);
         spike = zeros(1,length(time));
-        
         if i == 1
             % Generate a pulse
             spike(1*Fs) = 1;
@@ -41,73 +43,72 @@ for i = 1:2
             spike(1*Fs:4*Fs) = temp;
         end
         
-        %%
-        % Model parameter initilization
-        x = 0; % free calcium concentration
-        y = 0; % concentraction of calcium bound to troponin
-        z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
-        act = 0;
+        %%  initialization
+        c = 0; % free calcium concentration
+        cf = 0; % concentraction of calcium bound to troponin
+        A = 0; % muscle activation
         
-        x_vec = zeros(1,length(time));
-        y_vec = zeros(1,length(time));
-        z_vec = zeros(1,length(time));
-        act_vec = zeros(1,length(time));
+        R_vec = zeros(1,length(time));
+        c_vec = zeros(1,length(time));
+        x_int_vec = zeros(1,length(time));
+        cf_vec = zeros(1,length(time));
+        A_tilda_vec = zeros(1,length(time));
+        A_vec = zeros(1,length(time));
+        
+        spike_temp = zeros(1,length(time));
         R_temp = exp(-time/tau_1);
         R = zeros(1,length(time));
-        
-        %% Run a simulation
         for t = 1:length(time)
             %% Stage 1
             % Calcium diffusion to sarcoplasm
-            spike_temp = zeros(1,length(time));
             if spike(t) == 1
                 spike_temp(t) = 1;
-                %temp = conv(spike_temp,R_temp);
-                % R to depend on the normalized firing rate
-                temp = conv(spike_temp,R_temp*(1+2*act^alpha));
-                %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
-                %             temp = conv(spike_temp,R_temp*R_i);
+                temp = conv(spike_temp,R_temp*(1+2*A^alpha));
                 R = R + temp(1:length(time));
             end
+            %R = spike(t) + exp(-h/tau_1)*R; %*(1+3*A^alpha);
+            
+            %%
+            c_dot = k_1*(C-c-cf)*R(t) - k_2*c*(S-C+c+cf)-(k_3*c-k_4*cf)*(1-cf);
+            cf_dot = (1-cf)*(k_3*c-k_4*cf);
+            c = c_dot/Fs + c;
+            cf = cf_dot/Fs + cf;
             
             %% Stage 2
-            % Calcium kinetics
-            x_dot = k_1*(C-x-y)*R(t) - k_2*x*((C*(S-1))+x+y)-(k_3*x+k_4*y)*(1-y);
-            y_dot = (1-y)*(k_3*x-k_4*y);
-            x = x_dot/Fs + x;
-            y = y_dot/Fs + y;
-            
-            if y < 0
-                y_temp = 0;
+            % Cooperativity and saturation
+            if cf < 0
+                cf_temp = 0;
             else
-                y_temp = y;
+                cf_temp = cf;
             end
-            y_int = y_temp^N/(y_temp^N+K^N);
+            A_tilda = cf_temp^N/(cf_temp^N+K^N);
             
             %% Stage 3
-            % Dynamics of cross-bridge formation
-            z_dot = (y_int-z)/tau_2;
-            z = z_dot/Fs + z;
-            act = z; % Muscle activation
+            % First-order dynamics to muscle activation, A
+            %tau_2 = tau_2_0*(1-0.8*A_tilda)^2;
+            A_dot = (A_tilda-A)/tau_2;
+            A = A_dot/Fs + A;
             
             %% Store variables
             %x_vec(t) = x(t);
-            x_vec(t) = x;
-            y_vec(t) = y;
-            z_vec(t) = z;
-            act_vec(t) = act;
+            %R_vec(t) = R;
+            c_vec(t) = c;
+            cf_vec(t) = cf;
+            A_tilda_vec(t) = A_tilda;
+            A_vec(t) = A;
+            
             
         end
         
-        mean_exc(f) = mean(act_vec(3.5*Fs:4*Fs));
-        p2p_exc(f) = max(act_vec(3.5*Fs:4*Fs))-min(act_vec(3.5*Fs:4*Fs));
+        mean_exc(f) = mean(A_vec(3.5*Fs:4*Fs));
+        p2p_exc(f) = max(A_vec(3.5*Fs:4*Fs))-min(A_vec(3.5*Fs:4*Fs));
         
         if i == 1
             %------------------------------------------------------------------
             % Twitch analysis
             %------------------------------------------------------------------
             % Find the peak amplitude of twitch and its location
-            [pks,locs_0_100] = max(act_vec);
+            [pks,locs_0_100] = max(A_vec);
             % Display peak amplitude value
             pks
             % Time it takes from zero force to the peak
@@ -116,7 +117,7 @@ for i = 1:2
             % Find a half peak amplitude
             peak_half = pks/2;
             % Find time from peak to half maximum
-            [~,t_100_50] = min(abs(act_vec(locs_0_100:end)-peak_half));
+            [~,t_100_50] = min(abs(A_vec(locs_0_100:end)-peak_half));
             
             % Find the location of t_100_50
             locs_100_50 = locs_0_100+t_100_50;
@@ -129,9 +130,9 @@ for i = 1:2
             peak_10 = pks*0.1;
             
             % Find time when force reaches 40% maximum after peak
-            [~,t_40] = min(abs(act_vec(locs_0_100:end)-peak_40));
+            [~,t_40] = min(abs(A_vec(locs_0_100:end)-peak_40));
             % Find time when force reaches 10% maximum after peak
-            [~,t_10] = min(abs(act_vec(locs_0_100:end)-peak_10));
+            [~,t_10] = min(abs(A_vec(locs_0_100:end)-peak_10));
             
             % Time it takes from 40% peak to 10% peak
             t_40_10 = (t_10-t_40)*1000/Fs
@@ -146,7 +147,7 @@ for i = 1:2
         end
         
         figure(i)
-        plot(time,act_vec,'LineWidth',1)
+        plot(time,A_vec,'LineWidth',1)
         hold on
         if i == 1
             plot(time,twitch_Milner(1:length(time)))
@@ -166,9 +167,9 @@ for i = 1:2
     figure(i)
     xlabel('Time (s)','FontSize',14)
     ylabel('Activation','FontSize',14)
-            
+    
     if i == 2
-        %% Sweep simulation  
+        %% Sweep simulation
         twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
         fusion = 1-p2p_exc/p2p_exc(1);
         
@@ -183,17 +184,17 @@ for i = 1:2
         end
         f_eff = FR_new/FR_half;
         
-        if fiber_type == 'slow'
+        if strcmp(fiber_type,'slow')
             a_f = 0.56;
             n_f0 = 2.1;
             n_f1 = 5;
-        elseif fiber_type == 'fast'
+        elseif strcmp(fiber_type,'fast')
             a_f = 0.56;
             n_f0 = 2.1;
             n_f1 = 3.3;
         end
         n_f = n_f0 +n_f1* (1/Lce-1);
-        Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);        
+        Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
         
         %% Calculate error between the desired and generated activation-frequency relationship
         for j = 1:length(find(f_eff<3.5))

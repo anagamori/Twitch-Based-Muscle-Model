@@ -1,41 +1,55 @@
 %==========================================================================
 % spikeDrivenMuscleModel_test.m
 % Author: Akira Nagamori
-% Last update: 2/18/119
+% Last update: 3/27/19
 % Descriptions
-%   Inspired by Williams et al. 1998
+%   A new model driven by spike trains inspired by Williams et al. 1998
+%   Generatetwitch response and test activation-frequency response with a
+%   given parameter set
 %==========================================================================
 
 close all
 clear all
 clc
 
-%==========================================================================
+%% Simulation parameters
 % Simulation parameters
-Fs = 10000; %sampling frequency
+Fs = 5000; %sampling frequency
 h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
-Lce = 1;
+Lce = 1; % muscle length
+%% Model parameters
+C = 2;
+S = 10*C;
+k_1 = 35;
+k_2 = 30;
+k_3 = 35;
+k_4 = 30;
+tau_1 = 0.02;
+tau_2 = 0.02;
+N = 1.7;
+K = 0.065;
+alpha = 5;
 
+%%
 for i = 1:2
     if i == 1
-        % Generate a pulse
+        % Generate a pulse to record twitch response
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
         FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
     end
-    %==========================================================================
-    % initialization
+    %% initialization
     mean_exc = zeros(1,length(FR_test));
     p2p_exc = zeros(1,length(FR_test));
+    
+    %% Test each stimulus frequency
     for f = 1:length(FR_test)
+        %% Generate spike train
         FR = FR_test(f);
-        %==========================================================================
-        % Generate spike train
         spike = zeros(1,length(time));
-        
         if i == 1
             % Generate a pulse
             spike(1*Fs) = 1;
@@ -45,20 +59,6 @@ for i = 1:2
             spike(1*Fs:4*Fs) = temp;
         end
         
-        %% Model parameters        
-        C = 2;
-        S = 10*C;
-        k_1 = 35;
-        k_2 = 30;
-        k_3 = 35;
-        k_4 = 30;
-        tau_1 = 0.02;
-        tau_2 = 0.02;
-        n = 1.7;
-        k = 0.065;
-        alpha = 5;
-        
-        %=========================================================================
         %%  initialization
         c = 0; % free calcium concentration
         cf = 0; % concentraction of calcium bound to troponin
@@ -70,9 +70,9 @@ for i = 1:2
         cf_vec = zeros(1,length(time));
         A_tilda_vec = zeros(1,length(time));
         A_vec = zeros(1,length(time));
-               
+        
         spike_temp = zeros(1,length(time));
-         R_temp = exp(-time/tau_1);
+        R_temp = exp(-time/tau_1);
         R = zeros(1,length(time));
         for t = 1:length(time)
             %% Stage 1
@@ -82,7 +82,7 @@ for i = 1:2
                 temp = conv(spike_temp,R_temp*(1+2*A^alpha));
                 R = R + temp(1:length(time));
             end
-            %R = spike(t) + exp(-h/tau_1)*R; %*(1+3*A^alpha);            
+            %R = spike(t) + exp(-h/tau_1)*R; %*(1+3*A^alpha);
             
             %%
             c_dot = k_1*(C-c-cf)*R(t) - k_2*c*(S-C+c+cf)-(k_3*c-k_4*cf)*(1-cf);
@@ -92,20 +92,20 @@ for i = 1:2
             
             %% Stage 2
             % Cooperativity and saturation
-            if cf < 0 
+            if cf < 0
                 cf_temp = 0;
             else
                 cf_temp = cf;
             end
-            A_tilda = cf_temp^n/(cf_temp^n+k^n);
+            A_tilda = cf_temp^N/(cf_temp^N+K^N);
             
             %% Stage 3
             % First-order dynamics to muscle activation, A
             %tau_2 = tau_2_0*(1-0.8*A_tilda)^2;
-            A_dot = (A_tilda-A)/tau_2; 
+            A_dot = (A_tilda-A)/tau_2;
             A = A_dot/Fs + A;
             
-             %% Store variables
+            %% Store variables
             %x_vec(t) = x(t);
             %R_vec(t) = R;
             c_vec(t) = c;
@@ -165,7 +165,7 @@ for i = 1:2
         figure(i)
         plot(time,A_vec,'LineWidth',1)
         hold on
-        if i == 1   
+        if i == 1
             plot(time,twitch_Milner(1:length(time)))
             hold on
             plot([time(locs_0_100) time(locs_0_100)],[0 1],'--')
@@ -183,7 +183,7 @@ for i = 1:2
     figure(i)
     xlabel('Time (s)','FontSize',14)
     ylabel('Activation','FontSize',14)
-        
+    
     if i == 2
         
         twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
@@ -198,7 +198,7 @@ for i = 1:2
         a_f = 0.56;
         n_f0 = 2.1;
         n_f1 = 5;
-        n_f = n_f0 +n_f1* (1/Lce-1);       
+        n_f = n_f0 +n_f1* (1/Lce-1);
         Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
         
         FR_half

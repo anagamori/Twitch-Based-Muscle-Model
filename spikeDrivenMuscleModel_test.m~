@@ -1,50 +1,55 @@
 %==========================================================================
 % spikeDrivenMuscleModel_test.m
 % Author: Akira Nagamori
-% Last update: 2/18/119
+% Last update: 3/27/19
 % Descriptions
-%   Inspired by Williams et al. 1998
+%   A new model driven by spike trains inspired by Williams et al. 1998
+%   Test a parameter set by generating twitch response and 
 %==========================================================================
 
 close all
 clear all
 clc
 
-%==========================================================================
+%% Simulation parameters
 % Simulation parameters
-Fs = 1000; %sampling frequency
-T = 1/Fs;
+Fs = 5000; %sampling frequency
+h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
-Lce = 1;
+Lce = 1; % muscle length
+%% Model parameters
+C = 2;
+S = 10*C;
+k_1 = 35;
+k_2 = 30;
+k_3 = 35;
+k_4 = 30;
+tau_1 = 0.02;
+tau_2 = 0.02;
+n = 1.7;
+k = 0.065;
+alpha = 5;
 
+%%
 for i = 1:2
     if i == 1
-        simulation_condition = 1;
-    elseif i == 2
-        simulation_condition = 3;
-    end
-    if simulation_condition == 1
-        % Generate a pulse
+        % Generate a pulse to record twitch response
         FR_test = 1;
-    elseif simulation_condition == 2
-        % Generate a spike train at a given frequency
-        FR_test = 10;
-    elseif simulation_condition == 3
+    elseif i == 2
         % Generate a set of spike trains at multiple frequencies
         FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
     end
-    %==========================================================================
-    % initialization
+    %% initialization
     mean_exc = zeros(1,length(FR_test));
     p2p_exc = zeros(1,length(FR_test));
+    
+    %% Test each stimulus frequency
     for f = 1:length(FR_test)
+        %% Generate spike train
         FR = FR_test(f);
-        %==========================================================================
-        % Generate spike train
         spike = zeros(1,length(time));
-        
-        if simulation_condition == 1
+        if i == 1
             % Generate a pulse
             spike(1*Fs) = 1;
         else
@@ -53,95 +58,72 @@ for i = 1:2
             spike(1*Fs:4*Fs) = temp;
         end
         
-        %==========================================================================
-        % Model parameters
+        %%  initialization
         c = 0; % free calcium concentration
         cf = 0; % concentraction of calcium bound to troponin
-        z = 0; % porportion of bidning sites that formed cross-bridges (0-1)
-        act = 0;
+        A = 0; % muscle activation
         
-        %param = [7,1,20,5,15,7,0.005,0.04,1.8,0.04,4];
- 
-        
-        C = 2;
-        S = 3*C;
-        k_1 = 18;
-        k_2 = 8;
-        k_3 = 18;
-        k_4 = 14;
-        tau_1 = 0.005;
-        tau_2 = 0.03;
-        n = 1.7;
-        k = 0.04;
-        alpha = 4;
-        %=========================================================================
-        % initialization
-        x_vec = zeros(1,length(time));
+        R_vec = zeros(1,length(time));
+        c_vec = zeros(1,length(time));
         x_int_vec = zeros(1,length(time));
-        y_vec = zeros(1,length(time));
-        y_int_vec = zeros(1,length(time));
-        z_vec = zeros(1,length(time));
-        act_vec = zeros(1,length(time));
+        cf_vec = zeros(1,length(time));
+        A_tilda_vec = zeros(1,length(time));
+        A_vec = zeros(1,length(time));
         
         spike_temp = zeros(1,length(time));
         R_temp = exp(-time/tau_1);
         R = zeros(1,length(time));
-        
         for t = 1:length(time)
             %% Stage 1
             % Calcium diffusion to sarcoplasm
-            spike_temp = zeros(1,length(time));
             if spike(t) == 1
                 spike_temp(t) = 1;
-                %temp = conv(spike_temp,R_temp);
-                % R to depend on the normalized firing rate
-                temp = conv(spike_temp,R_temp*(1+2*act^alpha));
-                %             R_i = 1 + (5-1)*exp(-(1/FR)/0.1);
-                %             temp = conv(spike_temp,R_temp*R_i);
+                temp = conv(spike_temp,R_temp*(1+2*A^alpha));
                 R = R + temp(1:length(time));
             end
+            %R = spike(t) + exp(-h/tau_1)*R; %*(1+3*A^alpha);
             
+            %%
             c_dot = k_1*(C-c-cf)*R(t) - k_2*c*(S-C+c+cf)-(k_3*c-k_4*cf)*(1-cf);
             cf_dot = (1-cf)*(k_3*c-k_4*cf);
             c = c_dot/Fs + c;
             cf = cf_dot/Fs + cf;
             
-            if cf < 0 
+            %% Stage 2
+            % Cooperativity and saturation
+            if cf < 0
                 cf_temp = 0;
             else
                 cf_temp = cf;
             end
             A_tilda = cf_temp^n/(cf_temp^n+k^n);
-            %         if x > 1
-            %            x = 1;
             
             %% Stage 3
-            % Dynamics of cross-bridge formation (Huxley, 1957)
-            z_dot = (A_tilda-z)/tau_2; %(tau_temp/1000); %(1-z)*f_app - g_app*z; 
-            z = z_dot/Fs + z;
-            
-            %% Stage 4
-            %
-            act = z; % (z*(f_app_max+g_app)/f_app_max);           
+            % First-order dynamics to muscle activation, A
+            %tau_2 = tau_2_0*(1-0.8*A_tilda)^2;
+            A_dot = (A_tilda-A)/tau_2;
+            A = A_dot/Fs + A;
             
             %% Store variables
             %x_vec(t) = x(t);
-            x_vec(t) = c;
-            y_vec(t) = cf;
-            z_vec(t) = z;
-            act_vec(t) = act;
+            %R_vec(t) = R;
+            c_vec(t) = c;
+            cf_vec(t) = cf;
+            A_tilda_vec(t) = A_tilda;
+            A_vec(t) = A;
+            
             
         end
         
-        mean_exc(f) = mean(act_vec(3.5*Fs:4*Fs));
-        p2p_exc(f) = max(act_vec(3.5*Fs:4*Fs))-min(act_vec(3.5*Fs:4*Fs));
+        mean_exc(f) = mean(A_vec(3.5*Fs:4*Fs));
+        p2p_exc(f) = max(A_vec(3.5*Fs:4*Fs))-min(A_vec(3.5*Fs:4*Fs));
         
-        if simulation_condition == 1
+        if i == 1
             %------------------------------------------------------------------
             % Twitch analysis
             %------------------------------------------------------------------
             % Find the peak amplitude of twitch and its location
-            [pks,locs_0_100] = max(act_vec);
+            [pks,locs_0_100] = max(A_vec);
             % Display peak amplitude value
             pks
             % Time it takes from zero force to the peak
@@ -150,7 +132,7 @@ for i = 1:2
             % Find a half peak amplitude
             peak_half = pks/2;
             % Find time from peak to half maximum
-            [~,t_100_50] = min(abs(act_vec(locs_0_100:end)-peak_half));
+            [~,t_100_50] = min(abs(A_vec(locs_0_100:end)-peak_half));
             
             % Find the location of t_100_50
             locs_100_50 = locs_0_100+t_100_50;
@@ -163,9 +145,9 @@ for i = 1:2
             peak_10 = pks*0.1;
             
             % Find time when force reaches 40% maximum after peak
-            [~,t_40] = min(abs(act_vec(locs_0_100:end)-peak_40));
+            [~,t_40] = min(abs(A_vec(locs_0_100:end)-peak_40));
             % Find time when force reaches 10% maximum after peak
-            [~,t_10] = min(abs(act_vec(locs_0_100:end)-peak_10));
+            [~,t_10] = min(abs(A_vec(locs_0_100:end)-peak_10));
             
             % Time it takes from 40% peak to 10% peak
             t_40_10 = (t_10-t_40)*1000/Fs
@@ -180,9 +162,9 @@ for i = 1:2
         end
         
         figure(i)
-        plot(time,act_vec,'LineWidth',1)
+        plot(time,A_vec,'LineWidth',1)
         hold on
-        if simulation_condition == 1   
+        if i == 1
             plot(time,twitch_Milner(1:length(time)))
             hold on
             plot([time(locs_0_100) time(locs_0_100)],[0 1],'--')
@@ -201,23 +183,7 @@ for i = 1:2
     xlabel('Time (s)','FontSize',14)
     ylabel('Activation','FontSize',14)
     
-    if simulation_condition == 2
-        figure(3)
-        plot(time,x_vec,'LineWidth',1)
-        xlabel('Time (s)','FontSize',14)
-        ylabel('x','FontSize',14)
-        
-        figure(4)
-        plot(time,x_int_vec,'LineWidth',1)
-        xlabel('Time (s)','FontSize',14)
-        ylabel('x_{int}','FontSize',14)
-        
-        figure(5)
-        plot(time,y_vec,'LineWidth',1)
-        xlabel('Time (s)','FontSize',14)
-        ylabel('y','FontSize',14)
-        
-    elseif simulation_condition == 3
+    if i == 2
         
         twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
         fusion = 1-p2p_exc/p2p_exc(1);
@@ -231,7 +197,7 @@ for i = 1:2
         a_f = 0.56;
         n_f0 = 2.1;
         n_f1 = 5;
-        n_f = n_f0 +n_f1* (1/Lce-1);       
+        n_f = n_f0 +n_f1* (1/Lce-1);
         Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
         
         FR_half
