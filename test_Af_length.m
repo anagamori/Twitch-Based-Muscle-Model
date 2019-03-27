@@ -2,10 +2,10 @@ close all
 clc
 clear all
 
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
 
-for trialN = 190
+for trialN = 180
     %1:300
 MU_type = 'slow';
 
@@ -38,5 +38,6 @@ end
 
 freq = Data{2,9};
 fusion = 1-p2p/p2p(5,1);
+figure()
 plot(freq,fusion','LineWidth',2,'color','b')
 xlim([0 3])
