@@ -236,7 +236,7 @@ end
 
 for MU_No = first_MU:last_MU
     Data = Data_cell{MU_No};
-    cd(data_folder)
+    cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT')
     save(['Data_' num2str(MU_No)],'Data')
     cd(code_folder)
     
