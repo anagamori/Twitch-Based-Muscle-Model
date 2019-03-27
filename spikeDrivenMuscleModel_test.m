@@ -12,6 +12,12 @@ close all
 clear all
 clc
 
+%%
+code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+
+%% 
+seed_name = 'Seed_ST_1';
 %% Simulation parameters
 % Simulation parameters
 Fs = 5000; %sampling frequency
@@ -236,6 +242,10 @@ for i = 1:2
     
 end
 
+param = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
+cd(data_folder)
+save(seed_name,'param')
+cd(code_folder)
 
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
 
