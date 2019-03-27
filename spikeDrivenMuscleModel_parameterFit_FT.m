@@ -26,6 +26,10 @@ cd (data_folder)
 load('CT')
 cd (code_folder)
 
+%% Load seed parameters
+cd(data_folder)
+load('Seed_ST_1')
+cd(code_folder)
 %%
 first_MU = 300;
 last_MU = 300;

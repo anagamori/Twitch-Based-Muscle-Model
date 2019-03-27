@@ -26,6 +26,10 @@ cd (data_folder)
 load('CT')
 cd (code_folder)
 
+%% Load seed parameters
+cd(data_folder)
+load('Seed_ST_1')
+cd(code_folder)
 %%
 first_MU = 150;
 last_MU = 179;
@@ -40,11 +44,7 @@ parfor j = first_MU:last_MU
     j
     %% Contraction time of the unit to be optimized to
     target_CT = CT_sorted(j);
-    
-    %% Seed the initial parameter set
-    % [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] 
-    param = [20,2,35,30,35,30,0.02,0.02,1.7,0.065,5];
-    
+   
     %% Run annealing curve algorithm for 6 iterations
     for k = 1:6
         
