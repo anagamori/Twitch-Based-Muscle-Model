@@ -18,8 +18,8 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-first_MU = 31;
-last_MU = 40;
+first_MU = 190;
+last_MU = 190;
 %parpool(10)
 for trialN = first_MU:last_MU
     trialN
@@ -231,7 +231,7 @@ for trialN = first_MU:last_MU
             end
         end
         
-        [Data_temp{j}] = model_test(param,Lce,FR_half,'slow');
+        [Data_temp{j}] = spikeDrivenMuscleModel_testFunction(param,Lce,FR_half,'slow');
         
     end
     for trial = 1:40
