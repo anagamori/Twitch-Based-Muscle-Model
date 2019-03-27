@@ -62,8 +62,9 @@ for i = 1:2
         
         %param = [7,1,20,5,15,7,0.005,0.04,1.8,0.04,4];
  
-        S = 6;
+        
         C = 2;
+        S = 3*C;
         k_1 = 18;
         k_2 = 8;
         k_3 = 18;
@@ -100,7 +101,7 @@ for i = 1:2
                 R = R + temp(1:length(time));
             end
             
-            x_dot = k_1*(C-x-y)*R(t) - k_2*x*((C*(S-1))+x+y)-(k_3*x+k_4*y)*(1-y);
+            x_dot = k_1*(C-x-y)*R(t) - k_2*x*(S-C+x+y)-(k_3*x-k_4*y)*(1-y);
             y_dot = (1-y)*(k_3*x-k_4*y);
             x = x_dot/Fs + x;
             y = y_dot/Fs + y;
