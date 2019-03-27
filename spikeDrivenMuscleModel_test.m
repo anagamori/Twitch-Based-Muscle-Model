@@ -39,7 +39,7 @@ for i = 1:2
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
-        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
+        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100]; %10:10:100];
     end
     %% initialization
     mean_exc = zeros(1,length(FR_test));
