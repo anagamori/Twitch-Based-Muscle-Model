@@ -12,8 +12,8 @@ clc
 
 %==========================================================================
 % Simulation parameters
-Fs = 1000; %sampling frequency
-T = 1/Fs;
+Fs = 10000; %sampling frequency
+h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 Lce = 1;
@@ -47,16 +47,17 @@ for i = 1:2
         
         %% Model parameters        
         C = 2;
-        S = 4*C;
-        k_1 = 40;
+        S = 10*C;
+        k_1 = 35;
         k_2 = 30;
-        k_3 = 50;
-        k_4 = 40;
-        tau_1 = 0.005;
+        k_3 = 35;
+        k_4 = 30;
+        tau_1 = 0.02;
         tau_2 = 0.02;
         n = 1.7;
-        k = 0.04;
-        alpha = 4;
+        k = 0.065;
+        alpha = 5;
+        
         %=========================================================================
         %%  initialization
         c = 0; % free calcium concentration
@@ -71,14 +72,20 @@ for i = 1:2
         A_vec = zeros(1,length(time));
                
         spike_temp = zeros(1,length(time));
-        R = 0;
+         R_temp = exp(-time/tau_1);
+        R = zeros(1,length(time));
         for t = 1:length(time)
             %% Stage 1
             % Calcium diffusion to sarcoplasm
-            R = spike(t) + exp(-T/tau_1)*R; %*(1+3*A^alpha);            
+            if spike(t) == 1
+                spike_temp(t) = 1;
+                temp = conv(spike_temp,R_temp*(1+2*A^alpha));
+                R = R + temp(1:length(time));
+            end
+            %R = spike(t) + exp(-h/tau_1)*R; %*(1+3*A^alpha);            
             
             %%
-            c_dot = k_1*(C-c-cf)*R - k_2*c*(S-C+c+cf)-(k_3*c-k_4*cf)*(1-cf);
+            c_dot = k_1*(C-c-cf)*R(t) - k_2*c*(S-C+c+cf)-(k_3*c-k_4*cf)*(1-cf);
             cf_dot = (1-cf)*(k_3*c-k_4*cf);
             c = c_dot/Fs + c;
             cf = cf_dot/Fs + cf;
@@ -94,12 +101,13 @@ for i = 1:2
             
             %% Stage 3
             % First-order dynamics to muscle activation, A
+            %tau_2 = tau_2_0*(1-0.8*A_tilda)^2;
             A_dot = (A_tilda-A)/tau_2; 
             A = A_dot/Fs + A;
             
              %% Store variables
             %x_vec(t) = x(t);
-            R_vec(t) = R;
+            %R_vec(t) = R;
             c_vec(t) = c;
             cf_vec(t) = cf;
             A_tilda_vec(t) = A_tilda;

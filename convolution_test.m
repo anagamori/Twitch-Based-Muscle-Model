@@ -22,6 +22,8 @@ R = zeros(1,length(time));
 R_2_vec = zeros(1,length(time));
 R_2 = 0;
 
+alpha = 3;
+A = 3;
 
 for t = 1:length(time)
     
