@@ -17,7 +17,7 @@ code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
 
 %% 
-seed_name = 'Seed_ST_1';
+seed_name = 'Seed_ST_2';
 %% Simulation parameters
 % Simulation parameters
 Fs = 5000; %sampling frequency
@@ -27,15 +27,15 @@ time = 0:1/Fs:5; %simulation time
 Lce = 1; % muscle length
 %% Model parameters
 C = 2;
-S = 10*C;
-k_1 = 35;
-k_2 = 30;
-k_3 = 35;
-k_4 = 30;
+S = 6*C;
+k_1 = 25;
+k_2 = 20;
+k_3 = 15;
+k_4 = 12;
 tau_1 = 0.02;
-tau_2 = 0.02;
-N = 1.7;
-K = 0.065;
+tau_2 = 0.05;
+N = 1.8;
+K = 0.06;
 alpha = 5;
 
 %%
@@ -162,7 +162,7 @@ for i = 1:2
             % Locatino of t_40_10
             locs_40_10 = locs_0_100+t_10;
             
-            T = t_0_100/Fs;
+            T = t_0_100/1000;
             P =  pks/T;
             twitch_Milner_temp = P.*time.*exp(1-time/T);
             twitch_Milner = conv(spike,twitch_Milner_temp);
