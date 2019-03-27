@@ -24,17 +24,17 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 %% 
-for j = 1:4 %9:10 %6:9 %1:9 %:length(amp_vec)
+for j = 10 %9:10 %6:9 %1:9 %:length(amp_vec)
     if j <= 2
         Fs = 10000;
         time = 0:1/Fs:15;
-    elseif j > 2 && j < 4
+    elseif j > 2 && j <= 3
         Fs = 15000;
         time = 0:1/Fs:15;
-    elseif j >= 4 && j < 8
+    elseif j >= 4 && j <6
         Fs = 20000;
         time = 0:1/Fs:15;
-    elseif j >= 8
+    elseif j >= 6
         Fs = 25000;
         time = 0:1/Fs:15;
     end

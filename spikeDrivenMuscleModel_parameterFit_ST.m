@@ -27,17 +27,17 @@ load('CT')
 cd (code_folder)
 
 %%
-first_MU = 221;
-last_MU = 300;
+first_MU = 150;
+last_MU = 179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
-weight_temp = ((70-5)*rand(1,last_MU)+5);
+weight_temp = ((50-5)*rand(1,last_MU)+5);
 %parpool(10)
 
 %% Test each unit
 parfor j = first_MU:last_MU
-    
+    j
     %% Contraction time of the unit to be optimized to
     target_CT = CT_sorted(j);
     
@@ -47,6 +47,7 @@ parfor j = first_MU:last_MU
     
     %% Run annealing curve algorithm for 6 iterations
     for k = 1:6
+        
         rng shuffle
         Param_matrix = annealing_curve(param,k);
         
@@ -153,10 +154,9 @@ parfor j = first_MU:last_MU
                             %------------------------------------------------------------------
                             % Find the peak amplitude of twitch and its location
                             [pks,locs_0_100] = max(A_vec);
-                            % Display peak amplitude value
-                            pks
+                                               
                             % Time it takes from zero force to the peak
-                            t_0_100 = (locs_0_100-1*Fs)*1000/Fs % convert it in the unit of ms
+                            t_0_100 = (locs_0_100-1*Fs)*1000/Fs; % convert it in the unit of ms
                             
                             % Find a half peak amplitude
                             peak_half = pks/2;
@@ -166,7 +166,7 @@ parfor j = first_MU:last_MU
                             % Find the location of t_100_50
                             locs_100_50 = locs_0_100+t_100_50;
                             % Time it takes from peak to half maximum
-                            t_100_50 = t_100_50*1000/Fs
+                            t_100_50 = t_100_50*1000/Fs;
                             
                             % Find value of 40% of peak amplitude
                             peak_40 = pks*0.4;
@@ -179,7 +179,7 @@ parfor j = first_MU:last_MU
                             [~,t_10] = min(abs(A_vec(locs_0_100:end)-peak_10));
                             
                             % Time it takes from 40% peak to 10% peak
-                            t_40_10 = (t_10-t_40)*1000/Fs
+                            t_40_10 = (t_10-t_40)*1000/Fs;
                             
                             % Locatino of t_40_10
                             locs_40_10 = locs_0_100+t_10;
@@ -231,7 +231,7 @@ parfor j = first_MU:last_MU
     end
     
     [Data_temp] = spikeDrivenMuscleModel_testFunction(param,Lce,0,'slow');
-    Data_cell{j} = Data_temp
+    Data_cell{j} = Data_temp;
     
 end
 

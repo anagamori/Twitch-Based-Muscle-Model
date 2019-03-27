@@ -27,7 +27,7 @@ load('CT')
 cd (code_folder)
 
 %%
-first_MU = 221;
+first_MU = 300;
 last_MU = 300;
 Data_cell = cell(1,last_MU);
 
@@ -36,7 +36,7 @@ weight_temp = ((70-5)*rand(1,last_MU)+5);
 %parpool(10)
 
 %% Test each unit
-parfor j = first_MU:last_MU
+for j = first_MU:last_MU
     
     %% Contraction time of the unit to be optimized to
     target_CT = CT_sorted(j);
