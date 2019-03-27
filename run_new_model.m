@@ -3,17 +3,17 @@ clc
 clear all
 
 code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/ST';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
 
-for trialN = 40
+for trialN = 190
     %1:300
-MU_type = 'fast';
+MU_type = 'slow';
 
 cd(data_folder)
 load(['MU_' num2str(trialN)])
 cd(code_folder)
 
-[Data] = new_model_test(parameter,1,0,MU_type);
+[Data] = spikeDrivenMuscleModel_testFunction(parameter,1,0,MU_type);
 FR_half = Data{2,6};
 t2t = Data{2,5};
 p2p(1,:) = Data{2,13};
@@ -28,7 +28,7 @@ for i = 1:4
     elseif i == 4
         Lce = 1.2;
     end
-    [Data] = new_model_test(parameter,Lce,FR_half,MU_type);
+    [Data] = spikeDrivenMuscleModel_testFunction(parameter,Lce,FR_half,MU_type);
     p2p(i+1,:) = Data{2,13};
 end
 

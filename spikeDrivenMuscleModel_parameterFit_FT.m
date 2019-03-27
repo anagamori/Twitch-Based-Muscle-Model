@@ -156,10 +156,8 @@ for j = first_MU:last_MU
                             %------------------------------------------------------------------
                             % Find the peak amplitude of twitch and its location
                             [pks,locs_0_100] = max(A_vec);
-                            % Display peak amplitude value
-                            pks
                             % Time it takes from zero force to the peak
-                            t_0_100 = (locs_0_100-1*Fs)*1000/Fs % convert it in the unit of ms
+                            t_0_100 = (locs_0_100-1*Fs)*1000/Fs; % convert it in the unit of ms
                             
                             % Find a half peak amplitude
                             peak_half = pks/2;
@@ -169,7 +167,7 @@ for j = first_MU:last_MU
                             % Find the location of t_100_50
                             locs_100_50 = locs_0_100+t_100_50;
                             % Time it takes from peak to half maximum
-                            t_100_50 = t_100_50*1000/Fs
+                            t_100_50 = t_100_50*1000/Fs;
                             
                             % Find value of 40% of peak amplitude
                             peak_40 = pks*0.4;
@@ -182,7 +180,7 @@ for j = first_MU:last_MU
                             [~,t_10] = min(abs(A_vec(locs_0_100:end)-peak_10));
                             
                             % Time it takes from 40% peak to 10% peak
-                            t_40_10 = (t_10-t_40)*1000/Fs
+                            t_40_10 = (t_10-t_40)*1000/Fs;
                             
                             % Locatino of t_40_10
                             locs_40_10 = locs_0_100+t_10;

@@ -48,9 +48,7 @@ for i = 1:2
         cf = 0; % concentraction of calcium bound to troponin
         A = 0; % muscle activation
         
-        R_vec = zeros(1,length(time));
         c_vec = zeros(1,length(time));
-        x_int_vec = zeros(1,length(time));
         cf_vec = zeros(1,length(time));
         A_tilda_vec = zeros(1,length(time));
         A_vec = zeros(1,length(time));
