@@ -5,7 +5,7 @@ clear all
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
 
-for trialN = 3
+for trialN = 39
     %1:300
 MU_type = 'slow';
 

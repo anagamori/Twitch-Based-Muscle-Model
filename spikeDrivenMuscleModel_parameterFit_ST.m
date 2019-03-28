@@ -15,7 +15,7 @@ code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
 
 %% Simulation parameters
-Fs = 5000; %sampling frequency
+Fs = 1000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
@@ -28,17 +28,17 @@ cd (code_folder)
 
 %% Load seed parameters
 cd(data_folder)
-load('Seed_ST_2')
+load('Seed_ST_4')
 cd(code_folder)
 param_seed = param;
 clear param
 %%
-first_MU = 11; %150;
-last_MU = 20; %179;
+first_MU = 51; %150;
+last_MU = 60; %179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
-weight_temp = 0*(rand(1,last_MU)+5); %((30-5)*rand(1,last_MU)+5);
+weight_temp = ((50-5)*rand(1,last_MU)+5);
 %parpool(10)
 
 %% Test each unit
@@ -187,7 +187,7 @@ for j = first_MU:last_MU
                             % Locatino of t_40_10
                             locs_40_10 = locs_0_100+t_10;
                             
-                            T = t_0_100/Fs;
+                            T = t_0_100/1000;
                             P =  pks/T;
                             twitch_Milner_temp = P.*time.*exp(1-time/T);
                             twitch_Milner = conv(spike,twitch_Milner_temp);
@@ -337,7 +337,7 @@ var11 = x(11);
 end
 
 function error = error_calculation(vec_1,vec_2,reference)
-for i = 1:length(find(reference<2.5))
+for i = 1:length(find(reference<2.5&reference>0.3))
     error(i) = abs(vec_1(i)-vec_2(i));
 end
 end
