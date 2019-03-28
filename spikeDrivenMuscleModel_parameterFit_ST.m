@@ -28,20 +28,23 @@ cd (code_folder)
 
 %% Load seed parameters
 cd(data_folder)
-load('Seed_ST_1')
+load('Seed_ST_2')
 cd(code_folder)
+param_seed = param;
+clear param
 %%
-first_MU = 150;
-last_MU = 179;
+first_MU = 11; %150;
+last_MU = 20; %179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
-weight_temp = ((50-5)*rand(1,last_MU)+5);
+weight_temp = 0*(rand(1,last_MU)+5); %((30-5)*rand(1,last_MU)+5);
 %parpool(10)
 
 %% Test each unit
-parfor j = first_MU:last_MU
+for j = first_MU:last_MU
     j
+    param = param_seed;
     %% Contraction time of the unit to be optimized to
     target_CT = CT_sorted(j);
    
