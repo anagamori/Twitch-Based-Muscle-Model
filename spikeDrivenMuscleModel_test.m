@@ -17,7 +17,7 @@ code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
 
 %% 
-seed_name = 'Seed_ST_4';
+seed_name = 'Seed_ST_5';
 %% Simulation parameters
 % Simulation parameters
 Fs = 5000; %sampling frequency
@@ -27,13 +27,13 @@ time = 0:1/Fs:5; %simulation time
 Lce = 1; % muscle length
 %% Model parameters
 C = 2;
-S = 6*C;
+S = 9*C;
 k_1 = 25;
 k_2 = 20;
-k_3 = 22;
-k_4 = 18;
+k_3 = 30;
+k_4 = 28;
 tau_1 = 0.02;
-tau_2 = 0.03;
+tau_2 = 0.02;
 N = 1.8;
 K = 0.06;
 alpha = 5;
