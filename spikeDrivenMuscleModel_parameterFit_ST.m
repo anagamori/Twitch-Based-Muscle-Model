@@ -28,17 +28,17 @@ cd (code_folder)
 
 %% Load seed parameters
 cd(data_folder)
-load('Seed_ST_4')
+load('Seed_ST_5')
 cd(code_folder)
 param_seed = param;
 clear param
 %%
-first_MU = 51; %150;
-last_MU = 60; %179;
+first_MU = 101; %150;
+last_MU = 196; %179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
-weight_temp = ((50-5)*rand(1,last_MU)+5);
+weight_temp = ((80-50)*rand(1,last_MU)+5);
 %parpool(10)
 
 %% Test each unit
