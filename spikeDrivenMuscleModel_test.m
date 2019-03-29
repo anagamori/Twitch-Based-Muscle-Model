@@ -28,14 +28,14 @@ Lce = 1; % muscle length
 %% Model parameters
 C = 2;
 S = 9*C;
-k_1 = 25;
-k_2 = 20;
+k_1 = 50;
+k_2 = 48;
 k_3 = 30;
 k_4 = 28;
 tau_1 = 0.02;
 tau_2 = 0.02;
-N = 1.8;
-K = 0.06;
+N = 1.9;
+K = 0.07;
 alpha = 5;
 
 %%
