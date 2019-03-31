@@ -11,7 +11,7 @@ function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,
 %   relationship (e.g., parameter(5), parameter(6), etc)
 %==========================================================================
 %% Simulation parameters
-Fs = 5000; %sampling frequency
+Fs = 10000; %sampling frequency
 time = 0:1/Fs:5; %simulation time
 
 S = parameter(1); %7;
@@ -26,7 +26,7 @@ N = parameter(11)*Lce + parameter(12); %-2.26*Lce + 4.20;
 K = parameter(13)*Lce + parameter(14); %-0.044*Lce + 0.080;
 alpha = parameter(15); %4.475;
 
-%% 
+%%
 for i = 1:2
     if i == 1
         % Generate a pulse
@@ -57,7 +57,7 @@ for i = 1:2
             spike(1*Fs:4*Fs) = temp;
         end
         
-         %%  initialization
+        %%  initialization
         c = 0; % free calcium concentration
         cf = 0; % concentraction of calcium bound to troponin
         A = 0; % muscle activation
@@ -152,22 +152,39 @@ for i = 1:2
             % Locatino of t_40_10
             locs_40_10 = locs_0_100+t_10;
             
-            T = t_0_100/Fs;
+            T = t_0_100/1000;
             P =  pks/T;
             twitch_Milner_temp = P.*time.*exp(1-time/T);
             twitch_Milner = conv(spike,twitch_Milner_temp);
         end
         
     end
-    
     figure(i)
+    plot(time,A_vec,'LineWidth',1)
+    hold on
     xlabel('Time (s)','FontSize',14)
     ylabel('Activation','FontSize',14)
     set(gca,'TickDir','out');
     set(gca,'box','off')
-            
+    movegui('northwest')
+    if i == 1
+        plot(time,twitch_Milner(1:length(time)))
+        hold on
+        plot([time(locs_0_100) time(locs_0_100)],[0 1],'--')
+        text(time(locs_0_100),pks,num2str(t_0_100))
+        hold on
+        plot([time(locs_100_50) time(locs_100_50)],[0 1],'--')
+        plot([time(locs_40_10) time(locs_40_10)],[0 1],'--')
+        text(time(locs_100_50),peak_half,num2str(t_100_50))
+        text(time(locs_40_10),peak_10,num2str(t_40_10))
+        text(time(locs_0_100)-time(locs_0_100)*0.4,pks,num2str(pks))
+    end
+    
+    
+    
+    
     if i == 2
-        %% Sweep simulation  
+        %% Sweep simulation
         twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
         fusion = 1-p2p_exc/p2p_exc(1);
         
@@ -192,7 +209,7 @@ for i = 1:2
             n_f1 = 3.3;
         end
         n_f = n_f0 +n_f1* (1/Lce-1);
-        Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);        
+        Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
         
         %% Calculate error between the desired and generated activation-frequency relationship
         for j = 1:length(find(f_eff<3.5))
@@ -211,6 +228,7 @@ for i = 1:2
         plot(f_eff,Af_Song,'color','k','LineWidth',1)
         xlim([0 3])
         legend('New','Song')
+        movegui('northeast')
         
         figure(7)
         plot(FR_test/FR_half,fusion,'LineWidth',2,'color','b')
@@ -220,6 +238,7 @@ for i = 1:2
         set(gca,'box','off')
         hold on
         xlim([0 3])
+        movegui('southwest')
         
         figure(8)
         plot(mean_exc./max(mean_exc),fusion,'LineWidth',2,'color','b')
@@ -229,6 +248,7 @@ for i = 1:2
         set(gca,'box','off')
         hold on
         plot(0:0.1:1,0:0.1:1,'--','color','k')
+        movegui('southeast')
     end
     
 end

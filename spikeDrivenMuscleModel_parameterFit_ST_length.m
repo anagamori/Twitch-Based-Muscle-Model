@@ -18,7 +18,7 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-first_MU = 101;
+first_MU =101;
 last_MU = 196;
 parpool(10)
 for trialN = first_MU:last_MU
@@ -256,7 +256,7 @@ end
 
 function Y = annealing_curve(x,k)
 
-perturbation_amp = 0.2/2;
+perturbation_amp = 0.4/2;
 S = 7;
 C = 1;
 k_1 = 20;
@@ -269,48 +269,48 @@ N = 1.8;
 K = 0.04;
 alpha = 4;
 
-Y(1,1) = x(1) +  (S*perturbation_amp)./2.^(k-2);
-Y(2,1) = x(1) -  (S*perturbation_amp)./2.^(k-2);
+Y(1,1) = x(1) +  (x(1)*perturbation_amp)./2.^(k-2);
+Y(2,1) = x(1) -  (x(1)*perturbation_amp)./2.^(k-2);
 Y(3,1) = x(1);
 
-Y(1,2) = x(2) +  (C*perturbation_amp)./2.^(k-2);
-Y(2,2) = x(2) -  (C*perturbation_amp)./2.^(k-2);
+Y(1,2) = x(2) +  (x(2)*perturbation_amp)./2.^(k-2);
+Y(2,2) = x(2) -  (x(2)*perturbation_amp)./2.^(k-2);
 Y(3,2) = x(2);
 
-Y(1,3) = x(3) +  (k_1*perturbation_amp)./2.^(k-2);
-Y(2,3) = x(3) -  (k_1*perturbation_amp)./2.^(k-2);
+Y(1,3) = x(3) +  (x(3)*perturbation_amp)./2.^(k-2);
+Y(2,3) = x(3) -  (x(3)*perturbation_amp)./2.^(k-2);
 Y(3,3) = x(3);
 
-Y(1,4) = x(4) +  (k_2*perturbation_amp)./2.^(k-2);
-Y(2,4) = x(4) -  (k_2*perturbation_amp)./2.^(k-2);
+Y(1,4) = x(4) +  (x(4)*perturbation_amp)./2.^(k-2);
+Y(2,4) = x(4) -  (x(4)*perturbation_amp)./2.^(k-2);
 Y(3,4) = x(4);
 
-Y(1,5) = x(5) +  (k_3*perturbation_amp)./2.^(k-2);
-Y(2,5) = x(5) -  (k_3*perturbation_amp)./2.^(k-2);
+Y(1,5) = x(5) +  (x(5)*perturbation_amp)./2.^(k-2);
+Y(2,5) = x(5) -  (x(5)*perturbation_amp)./2.^(k-2);
 Y(3,5) = x(5);
 
-Y(1,6) = x(6) +  (k_4*perturbation_amp)./2.^(k-2);
-Y(2,6) = x(6) -  (k_4*perturbation_amp)./2.^(k-2);
+Y(1,6) = x(6) +  (x(6)*perturbation_amp)./2.^(k-2);
+Y(2,6) = x(6) -  (x(6)*perturbation_amp)./2.^(k-2);
 Y(3,6) = x(6);
 
-Y(1,7) = x(7) +  (tau_1*perturbation_amp)./2.^(k-2);
-Y(2,7) = x(7) -  (tau_1*perturbation_amp)./2.^(k-2);
+Y(1,7) = x(7) +  (x(7)*perturbation_amp)./2.^(k-2);
+Y(2,7) = x(7) -  (x(7)*perturbation_amp)./2.^(k-2);
 Y(3,7) = x(7);
 
-Y(1,8) = x(8) +  (tau_2*perturbation_amp)./2.^(k-2);
-Y(2,8) = x(8) -  (tau_2*perturbation_amp)./2.^(k-2);
+Y(1,8) = x(8) +  (x(8)*perturbation_amp)./2.^(k-2);
+Y(2,8) = x(8) -  (x(8)*perturbation_amp)./2.^(k-2);
 Y(3,8) = x(8);
 
-Y(1,9) = x(9) +  (N*perturbation_amp)./2.^(k-2);
-Y(2,9) = x(9) -  (N*0.2)./2.^(k-2);
+Y(1,9) = x(9) +  (x(9)*perturbation_amp)./2.^(k-2);
+Y(2,9) = x(9) -  (x(9)*0.2)./2.^(k-2);
 Y(3,9) = x(9);
 
-Y(1,10) = x(10) +  (K*perturbation_amp)./2.^(k-2);
-Y(2,10) = x(10) -  (K*perturbation_amp)./2.^(k-2);
+Y(1,10) = x(10) +  (x(10)*perturbation_amp)./2.^(k-2);
+Y(2,10) = x(10) -  (x(10)*perturbation_amp)./2.^(k-2);
 Y(3,10) = x(10);
 
-Y(1,11) = x(11) +  (alpha*perturbation_amp)./2.^(k-2);
-Y(2,11) = x(11) -  (alpha*perturbation_amp)./2.^(k-2);
+Y(1,11) = x(11) +  (x(11)*perturbation_amp)./2.^(k-2);
+Y(2,11) = x(11) -  (x(11)*perturbation_amp)./2.^(k-2);
 Y(3,11) = x(11);
 
 end
@@ -332,7 +332,7 @@ var11 = x(11);
 end
 
 function error = error_calculation(vec_1,vec_2,reference)
-for i = 1:length(find(reference<2.5))
+for i = 1:length(find(reference<2.5&reference>0.4))
     error(i) = abs(vec_1(i)-vec_2(i));
 end
 end
