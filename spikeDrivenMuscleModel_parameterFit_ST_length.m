@@ -71,7 +71,7 @@ for trialN = first_MU:last_MU
             end
         end
        
-        [Data_temp{j}] = spikeDrivenMuscleModel_testFunction(param,Lce,FR_half,'slow',1);
+        [Data_temp{j}] = spikeDrivenMuscleModel_testFunction(param,Lce,FR_half,'slow',0);
         
     end
     for trial = 1:40
