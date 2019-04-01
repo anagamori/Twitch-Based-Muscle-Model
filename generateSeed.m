@@ -1,35 +1,57 @@
-
-function [Data] = spikeDrivenMuscleModel_testFunction(param,Lce,FR_half_temp,fiber_type)
 %==========================================================================
-% model_test.m
+% spikeDrivenMuscleModel_test.m
 % Author: Akira Nagamori
-% Last update: 2/25/119
+% Last update: 3/27/19
 % Descriptions
-%   Run twitch and sweep simulations with a given set of parameters and
-%   generate associated data with figures
+%   A new model driven by spike trains inspired by Williams et al. 1998
+%   Generatetwitch response and test activation-frequency response with a
+%   given parameter set
 %==========================================================================
+
+close all
+clear all
+clc
+
+%%
+code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+
+%% 
+seed_name = 'Seed_ST_5';
 %% Simulation parameters
-Fs = 1000; %sampling frequency
+% Simulation parameters
+Fs = 5000; %sampling frequency
+h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
-[S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param);
+
+Lce = 1; % muscle length
+%% Model parameters
+C = 2;
+S = 9*C;
+k_1 = 50;
+k_2 = 48;
+k_3 = 30;
+k_4 = 28;
+tau_1 = 0.02;
+tau_2 = 0.02;
+N = 1.9;
+K = 0.07;
+alpha = 5;
 
 %%
 for i = 1:2
     if i == 1
-        % Generate a pulse
+        % Generate a pulse to record twitch response
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
-        if strcmp(fiber_type,'fast')
-            FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
-        else
-            FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100];
-        end
+        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100]; %10:10:100];
     end
-    %==========================================================================
-    % initialization
+    %% initialization
     mean_exc = zeros(1,length(FR_test));
     p2p_exc = zeros(1,length(FR_test));
+    
+    %% Test each stimulus frequency
     for f = 1:length(FR_test)
         %% Generate spike train
         FR = FR_test(f);
@@ -48,16 +70,18 @@ for i = 1:2
         cf = 0; % concentraction of calcium bound to troponin
         A = 0; % muscle activation
         
+        R_vec = zeros(1,length(time));
         c_vec = zeros(1,length(time));
+        x_int_vec = zeros(1,length(time));
         cf_vec = zeros(1,length(time));
         A_tilda_vec = zeros(1,length(time));
         A_vec = zeros(1,length(time));
         
+        spike_temp = zeros(1,length(time));
         R_temp = exp(-time/tau_1);
         R = zeros(1,length(time));
         for t = 1:length(time)
             %% Stage 1
-            spike_temp = zeros(1,length(time));
             % Calcium diffusion to sarcoplasm
             if spike(t) == 1
                 spike_temp(t) = 1;
@@ -107,8 +131,10 @@ for i = 1:2
             %------------------------------------------------------------------
             % Find the peak amplitude of twitch and its location
             [pks,locs_0_100] = max(A_vec);
+            % Display peak amplitude value
+            pks
             % Time it takes from zero force to the peak
-            t_0_100 = (locs_0_100-1*Fs)*1000/Fs; % convert it in the unit of ms
+            t_0_100 = (locs_0_100-1*Fs)*1000/Fs % convert it in the unit of ms
             
             % Find a half peak amplitude
             peak_half = pks/2;
@@ -118,7 +144,7 @@ for i = 1:2
             % Find the location of t_100_50
             locs_100_50 = locs_0_100+t_100_50;
             % Time it takes from peak to half maximum
-            t_100_50 = t_100_50*1000/Fs;
+            t_100_50 = t_100_50*1000/Fs
             
             % Find value of 40% of peak amplitude
             peak_40 = pks*0.4;
@@ -131,12 +157,12 @@ for i = 1:2
             [~,t_10] = min(abs(A_vec(locs_0_100:end)-peak_10));
             
             % Time it takes from 40% peak to 10% peak
-            t_40_10 = (t_10-t_40)*1000/Fs;
+            t_40_10 = (t_10-t_40)*1000/Fs
             
             % Locatino of t_40_10
             locs_40_10 = locs_0_100+t_10;
             
-            T = t_0_100/Fs;
+            T = t_0_100/1000;
             P =  pks/T;
             twitch_Milner_temp = P.*time.*exp(1-time/T);
             twitch_Milner = conv(spike,twitch_Milner_temp);
@@ -145,7 +171,6 @@ for i = 1:2
         figure(i)
         plot(time,A_vec,'LineWidth',1)
         hold on
-        movegui('northwest')
         if i == 1
             plot(time,twitch_Milner(1:length(time)))
             hold on
@@ -166,114 +191,70 @@ for i = 1:2
     ylabel('Activation','FontSize',14)
     
     if i == 2
-        %% Sweep simulation
-        twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f);
+        
+        twitch2tetanus_ratio = p2p_exc(1)/mean_exc(f)
         fusion = 1-p2p_exc/p2p_exc(1);
         
         FR_new = 0.1:0.1:FR_test(end);
         Af_new = spline(FR_test,mean_exc,FR_new);
-        
-        if FR_half_temp == 0
-            [~,loc] = min(abs(Af_new-0.5));
-            FR_half = FR_new(loc);
-        else
-            FR_half = FR_half_temp;
-        end
+        [~,loc] = min(abs(Af_new-0.5));
+        FR_half = FR_new(loc);
         f_eff = FR_new/FR_half;
         
-        if strcmp(fiber_type,'slow')
-            a_f = 0.56;
-            n_f0 = 2.1;
-            n_f1 = 5;
-        elseif strcmp(fiber_type,'fast')
-            a_f = 0.56;
-            n_f0 = 2.1;
-            n_f1 = 3.3;
-        end
+        a_f = 0.56;
+        n_f0 = 2.1;
+        n_f1 = 5;
         n_f = n_f0 +n_f1* (1/Lce-1);
         Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
         
+        FR_half
+        
         %% Calculate error between the desired and generated activation-frequency relationship
-        for j = 1:length(find(f_eff<2.5&f_eff>0.4))
+        for j = 1:length(find(f_eff<3.5))
             error_temp(j) = abs(Af_Song(j)-Af_new(j));
         end
-        error = sum(error_temp);
+        error = sum(error_temp)
         
         figure(6)
-        plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
-        xlabel('Frequency (f_{0.5})','FontSize',14)
+        plot(FR_test/FR_half,mean_exc,'LineWidth',1)
+        xlabel('Frequency (Hz)','FontSize',14)
         ylabel('Activation','FontSize',14)
-        set(gca,'TickDir','out');
-        set(gca,'box','off')
         hold on
-        %plot(f_eff,Af_new,'color','r')
-        plot(f_eff,Af_Song,'color','k','LineWidth',1)
+        plot(f_eff,Af_new)
+        plot(f_eff,Af_Song,'color','k')
         xlim([0 3])
-        legend('New','Song')
-        movegui('northeast')
+        legend('New','New Fit','Song')
         
         figure(7)
-        plot(FR_test/FR_half,fusion,'LineWidth',2,'color','b')
-        xlabel('Frequency (f_{0.5})','FontSize',14)
+        plot(FR_test/FR_half,fusion,'LineWidth',1)
+        xlabel('Frequency (Hz)','FontSize',14)
         ylabel('Fusion','FontSize',14)
-        set(gca,'TickDir','out');
-        set(gca,'box','off')
         hold on
         xlim([0 3])
-        movegui('southwest')
         
         figure(8)
-        plot(mean_exc./max(mean_exc),fusion,'LineWidth',2,'color','b')
+        plot(mean_exc./max(mean_exc),fusion,'LineWidth',1)
         xlabel('Activation','FontSize',14)
         ylabel('Fusion','FontSize',14)
-        set(gca,'TickDir','out');
-        set(gca,'box','off')
         hold on
         plot(0:0.1:1,0:0.1:1,'--','color','k')
-        movegui('southeast')
     end
     
 end
 
-Data = cell(2,12);
-Data(1,:) = {'t_0_100','t_100_50','t_40_10','P_t','t2t','FR_half','Error_CT','Error_Af','Test frequencies','Af','Fusion','Parameters'};
-Data{2,1} = t_0_100;
-Data{2,2} = t_100_50;
-Data{2,3} = t_40_10;
-Data{2,4} = pks;
-Data{2,5} = twitch2tetanus_ratio;
-Data{2,6} = FR_half;
-Data{2,7} = 0;
-Data{2,8} = error;
-Data{2,9} = FR_test/FR_half;
-Data{2,10} = mean_exc;
-Data{2,11} = fusion;
-Data{2,12} = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
+param = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
+cd(data_folder)
+save(seed_name,'param')
+cd(code_folder)
 
-    function spikeTrain = spikeTrainGenerator(t,Fs,freq)
-        
-        spikeTrain = zeros(1,length(t));
-        ISI = round(1/freq*Fs);
-        numSpikes = round(length(t)/ISI);
-        index = [1:numSpikes]*ISI;
-        index(index>length(t)) = [];
-        spikeTrain(index) = 1;
-        spikeTrain(1) = 1;
-        
-    end
+function spikeTrain = spikeTrainGenerator(t,Fs,freq)
 
-    function [var1,var2,var3,var4,var5,var6,var7,var8,var9,var10,var11] = parameter_Assigning(x)
-        var1 = x(1);
-        var2 = x(2);
-        var3 = x(3);
-        var4 = x(4);
-        var5 = x(5);
-        var6 = x(6);
-        var7 = x(7);
-        var8 = x(8);
-        var9 = x(9);
-        var10 = x(10);
-        var11 = x(11);
-    end
+spikeTrain = zeros(1,length(t));
+ISI = round(1/freq*Fs);
+numSpikes = round(length(t)/ISI);
+index = [1:numSpikes]*ISI;
+index(index>length(t)) = [];
+spikeTrain(index) = 1;
+spikeTrain(1) = 1;
 
 end

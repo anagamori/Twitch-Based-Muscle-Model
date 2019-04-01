@@ -17,27 +17,31 @@ code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
 
 %% 
-seed_name = 'Seed_ST_5';
+test_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
+MU_No = 1;
 %% Simulation parameters
 % Simulation parameters
-Fs = 5000; %sampling frequency
+Fs = 1000; %sampling frequency
 h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 Lce = 1; % muscle length
 %% Model parameters
-C = 2;
-S = 9*C;
-k_1 = 50;
-k_2 = 48;
-k_3 = 30;
-k_4 = 28;
-tau_1 = 0.02;
-tau_2 = 0.02;
-N = 1.9;
-K = 0.07;
-alpha = 5;
+cd(test_folder)
+load(['MU_' num2str(MU_No)])
+cd(code_folder)
 
+S = parameter(1); %7;
+C = parameter(2); %1.025;
+k_1 = parameter(3); %14.625;
+k_2 = parameter(4); %4.9375;
+k_3 = parameter(5)*Lce + parameter(6); %17.41*Lce - 2.85;
+k_4 = parameter(7)*Lce + parameter(8); %-7.67*Lce + 14.92;
+tau_1 = parameter(9); %0.0051;
+tau_2 = parameter(10); % 0.04;
+N = parameter(11)*Lce + parameter(12); %-2.26*Lce + 4.20;
+K = parameter(13)*Lce + parameter(14); %-0.044*Lce + 0.080;
+alpha = parameter(15); %4.475;
 %%
 for i = 1:2
     if i == 1
@@ -45,7 +49,7 @@ for i = 1:2
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
-        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100]; %10:10:100];
+        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
     end
     %% initialization
     mean_exc = zeros(1,length(FR_test));
@@ -83,6 +87,7 @@ for i = 1:2
         for t = 1:length(time)
             %% Stage 1
             % Calcium diffusion to sarcoplasm
+            spike_temp = zeros(1,length(time));
             if spike(t) == 1
                 spike_temp(t) = 1;
                 temp = conv(spike_temp,R_temp*(1+2*A^alpha));
@@ -241,11 +246,6 @@ for i = 1:2
     end
     
 end
-
-param = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
-cd(data_folder)
-save(seed_name,'param')
-cd(code_folder)
 
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
 
