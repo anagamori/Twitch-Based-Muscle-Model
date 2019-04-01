@@ -18,12 +18,12 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-first_MU = 38;
-last_MU = 100;
+first_MU = 62;
+last_MU = 195;
 
 param_target = [5 6 9 10];
 %numCores = feature('numcores');
-parpool(3)
+%parpool(10)
 for trialN = first_MU:last_MU
     trialN
     cd(data_folder)
@@ -36,8 +36,8 @@ for trialN = first_MU:last_MU
     Data_temp = cell(1,40);
     
     M = randomizer(param_target,6,40);
-    
-    for j = 1:40
+    tic
+    parfor j = 1:40
         Lce = Lce_long(j);
         index_temp = M(j,:);
         
@@ -53,6 +53,7 @@ for trialN = first_MU:last_MU
 
         FR_half = FR_half_initial;
         param = param_initial;
+        
         for k = 1:6
             rng shuffle
             Param_matrix = annealing_curve(param,k);
@@ -69,10 +70,10 @@ for trialN = first_MU:last_MU
                     [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,index,i);
                     param_temp(i,:) =  [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
                 end
-                parfor l = 1:3
+                for l = 1:3
 
                     %% Run a twitch simulation and sweep simulation
-                    [Data_temp_2] = spikeDrivenMuscleModel_testFunction(param_temp(l,:),Lce,FR_half,'slow');
+                    [Data_temp_2] = spikeDrivenMuscleModel_testFunction(param_temp(l,:),Lce,FR_half,'slow',0);
                     
                     error_long(l) = Data_temp_2{2,8};
                     
@@ -82,8 +83,8 @@ for trialN = first_MU:last_MU
                 param =  [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
             end
         end
-        
-        [Data_temp{j}] = spikeDrivenMuscleModel_testFunction(param,Lce,FR_half,'slow');
+       
+        [Data_temp{j}] = spikeDrivenMuscleModel_testFunction(param,Lce,FR_half,'slow',1);
         
     end
     for trial = 1:40
@@ -92,6 +93,7 @@ for trialN = first_MU:last_MU
         save(['Data_' num2str(trialN) '_' num2str(trial)],'Data')
         cd(code_folder)
     end
+    toc
     close all
 end
 %%
