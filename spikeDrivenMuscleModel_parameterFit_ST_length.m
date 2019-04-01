@@ -41,27 +41,14 @@ for trialN = first_MU:last_MU
         Lce = Lce_long(j);
         index_temp = M(j,:);
         
-%         if j == 1
-%             Lce = 0.8;
-%         elseif j == 2
-%             Lce = 0.9;
-%         elseif j == 3
-%             Lce = 1.1;
-%         elseif j == 4
-%             Lce = 1.2;
-%         end
-
         FR_half = FR_half_initial;
         param = param_initial;
         
         for k = 1:6
-            rng shuffle
+            
             Param_matrix = annealing_curve(param,k);
-            
-            r = randperm(4);
-            
             %% Loop through all parameters
-            for n = 1:length(r)
+            for n = 1:4
                 index = index_temp(n+(k-1)*4);
                 %% Loop through all perturbations
                 error_long = zeros(1,3);
@@ -164,6 +151,7 @@ var11 = x(11);
 end
 
 function M = randomizer(x,n,m)
+rng shuffle
 M = zeros(m,n*length(x));
 for j = 1:m
     temp = [];
