@@ -58,6 +58,7 @@ for i = 1:2
         R = zeros(1,length(time));
         for t = 1:length(time)
             %% Stage 1
+            spike_temp = zeros(1,length(time));
             % Calcium diffusion to sarcoplasm
             if spike(t) == 1
                 spike_temp(t) = 1;
@@ -147,6 +148,7 @@ for i = 1:2
         figure(i)
         plot(time,A_vec,'LineWidth',1)
         hold on
+        movegui('northwest')
         if i == 1
             plot(time,twitch_Milner(1:length(time)))
             hold on
@@ -201,28 +203,37 @@ for i = 1:2
         error = sum(error_temp)
         
         figure(6)
-        plot(FR_test/FR_half,mean_exc,'LineWidth',1)
-        xlabel('Frequency (Hz)','FontSize',14)
+        plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
+        xlabel('Frequency (f_{0.5})','FontSize',14)
         ylabel('Activation','FontSize',14)
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
         hold on
-        plot(f_eff,Af_new)
-        plot(f_eff,Af_Song,'color','k')
+        %plot(f_eff,Af_new,'color','r')
+        plot(f_eff,Af_Song,'color','k','LineWidth',1)
         xlim([0 3])
-        legend('New','New Fit','Song')
+        legend('New','Song')
+        movegui('northeast')
         
         figure(7)
-        plot(FR_test/FR_half,fusion,'LineWidth',1)
-        xlabel('Frequency (Hz)','FontSize',14)
+        plot(FR_test/FR_half,fusion,'LineWidth',2,'color','b')
+        xlabel('Frequency (f_{0.5})','FontSize',14)
         ylabel('Fusion','FontSize',14)
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
         hold on
         xlim([0 3])
+        movegui('southwest')
         
         figure(8)
-        plot(mean_exc./max(mean_exc),fusion,'LineWidth',1)
+        plot(mean_exc./max(mean_exc),fusion,'LineWidth',2,'color','b')
         xlabel('Activation','FontSize',14)
         ylabel('Fusion','FontSize',14)
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
         hold on
         plot(0:0.1:1,0:0.1:1,'--','color','k')
+        movegui('southeast')
     end
     
 end

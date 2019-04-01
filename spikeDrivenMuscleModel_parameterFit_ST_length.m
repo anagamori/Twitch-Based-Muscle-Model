@@ -18,9 +18,9 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-first_MU =101;
+first_MU = 30;
 last_MU = 196;
-parpool(10)
+%parpool(10)
 for trialN = first_MU:last_MU
     trialN
     cd(data_folder)
@@ -31,7 +31,7 @@ for trialN = first_MU:last_MU
     param_initial = Data{2,12};
     
     Data_temp = cell(1,40);
-    parfor j = 1:40
+    for j = 1:40
         
         if j <= 10
             Lce = 0.8;
@@ -42,7 +42,16 @@ for trialN = first_MU:last_MU
         elseif j > 30
             Lce = 1.2;
         end
-        condition = 10+j;
+%         if j == 1
+%             Lce = 0.8;
+%         elseif j == 2
+%             Lce = 0.9;
+%         elseif j == 3
+%             Lce = 1.1;
+%         elseif j == 4
+%             Lce = 1.2;
+%         end
+        condition = j+10;
         FR_half = FR_half_initial;
         param = param_initial;
         for k = 1:6
@@ -106,11 +115,12 @@ for trialN = first_MU:last_MU
                             A_tilda_vec = zeros(1,length(time));
                             A_vec = zeros(1,length(time));
                             
-                            spike_temp = zeros(1,length(time));
+                            
                             R_temp = exp(-time/tau_1);
                             R = zeros(1,length(time));
                             for t = 1:length(time)
                                 %% Stage 1
+                                spike_temp = zeros(1,length(time));
                                 % Calcium diffusion to sarcoplasm
                                 if spike(t) == 1
                                     spike_temp(t) = 1;
@@ -237,9 +247,10 @@ for trialN = first_MU:last_MU
     for trial = 1:40
         Data  = Data_temp{trial};
         cd(data_folder)
-        save(['Data_' num2str(trialN) '_' num2str(trial+10)],'Data')
+        save(['Data_' num2str(trialN) '_' num2str(trial)],'Data')
         cd(code_folder)
     end
+    close all
 end
 %%
 function spikeTrain = spikeTrainGenerator(t,Fs,freq)
@@ -256,18 +267,7 @@ end
 
 function Y = annealing_curve(x,k)
 
-perturbation_amp = 0.4/2;
-S = 7;
-C = 1;
-k_1 = 20;
-k_2 = 5;
-k_3 = 15;
-k_4 = 7;
-tau_1 = 0.005;
-tau_2 = 0.04;
-N = 1.8;
-K = 0.04;
-alpha = 4;
+perturbation_amp = 0.3/2;
 
 Y(1,1) = x(1) +  (x(1)*perturbation_amp)./2.^(k-2);
 Y(2,1) = x(1) -  (x(1)*perturbation_amp)./2.^(k-2);

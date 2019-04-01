@@ -11,7 +11,7 @@ function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,
 %   relationship (e.g., parameter(5), parameter(6), etc)
 %==========================================================================
 %% Simulation parameters
-Fs = 10000; %sampling frequency
+Fs = 1000; %sampling frequency
 time = 0:1/Fs:5; %simulation time
 
 S = parameter(1); %7;
@@ -67,12 +67,13 @@ for i = 1:2
         A_tilda_vec = zeros(1,length(time));
         A_vec = zeros(1,length(time));
         
-        spike_temp = zeros(1,length(time));
+        
         R_temp = exp(-time/tau_1);
         R = zeros(1,length(time));
         for t = 1:length(time)
             %% Stage 1
             % Calcium diffusion to sarcoplasm
+            spike_temp = zeros(1,length(time));
             if spike(t) == 1
                 spike_temp(t) = 1;
                 temp = conv(spike_temp,R_temp*(1+2*A^alpha));

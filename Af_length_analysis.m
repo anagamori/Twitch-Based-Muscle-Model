@@ -13,7 +13,7 @@ code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
 
 %% 
-for trialN = 101:196 %180:189
+for trialN = 2:15 %180:189
 param_Matrix_1 = zeros(10,11);
 param_Matrix_2 = zeros(10,11);
 param_Matrix_3 = zeros(10,11);
@@ -32,22 +32,22 @@ K = param_Matrix(:,10);
 for i = 1:10
     
     cd(data_folder)
-    load(['Data_' num2str(trialN) '_' num2str(i+10)])
+    load(['Data_' num2str(trialN) '_' num2str(i)])
     cd(code_folder)    
     param_Matrix_1(i,:) = Data{2,12};
     error_1(i) = Data{2,8};
     cd(data_folder)
-    load(['Data_' num2str(trialN) '_' num2str(i+20)])
+    load(['Data_' num2str(trialN) '_' num2str(i+10)])
     cd(code_folder)
     param_Matrix_2(i,:) = Data{2,12};
     error_2(i) = Data{2,8};
     cd(data_folder)
-    load(['Data_' num2str(trialN) '_' num2str(i+30)])
+    load(['Data_' num2str(trialN) '_' num2str(i+20)])
     cd(code_folder)
     param_Matrix_3(i,:) = Data{2,12};
     error_3(i) = Data{2,8};
     cd(data_folder)
-    load(['Data_' num2str(trialN) '_' num2str(i+40)])
+    load(['Data_' num2str(trialN) '_' num2str(i+30)])
     cd(code_folder)
     param_Matrix_4(i,:) = Data{2,12};
     error_4(i) = Data{2,8};
