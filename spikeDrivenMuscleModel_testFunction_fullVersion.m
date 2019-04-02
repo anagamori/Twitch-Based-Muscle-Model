@@ -1,5 +1,5 @@
 
-function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,FR_half_temp,fiber_type)
+function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,FR_half_temp,fiber_type,plotOpt)
 %==========================================================================
 % model_test.m
 % Author: Akira Nagamori
@@ -11,7 +11,7 @@ function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,
 %   relationship (e.g., parameter(5), parameter(6), etc)
 %==========================================================================
 %% Simulation parameters
-Fs = 1000; %sampling frequency
+Fs = 2000; %sampling frequency
 time = 0:1/Fs:5; %simulation time
 
 S = parameter(1); %7;
@@ -160,27 +160,28 @@ for i = 1:2
         end
         
     end
-    figure(i)
-    plot(time,A_vec,'LineWidth',1)
-    hold on
-    xlabel('Time (s)','FontSize',14)
-    ylabel('Activation','FontSize',14)
-    set(gca,'TickDir','out');
-    set(gca,'box','off')
-    movegui('northwest')
-    if i == 1
-        plot(time,twitch_Milner(1:length(time)))
+    if plotOpt == 1
+        figure(i)
+        plot(time,A_vec,'LineWidth',1)
         hold on
-        plot([time(locs_0_100) time(locs_0_100)],[0 1],'--')
-        text(time(locs_0_100),pks,num2str(t_0_100))
-        hold on
-        plot([time(locs_100_50) time(locs_100_50)],[0 1],'--')
-        plot([time(locs_40_10) time(locs_40_10)],[0 1],'--')
-        text(time(locs_100_50),peak_half,num2str(t_100_50))
-        text(time(locs_40_10),peak_10,num2str(t_40_10))
-        text(time(locs_0_100)-time(locs_0_100)*0.4,pks,num2str(pks))
+        xlabel('Time (s)','FontSize',14)
+        ylabel('Activation','FontSize',14)
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
+        movegui('northwest')
+        if i == 1
+            plot(time,twitch_Milner(1:length(time)))
+            hold on
+            plot([time(locs_0_100) time(locs_0_100)],[0 1],'--')
+            text(time(locs_0_100),pks,num2str(t_0_100))
+            hold on
+            plot([time(locs_100_50) time(locs_100_50)],[0 1],'--')
+            plot([time(locs_40_10) time(locs_40_10)],[0 1],'--')
+            text(time(locs_100_50),peak_half,num2str(t_100_50))
+            text(time(locs_40_10),peak_10,num2str(t_40_10))
+            text(time(locs_0_100)-time(locs_0_100)*0.4,pks,num2str(pks))
+        end
     end
-    
     
     
     
@@ -217,39 +218,40 @@ for i = 1:2
             error_temp(j) = abs(Af_Song(j)-Af_new(j));
         end
         error = sum(error_temp)
-        
-        figure(6)
-        plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
-        xlabel('Frequency (f_{0.5})','FontSize',14)
-        ylabel('Activation','FontSize',14)
-        set(gca,'TickDir','out');
-        set(gca,'box','off')
-        hold on
-        %plot(f_eff,Af_new,'color','r')
-        plot(f_eff,Af_Song,'color','k','LineWidth',1)
-        xlim([0 3])
-        legend('New','Song')
-        movegui('northeast')
-        
-        figure(7)
-        plot(FR_test/FR_half,fusion,'LineWidth',2,'color','b')
-        xlabel('Frequency (f_{0.5})','FontSize',14)
-        ylabel('Fusion','FontSize',14)
-        set(gca,'TickDir','out');
-        set(gca,'box','off')
-        hold on
-        xlim([0 3])
-        movegui('southwest')
-        
-        figure(8)
-        plot(mean_exc./max(mean_exc),fusion,'LineWidth',2,'color','b')
-        xlabel('Activation','FontSize',14)
-        ylabel('Fusion','FontSize',14)
-        set(gca,'TickDir','out');
-        set(gca,'box','off')
-        hold on
-        plot(0:0.1:1,0:0.1:1,'--','color','k')
-        movegui('southeast')
+        if plotOpt == 1
+            figure(6)
+            plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
+            xlabel('Frequency (f_{0.5})','FontSize',14)
+            ylabel('Activation','FontSize',14)
+            set(gca,'TickDir','out');
+            set(gca,'box','off')
+            hold on
+            %plot(f_eff,Af_new,'color','r')
+            plot(f_eff,Af_Song,'color','k','LineWidth',1)
+            xlim([0 3])
+            legend('New','Song')
+            movegui('northeast')
+            
+            figure(7)
+            plot(FR_test/FR_half,fusion,'LineWidth',2,'color','b')
+            xlabel('Frequency (f_{0.5})','FontSize',14)
+            ylabel('Fusion','FontSize',14)
+            set(gca,'TickDir','out');
+            set(gca,'box','off')
+            hold on
+            xlim([0 3])
+            movegui('southwest')
+            
+            figure(8)
+            plot(mean_exc./max(mean_exc),fusion,'LineWidth',2,'color','b')
+            xlabel('Activation','FontSize',14)
+            ylabel('Fusion','FontSize',14)
+            set(gca,'TickDir','out');
+            set(gca,'box','off')
+            hold on
+            plot(0:0.1:1,0:0.1:1,'--','color','k')
+            movegui('southeast')
+        end
     end
     
 end

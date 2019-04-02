@@ -28,25 +28,28 @@ cd (code_folder)
 
 %% Load seed parameters
 cd(data_folder)
-load('Seed_ST_5')
+load('Seed_FT_2')
 cd(code_folder)
 param_seed = param;
 clear param
 %%
-first_MU = 78; %150;
-last_MU = 79; %179;
+first_MU = 260; %150;
+last_MU = 260; %179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
-weight_temp = ((15-0)*rand(1,last_MU)+0)*0;
+rng shuffle
+b = 30;
+a = 20;
+weight_temp = ((b-a)*rand(1,last_MU)+a);
 %parpool(10)
 
 %%
 param_target = 1:1:11;
 M = randomizer(param_target,6,last_MU);
 %% Test each unit
-parpool(10)
-parfor j = first_MU:last_MU
+%parpool(10)
+for j = first_MU:last_MU
     j
     param = param_seed;
     %% Contraction time of the unit to be optimized to
@@ -70,34 +73,35 @@ parfor j = first_MU:last_MU
             end
             for l = 1:3          
                 %% Run a twitch simulation and sweep simulation
-                [Data_temp_2] = spikeDrivenMuscleModel_testFunction(param_temp(l,:),Lce,FR_half,'fast',0);
+                [Data_temp_2] = spikeDrivenMuscleModel_testFunction(param_temp(l,:),Lce,0,'fast',0);
+                weight = weight_temp(j);
+                error_long(l) = Data_temp_2{2,8} + abs(target_CT-Data_temp_2{2,1}) + weight*Data_temp_2{2,5};
                 
-                error_long(l) = Data_temp_2{2,8};
-                [min_error,loc_min_error] = min(error_long);
             end
-            [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,r(n),loc_min_error);
+            [min_error,loc_min_error] = min(error_long);
+            [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param,Param_matrix,index,loc_min_error);
             param =  [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha];
         end
     end
     toc
-    [Data_temp] = spikeDrivenMuscleModel_testFunction(param,Lce,0,'fast',0);
+    [Data_temp] = spikeDrivenMuscleModel_testFunction(param,Lce,0,'fast',1);
     Data_cell{j} = Data_temp;
     
 end
 
 for MU_No = first_MU:last_MU
     Data = Data_cell{MU_No};
-    cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST')
+    cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT')
     save(['Data_' num2str(MU_No)],'Data')
     cd(code_folder)
-    
+    Data{2,5}
 end
 
 %%
 
 function Y = annealing_curve(x,k)
 
-perturbation_amp = 0.2/2;
+perturbation_amp = 0.3/2;
 
 Y(1,1) = x(1) +  (x(1)*perturbation_amp)./2.^(k-2);
 Y(2,1) = x(1) -  (x(1)*perturbation_amp)./2.^(k-2);

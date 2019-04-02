@@ -9,7 +9,7 @@ function [Data] = spikeDrivenMuscleModel_testFunction(param,Lce,FR_half_temp,fib
 %   generate associated data with figures
 %==========================================================================
 %% Simulation parameters
-Fs = 1000; %sampling frequency
+Fs = 2000; %sampling frequency
 time = 0:1/Fs:5; %simulation time
 [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,alpha] = parameter_Assigning(param);
 

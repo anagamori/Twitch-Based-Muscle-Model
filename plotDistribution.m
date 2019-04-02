@@ -3,21 +3,29 @@ clc
 clear all
 
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/';
 
-for trialN = 1
+N_MU = 300; % number of motor units in a pool
+load('index_slow') % index for the largest slow-twitch MU
+
+for trialN = 1:300
     %1:300
-MU_type = 'slow';
-
-cd(data_folder)
-load(['MU_' num2str(trialN)])
-cd(code_folder)
-
-[Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,1,0,MU_type);
-CT(trialN) = Data{2,1};
-FR_half(trialN) = Data{2,6};
-t2t(trialN) = Data{2,5};
-
+    if trialN <= index_slow
+        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
+        MU_type = 'slow';
+    else
+        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT';
+        MU_type = 'fast';
+    end
+    cd(data_folder)
+    load(['MU_' num2str(trialN)])
+    cd(code_folder)
+    
+    [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,1,0,MU_type,0);
+    CT(trialN) = Data{2,1};
+    FR_half(trialN) = Data{2,6};
+    t2t(trialN) = Data{2,5};
+    
 end
 
 %%
@@ -28,3 +36,8 @@ figure(12)
 plot(CT,t2t,'o')
 mean(t2t)
 
+% cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/')
+% save('CT_vec','CT_vec')
+% save('t2t','t2t')
+% save('twitch_force','twitch_force')
+% cd(code_folder)

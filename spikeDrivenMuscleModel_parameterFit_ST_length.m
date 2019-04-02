@@ -18,12 +18,12 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-first_MU = 62;
-last_MU = 195;
+first_MU = 61;
+last_MU = 61;
 
 param_target = [5 6 9 10];
 %numCores = feature('numcores');
-%parpool(10)
+parpool(10)
 for trialN = first_MU:last_MU
     trialN
     cd(data_folder)

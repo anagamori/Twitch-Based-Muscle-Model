@@ -13,30 +13,30 @@ clear all
 clc
 
 %%
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
 
 %% 
-seed_name = 'Seed_ST_5';
+seed_name = 'Seed_FT_3';
 %% Simulation parameters
 % Simulation parameters
-Fs = 5000; %sampling frequency
+Fs = 2000; %sampling frequency
 h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 Lce = 1; % muscle length
 %% Model parameters
-C = 2;
-S = 9*C;
-k_1 = 50;
-k_2 = 48;
-k_3 = 30;
-k_4 = 28;
+C = 3;
+S = 11*C;
+k_1 = 72;
+k_2 = 72;
+k_3 = 50;
+k_4 = 49;
 tau_1 = 0.02;
-tau_2 = 0.02;
-N = 1.9;
-K = 0.07;
-alpha = 5;
+tau_2 = 0.003;
+N = 2.2;
+K = 0.11;
+alpha = 6;
 
 %%
 for i = 1:2
@@ -45,7 +45,7 @@ for i = 1:2
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
-        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100]; %10:10:100];
+        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
     end
     %% initialization
     mean_exc = zeros(1,length(FR_test));
@@ -77,11 +77,12 @@ for i = 1:2
         A_tilda_vec = zeros(1,length(time));
         A_vec = zeros(1,length(time));
         
-        spike_temp = zeros(1,length(time));
+        
         R_temp = exp(-time/tau_1);
         R = zeros(1,length(time));
         for t = 1:length(time)
             %% Stage 1
+            spike_temp = zeros(1,length(time));
             % Calcium diffusion to sarcoplasm
             if spike(t) == 1
                 spike_temp(t) = 1;
