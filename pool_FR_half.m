@@ -39,10 +39,11 @@ for i = 1:N_MU
 end
 
 %% 
-% cd(data_folder_default)
-% save('CT_vec','CT_vec')
-% save('t2t','t2t')
-% save('twitch_force','twitch_force')
-% cd(code_folder)
+cd(data_folder_default)
+save('CT_vec','CT_vec')
+save('FR_half','FR_half')
+save('t2t','t2t')
+save('twitch_force','twitch_force')
+cd(code_folder)
 MFR_MU = FR_half./2;
 PFR_MU = FR_half.*2;
