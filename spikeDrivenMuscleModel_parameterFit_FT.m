@@ -33,8 +33,8 @@ cd(code_folder)
 param_seed = param;
 clear param
 %%
-first_MU = 260; %150;
-last_MU = 260; %179;
+first_MU = 273; %150;
+last_MU = 273; %179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
