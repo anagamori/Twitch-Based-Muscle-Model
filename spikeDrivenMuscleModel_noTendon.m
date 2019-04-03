@@ -60,8 +60,8 @@ spike_time_mat = zeros(N_MU,length(time));
 spike_train = zeros(N_MU,length(time));
 force = zeros(N_MU,length(time));
 Force = zeros(1,length(time));
-R = zeros(N_MU,length(time));
 
+R = zeros(N_MU,length(time));
 c = zeros(N_MU,1);
 cf = zeros(N_MU,1);
 A = zeros(N_MU,1);
