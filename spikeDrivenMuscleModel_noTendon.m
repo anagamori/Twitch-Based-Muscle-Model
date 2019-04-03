@@ -5,7 +5,7 @@
 % Descriptions:
 %   Full model without tendon
 %==========================================================================
-function [output] = spikeDrivenMuscleModel_noTendon(Fs,time,input,modelParameter)
+function [output] = spikeDrivenMuscleModel_noTendon(Fs,time,input,modelParameter,figOpt)
 %% Simulation parameters
 synaptic_drive = input;
 
@@ -199,11 +199,13 @@ for t = 1:length(time)
 end
 
 %%
-figure(1)
-plot(time,Force)
-xlabel('Time (s)')
-ylabel('Force (N)')
-hold on
+if figOpt == 1
+    figure(1)
+    plot(time,Force)
+    xlabel('Time (s)')
+    ylabel('Force (N)')
+    hold on
+end
 
 output.Force = Force;
 output.force = force;

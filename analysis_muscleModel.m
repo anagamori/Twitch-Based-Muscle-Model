@@ -10,13 +10,13 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/No_100_adjustedForce';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_50_Ur_Rec_2';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 %% 
 amp_vec = 0.1:0.1:1;
-Fs = 1000;
+Fs = 2000;
 
 Force_mat = zeros(10,15*Fs+1);
 mean_Force = zeros(10,length(amp_vec));
@@ -51,7 +51,7 @@ end
 
 
 %%
-close all
+%close all
 mean_mean_Force = mean(mean_Force);
 figure(1)
 plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2)
