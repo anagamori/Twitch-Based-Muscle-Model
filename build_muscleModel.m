@@ -10,8 +10,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
@@ -47,7 +47,7 @@ PTi = P_MU./sum(P_MU)*modelParameter.F0; % peak tetanic force for individual uni
 
 %% Fractional PSCA
 F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
-[~, modelParameter.index_slow] = min(abs(cumsum(modelParameter.PTi) - modelParameter.F0*F_pcsa_slow)); 
+[~, modelParameter.index_slow] = min(abs(cumsum(PTi) - modelParameter.F0*F_pcsa_slow)); 
 
 %% Model parameters for activation-frequency relationship
 cd(model_parameter_folder )
@@ -71,7 +71,7 @@ modelParameter.PTi_new = PTi (index_MU_PTi);
 % Find recruitment threshold for individual units using exponential fit
 % Recruitment threshold is correlated to peak tetanic tension
 %   Use index_MU_PTi to appropriately index each MU
-Ur = 0.5; % recruitment threshold for the lastly recruited motor unit
+Ur = 0.8; % recruitment threshold for the lastly recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 modelParameter.N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
