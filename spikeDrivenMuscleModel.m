@@ -5,7 +5,7 @@
 % Descriptions:
 %   Full model without tendon
 %==========================================================================
-function [output] = spikeDrivenMuscleModel(Fs,time,input,modelParameter)
+function [output] = spikeDrivenMuscleModel(Fs,time,input,modelParameter,figOpt)
 %% Simulation parameters
 synaptic_drive = input;
 
@@ -117,12 +117,12 @@ for t = 1:length(time)
         DR_mat(:,t) = DR_MU;
         %% Sag & Yield (Song et al., 2008)
         f_eff = DR_MU./FR_half;
-        S_MU = sag_function(S_MU,f_eff,a_s,Fs);
-        S_MU(1:index_slow) = 1;
-        S_mat(:,t) = S_MU;
-        Y = yield_function(Y,V_ce,Fs);
-        Y(index_slow+1:end) = 1;
-        Y_mat(:,t) = Y;
+        S_i = sag_function(S_i,f_eff,a_s,Fs);
+        S_i(1:index_slow) = 1;
+        S_mat(:,t) = S_i;
+        Y_i = yield_function(Y_i,V_ce,Fs);
+        Y_i(index_slow+1:end) = 1;
+        Y_mat(:,t) = Y_i;
         
         %% Convert activation into spike trains
         index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1)' == 0);
@@ -186,7 +186,7 @@ for t = 1:length(time)
         end
     end
         %% Convert spikes into activation
-        [c,cf,A_tilde,A] = spike2activation(R(:,t),c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs);
+        [c,cf,A_tilde,A] = spike2activation(R(:,t),c,cf,A,parameter_Matrix,L_ce,S_i,Y_i,Fs);
         
         c_mat(:,t) = c;
         cf_mat(:,t) = cf;
@@ -214,7 +214,7 @@ for t = 1:length(time)
             F_pe2 = 0;
         end
         
-        f_i = z.*PTi_new'.*(FL.*FV+F_pe2);
+        f_i = A.*PTi_new'.*(FL.*FV+F_pe2);
         %f_i = A.*PTi_new'.*(FL+F_pe2);
         force(:,t) = f_i;
         
@@ -245,11 +245,13 @@ for t = 1:length(time)
 end
 
 %%
-figure(1)
-plot(time,F_ce)
-xlabel('Time (s)')
-ylabel('Force (N)')
-hold on
+if figOpt == 1
+    figure(1)
+    plot(time,F_ce)
+    xlabel('Time (s)')
+    ylabel('Force (N)')
+    hold on
+end
 
 
 output.spike_train = spike_train;
