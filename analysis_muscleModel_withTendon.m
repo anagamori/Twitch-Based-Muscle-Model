@@ -24,7 +24,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 %% 
-for j = 1:5 %9:10 %6:9 %1:9 %:length(amp_vec)
+for j = 6:7 %9:10 %6:9 %1:9 %:length(amp_vec)
     if j <= 2
         Fs = 10000;
         time = 0:1/Fs:15;
@@ -40,7 +40,7 @@ for j = 1:5 %9:10 %6:9 %1:9 %:length(amp_vec)
     end
     j
     tic
-    for i = 1:10
+    for i = 6:10
         cd(data_folder)
         load(['Data_' num2str(j) '_' num2str(i)])
         cd(code_folder)
