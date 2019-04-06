@@ -10,15 +10,15 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_1_shortTendon';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
-modelParameter.tendonSlackLength = 24.1; % [cm]
+modelParameter.tendonSlackLength = 12; % [cm]
 modelParameter.mass = 0.01; % [g]
 modelParameter.muscleInitialLength = 6.8; % [cm]
-modelParameter.tendonInitialLength = 24.1; % [cm]
+modelParameter.tendonInitialLength = 12 ; % [cm]
 
 density = 1.06; %
 L0 = modelParameter.optimalLength; % optimal muscle length [cm]

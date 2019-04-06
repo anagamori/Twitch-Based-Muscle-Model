@@ -9,12 +9,12 @@ clear all
 clc
 
 %%
-condition = '30_CoV_50_Ur_Rec_2';
+condition = '10_CoV_50_Ur_Rec_2';
 data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
-Fs = 1000;
+Fs = 2000;
 amp_vec = 0.1:0.1:1;
 time =0:1/Fs:15;
 mean_Force = zeros(10,length(amp_vec));

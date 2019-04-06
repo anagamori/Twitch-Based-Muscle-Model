@@ -23,7 +23,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-for j = 1:10
+for j = 1:5
     cd(data_folder)
     load(['Force_mat_' num2str(j)])
     cd(code_folder)
