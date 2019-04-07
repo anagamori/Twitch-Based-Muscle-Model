@@ -11,7 +11,7 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_noFV';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_shortTendon';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_1_shortTendon';
 
@@ -30,19 +30,35 @@ modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulat
 
 amp_vec = 0.1:0.1:1;
 trial_vec = [7 10];
-for j = 9:10 %:length(amp_vec)
+for j = 9:10 %:10 %:length(amp_vec)
     j
-    if j <= 2
+%     if j <= 2
+%         Fs = 10000;
+%         time = 0:1/Fs:15;
+%     elseif j > 2 && j <= 4
+%         Fs = 15000;
+%         time = 0:1/Fs:15;
+%     elseif j >= 5 && j < 7
+%         Fs = 20000;
+%         time = 0:1/Fs:15;
+%     elseif j >= 7
+%         Fs = 25000;
+%         time = 0:1/Fs:5;
+%     end
+    if j <= 1
         Fs = 10000;
         time = 0:1/Fs:15;
-    elseif j > 2 && j <= 4
+    elseif j >= 2 && j <= 3
         Fs = 15000;
         time = 0:1/Fs:15;
-    elseif j >= 5 && j < 7
+    elseif j == 4
         Fs = 20000;
+        time = 0:1/Fs:5;
+    elseif j >= 5 && j < 7
+        Fs = 25000;
         time = 0:1/Fs:15;
     elseif j >= 7
-        Fs = 25000;
+        Fs = 30000;
         time = 0:1/Fs:15;
     end
     amp = amp_vec(j);
