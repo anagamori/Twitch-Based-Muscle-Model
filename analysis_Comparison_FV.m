@@ -32,6 +32,7 @@ for i = 1:3
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
+        color_code = [77 172 38]/255;
     elseif i == 2
         Fs = 10000;
         time =0:1/Fs:15;
@@ -42,6 +43,7 @@ for i = 1:3
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
+        color_code = [123 50 148]/255;
     elseif i == 3
         Fs = 10000;
         time =0:1/Fs:15;
@@ -52,10 +54,22 @@ for i = 1:3
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
+        color_code = [230 97 1]/255;
+%     elseif i == 4
+%         Fs = 10000;
+%         time =0:1/Fs:15;
+%         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition '_shortTendon'];
+%         cd(data_folder)
+%         load('mean_Force')
+%         load('std_Force')
+%         load('cov_Force')
+%         load('mean_pxx')
+%         cd(code_folder)
+%         color_code = [208 28 139]/255;
     end
     mean_mean_Force = mean(mean_Force);
     figure(1)
-    plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2)
+    plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2,'Color',color_code)
     %plot([0 amp_vec],[0 mean(mean_Force)],'LineWidth',2)
     xlabel('Activation (%)','FontSize',14)
     ylabel('Force (%MVC)','FontSize',14)
@@ -64,7 +78,7 @@ for i = 1:3
     hold on
     
     figure(2)
-    errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2);
+    errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec,mean(std_Force),std(std_Force),'LineWidth',2);
     xlabel('Mean Force (%)','FontSize',14)
     ylabel('SD (N)','FontSize',14)
@@ -74,7 +88,7 @@ for i = 1:3
     set(gca,'box','off')
 
     figure(3)
-    errorbar(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),std(cov_Force),'LineWidth',2);
+    errorbar(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec,mean(cov_Force),std(cov_Force),'LineWidth',2);
     xlabel('Mean Force (%)','FontSize',14)
     ylabel('CoV (%)','FontSize',14)
