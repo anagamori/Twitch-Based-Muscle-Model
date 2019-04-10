@@ -10,9 +10,9 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_80_Ur_Rec_2';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_50_Ur_Rec_2_random';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_1_random';
 
 %% 
 cd(model_parameter_folder)
@@ -29,6 +29,7 @@ modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulat
 Fs = 2000;
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
+parpool(10)
 for j = 1:length(amp_vec)
     j
     amp = amp_vec(j);
@@ -36,7 +37,7 @@ for j = 1:length(amp_vec)
     
     output_temp = cell(1,10);
     
-    for i = 1:10
+    parfor i = 1:10
         tic
         output_temp{i} = spikeDrivenMuscleModel_noTendon(Fs,time,input,modelParameter,0);
         toc
