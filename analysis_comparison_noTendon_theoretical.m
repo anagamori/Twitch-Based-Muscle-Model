@@ -79,3 +79,5 @@ for i = 1
     
 end
 
+x = log([0 mean(mean_Force)./mean_mean_Force(end)*100])';
+y = log([0 mean(std_Force/mean_mean_Force(end)*100)])';

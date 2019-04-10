@@ -12,7 +12,7 @@ clc
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
-Fs = 1000;
+Fs = 2000;
 amp_vec = 0.1:0.1:1;
 time =0:1/Fs:15;
 mean_Force = zeros(10,length(amp_vec));
@@ -22,9 +22,9 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 for k = 1:2
     if k == 1
-        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/10_CoV';
-    else
         data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/10_CoV_50_Ur_Rec_2';
+    else
+        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/100_PTi';
     end
 for j = 1:10
     cd(data_folder)
