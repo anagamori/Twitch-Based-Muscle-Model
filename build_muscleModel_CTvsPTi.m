@@ -62,23 +62,9 @@ cd(code_folder)
 cd(model_parameter_folder )
 load('CT_vec')
 cd(code_folder)
-%% Assign peak tetanic force into each unit
-% shuffle indexes within each fiber type with respect to contraction time
-% this will allow us to randomly assign peak tetanic tension to each motor
-% unit with different contraction time
-M = [PTi' CT_vec'];
-R = [1 0.5; 0.5 1];
-L = chol(R);
-M = M*L;
 
 %%
-rng(1)
-R_slow = randperm(modelParameter.index_slow);
-index_fast = modelParameter.index_slow+1:modelParameter.N_MU;
-R_fast_temp = randperm(length(index_fast));
-R_fast = index_fast(R_fast_temp);
-index_MU_PTi = [R_slow R_fast]; % vector of indexes to match peak tetanic tension to appropriate contraction time
-modelParameter.PTi_new = PTi (index_MU_PTi);
+modelParameter.PTi_new = PTi ;
 
 %% Recruitment threshold
 % Find recruitment threshold for individual units using exponential fit
@@ -89,7 +75,7 @@ Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 modelParameter.N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*modelParameter.i_MU); % the resulting recruitment threshold for individual units
-modelParameter.U_th_new = U_th(index_MU_PTi);
+modelParameter.U_th_new = U_th;
 
 %% Minimum and maximum firing rate
 cd(model_parameter_folder )
