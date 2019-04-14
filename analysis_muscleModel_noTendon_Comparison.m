@@ -24,7 +24,7 @@ for k = 1:2
     if k == 1
         data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/10_CoV_50_Ur_Rec_2';
     else
-        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/100_PTi';
+        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/10_CoV_50_Ur_Rec_2_CTvsPTi';
     end
 for j = 1:10
     cd(data_folder)

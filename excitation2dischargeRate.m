@@ -7,7 +7,7 @@
 %   individual motor units
 %==========================================================================
 
-
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi');
 %% Peak tension of muscle
 density = 1.06; %
 L0 = 6.8; % optimal muscle length [cm]
@@ -57,7 +57,7 @@ PTi_new = PTi (index_MU_PTi);
 % Find recruitment threshold for individual units using exponential fit
 % Recruitment threshold is correlated to peak tetanic tension
 %   Use index_MU_PTi to appropriately index each MU
-Ur = 0.8; % recruitment threshold for the lastly recruited motor unit
+Ur = 0.5; % recruitment threshold for the lastly recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
@@ -73,8 +73,9 @@ PDR = FR_half*2;
 [~,index_DR_dif] = max(PDR-MDR);
 %g_e = (PDR(index_DR_dif)-MDR(index_DR_dif))/(1-U_th_new(index_DR_dif));
 g_e = max((PDR-MDR)./(1-U_th_new));
+%g_e = 115.1750;
 %% 
-
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
 %% Discharge rate of motor unit
 U_vec = 0:0.01:1;
 DR_mat = zeros(N_MU,length(U_vec));
