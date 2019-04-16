@@ -91,14 +91,17 @@ for t = 1:length(time)
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
+            DR_temp = g_e.*(U_eff-U_th_new)+0.5;
+            DR_temp(DR_temp<0.5) = 0;
+            DR_temp(DR_temp>2) = 2;
+            DR_MU = DR_temp.*FR_half;
         elseif recruitmentType == 2
             DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+            DR_MU(DR_MU<MDR) = 0;
+            DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
-        % firing rate
-        DR_MU(DR_MU<MDR) = 0;
-        DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
+        % firing rate        
         DR_mat(:,t) = DR_MU;
         %% Sag & Yield (Song et al., 2008)
         f_eff = DR_MU./FR_half;
