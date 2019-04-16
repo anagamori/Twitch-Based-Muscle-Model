@@ -29,8 +29,8 @@ modelParameter.recruitment = 1; % 1: Variable gain, 2: Fuglevand's formulation
 Fs = 2000;
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
-parpool(10)
-for j = 1 %:length(amp_vec)
+%parpool(10)
+for j = 2:length(amp_vec)
     j
     amp = amp_vec(j);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
