@@ -14,14 +14,14 @@ clear all
 clc
 
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_Ur_50_CTvsPTi_Rec_1';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi_shortTendon';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
-modelParameter.tendonSlackLength = 24.1; % [cm]
+modelParameter.tendonSlackLength = 12; % [cm]
 modelParameter.mass = 0.01; % [g]
 modelParameter.muscleInitialLength = 6.8; % [cm]
-modelParameter.tendonInitialLength = 24.1; % [cm]
+modelParameter.tendonInitialLength = 12; % [cm]
 
 density = 1.06; %
 L0 = modelParameter.optimalLength; % optimal muscle length [cm]
@@ -87,10 +87,10 @@ modelParameter.PDR = modelParameter.FR_half*2;
 
 %% Gain for frequency-activation relationship
 % Recruitment type = 1
-modelParameter.g_e = (2-0.5)./(1-modelParameter.U_th_new(end));
+%modelParameter.g_e = (2-0.5)./(1-modelParameter.U_th_new(end));
 %modelParameter.g_e =
 % Recruitment type = 2
-%max((modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th_new));
+max((modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th_new));
 %% Sample 100 units from the base model
 
 %% Save model parameters
