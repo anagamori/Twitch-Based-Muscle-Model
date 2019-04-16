@@ -25,7 +25,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 %% 
-for j = 2:length(amp_vec)
+for j = 1:length(amp_vec)
     for i = 1:10
         cd(data_folder)
         load(['Data_' num2str(j) '_' num2str(i)])
