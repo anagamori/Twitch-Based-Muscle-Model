@@ -3,11 +3,11 @@ clc
 clear all
 
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/ST';
 
-for trialN = 300
+for trialN = 1
     %1:300
-MU_type = 'fast';
+MU_type = 'slow';
 
 cd(data_folder)
 load(['MU_' num2str(trialN)])

@@ -12,10 +12,10 @@ clc
 
 %% Folder name
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2';
 
 %% Simulation parameters
-Fs = 1000; %sampling frequency
+Fs = 2000; %sampling frequency
 T = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
@@ -33,12 +33,13 @@ cd(code_folder)
 param_seed = param;
 clear param
 %%
-first_MU = 78; %150;
-last_MU = 79; %179;
+first_MU = 101; %150;
+last_MU = 196; %179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
 weight_temp = ((15-0)*rand(1,last_MU)+0)*0;
+target_t2t = 0.23;
 %parpool(10)
 
 %% Test each unit
@@ -219,7 +220,7 @@ for j = first_MU:last_MU
                         error_temp = error_calculation(Af_Song,Af_new,f_eff);
                         
                         weight = weight_temp(j);
-                        error = sum(error_temp) + abs(target_CT-t_0_100) + weight*twitch2tetanus_ratio;
+                        error = sum(error_temp) + abs(target_CT-t_0_100) + abs(twitch2tetanus_ratio-target_t2t)*80;
                         
                     end
                     
@@ -233,14 +234,14 @@ for j = first_MU:last_MU
         end
     end
     
-    [Data_temp] = spikeDrivenMuscleModel_testFunction(param,Lce,0,'slow');
+    [Data_temp] = spikeDrivenMuscleModel_testFunction(param,Lce,0,'slow',1);
     Data_cell{j} = Data_temp;
     
 end
 
 for MU_No = first_MU:last_MU
     Data = Data_cell{MU_No};
-    cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST')
+    cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/ST')
     save(['Data_' num2str(MU_No)],'Data')
     cd(code_folder)
     

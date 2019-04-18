@@ -10,7 +10,7 @@ clc
 
 %% Folder name
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/ST';
 %% Simulation parameters
 Fs = 1000; %sampling frequency
 T = 1/Fs;
@@ -18,12 +18,12 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-first_MU = 61;
-last_MU = 61;
+first_MU = 1;
+last_MU = 20;
 
 param_target = [5 6 9 10];
 %numCores = feature('numcores');
-parpool(10)
+%parpool(10)
 for trialN = first_MU:last_MU
     trialN
     cd(data_folder)

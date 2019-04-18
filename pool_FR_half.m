@@ -11,18 +11,19 @@ clc
 clear all
 
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder_default = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/';
+data_folder_default = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/';
 
-N_MU = 300; % number of motor units in a pool
+N_MU = 10; % number of motor units in a pool
+cd(data_folder_default)
 load('index_slow') % index for the largest slow-twitch MU
-
+cd(code_folder)
 parameter_Matrix = zeros(N_MU,15);
 for i = 1:N_MU
     if i <= index_slow
-        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
+        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/ST';
         MU_type = 'slow';
     else
-        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT';
+        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/FT';
         MU_type = 'fast';
     end
     

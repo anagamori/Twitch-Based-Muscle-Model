@@ -12,7 +12,7 @@ clc
 
 %% Folder name
 code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2';
 
 %% Simulation parameters
 Fs = 1000; %sampling frequency
@@ -33,8 +33,8 @@ cd(code_folder)
 param_seed = param;
 clear param
 %%
-first_MU = 273; %150;
-last_MU = 273; %179;
+first_MU = 231; %150;
+last_MU =300; %179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
@@ -43,13 +43,13 @@ b = 30;
 a = 20;
 weight_temp = ((b-a)*rand(1,last_MU)+a);
 %parpool(10)
-
+target_t2t = 0.23;
 %%
 param_target = 1:1:11;
 M = randomizer(param_target,6,last_MU);
 %% Test each unit
 %parpool(10)
-for j = first_MU:last_MU
+parfor j = first_MU:last_MU
     j
     param = param_seed;
     %% Contraction time of the unit to be optimized to
@@ -75,7 +75,7 @@ for j = first_MU:last_MU
                 %% Run a twitch simulation and sweep simulation
                 [Data_temp_2] = spikeDrivenMuscleModel_testFunction(param_temp(l,:),Lce,0,'fast',0);
                 weight = weight_temp(j);
-                error_long(l) = Data_temp_2{2,8} + abs(target_CT-Data_temp_2{2,1}) + weight*Data_temp_2{2,5};
+                error_long(l) = Data_temp_2{2,8} + abs(target_CT-Data_temp_2{2,1}) + abs(Data_temp_2{2,5}-target_t2t)*80;
                 
             end
             [min_error,loc_min_error] = min(error_long);
@@ -91,7 +91,7 @@ end
 
 for MU_No = first_MU:last_MU
     Data = Data_cell{MU_No};
-    cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT')
+    cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/FT')
     save(['Data_' num2str(MU_No)],'Data')
     cd(code_folder)
     Data{2,5}
