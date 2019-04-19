@@ -33,14 +33,14 @@ cd(code_folder)
 param_seed = param;
 clear param
 %%
-first_MU = 101; %150;
+first_MU = 184; %150;
 last_MU = 196; %179;
 Data_cell = cell(1,last_MU);
 
 %% Weighting for optimization
 weight_temp = ((15-0)*rand(1,last_MU)+0)*0;
 target_t2t = 0.23;
-%parpool(10)
+parpool(10)
 
 %% Test each unit
 for j = first_MU:last_MU

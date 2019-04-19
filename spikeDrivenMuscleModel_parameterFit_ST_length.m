@@ -18,8 +18,8 @@ time = 0:1/Fs:5; %simulation time
 
 %% Parameters to be searched
 %Lce = 1.1;
-first_MU = 1;
-last_MU = 20;
+first_MU = 184;
+last_MU = 196;
 
 param_target = [5 6 9 10];
 %numCores = feature('numcores');
