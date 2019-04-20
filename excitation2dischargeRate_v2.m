@@ -6,7 +6,7 @@
 %   Plot the relationship between excitation and discharge rate of
 %   individual motor units
 %==========================================================================
-
+close all
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi');
 %% Peak tension of muscle
 density = 1.06; %
@@ -57,7 +57,7 @@ PTi_new = PTi; %(index_MU_PTi);
 % Find recruitment threshold for individual units using exponential fit
 % Recruitment threshold is correlated to peak tetanic tension
 %   Use index_MU_PTi to appropriately index each MU
-Ur = 0.8; % recruitment threshold for the lastly recruited motor unit
+Ur = 0.5; % recruitment threshold for the lastly recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
@@ -77,7 +77,7 @@ g_e = (2-0.5)./(1-U_th_new(end));
 %% 
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
 %% Discharge rate of motor unit
-U_vec = 0:0.01:1;
+U_vec = 0:0.001:1;
 DR_mat = zeros(N_MU,length(U_vec));
 for i = 1:length(U_vec)
     DR_temp = g_e.*(U_vec(i)-U_th_new)+0.5;
@@ -88,8 +88,19 @@ for i = 1:length(U_vec)
     DR_mat(:,i) = DR_MU;
 end
 
+%%
+%randperm(300,50)
 figure(1)
-plot(U_vec,DR_mat)
-xlabel('Synaptic Drive (%Maximum)')
-ylabel('Discharge Rate (Hz)')
+plot(U_vec,DR_mat(randperm(300,29),:),'k','LineWidth',1)
+hold on 
+plot(U_vec,DR_mat(end,:),'k','LineWidth',1)
+ylim([0 90])
+yticks(0:10:90)
+xlabel('Synaptic Drive (%Maximum)','FontSize',14)
+ylabel('Discharge Rate (Hz)','FontSize',14)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+ax = gca;
+ax.FontSize = 10;
+
 
