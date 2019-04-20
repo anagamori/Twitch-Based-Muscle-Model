@@ -6,7 +6,9 @@ code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/';
 
 N_MU = 300; % number of motor units in a pool
+cd(data_folder)
 load('index_slow') % index for the largest slow-twitch MU
+cd(code_folder)
 
 for trialN = 1:300
     %1:300
@@ -36,6 +38,7 @@ figure(12)
 plot(CT,t2t,'o')
 mean(t2t)
 
+CT_vec = CT;
 cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/')
 save('CT_vec','CT_vec')
 save('t2t','t2t')
