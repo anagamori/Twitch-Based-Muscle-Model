@@ -10,9 +10,9 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_50_Ur_Rec_2_constantT2T';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_50_Ur_Rec_2_CTvsPTi_PR_100';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_2';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi_PR_100';
 
 %% 
 cd(model_parameter_folder)
@@ -30,7 +30,7 @@ Fs = 2000;
 time = 0:1/Fs:15;
 amp_vec = 0.1:0.1:1;
 parpool(10)
-for j = 9:length(amp_vec)
+for j = 1:length(amp_vec)
     j
     amp = amp_vec(j);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
