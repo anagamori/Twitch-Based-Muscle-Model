@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = '10_CoV_50_Ur_Rec_2_constantT2T';
+condition = '10_CoV_50_Ur_Rec_2_CTvsPTi_PR_100';
 data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
