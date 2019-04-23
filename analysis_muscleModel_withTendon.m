@@ -10,11 +10,11 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_CTvsPTi_shortTendon';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_CTvsPTi_PR_100';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
-%% 
+%%
 amp_vec = 0.1:0.1:1;
 
 Force_mat = zeros(10,15*10000+1);
@@ -23,38 +23,38 @@ std_Force = zeros(10,length(amp_vec));
 cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
-%% 
-for j = 8:10 %6:9 %1:9 %:length(amp_vec)
-%     if j <= 2
-%         Fs = 10000;
-%         time = 0:1/Fs:15;
-%     elseif j > 2 && j <= 3
-%         Fs = 15000;
-%         time = 0:1/Fs:15;
-%     elseif j >= 4 && j < 7
-%         Fs = 20000;
-%         time = 0:1/Fs:15;
-%     elseif j >= 7
-%         Fs = 25000;
-%         time = 0:1/Fs:15;
-%     end
-    if j <= 1
+%%
+for j = 5 %6:9 %1:9 %:length(amp_vec)
+    if j <= 2
         Fs = 10000;
         time = 0:1/Fs:15;
-    elseif j >= 2 && j <= 3
+    elseif j > 2 && j <= 4
         Fs = 15000;
         time = 0:1/Fs:15;
-    elseif j == 4
+    elseif j >= 5 && j < 7
         Fs = 20000;
         time = 0:1/Fs:15;
-    elseif j >= 5 && j < 7
+    elseif j >= 7
         Fs = 25000;
         time = 0:1/Fs:15;
-    elseif j >= 7
-        Fs = 30000;
-        time = 0:1/Fs:15;
     end
-
+    %     if j <= 1
+    %         Fs = 10000;
+    %         time = 0:1/Fs:15;
+    %     elseif j >= 2 && j <= 3
+    %         Fs = 15000;
+    %         time = 0:1/Fs:15;
+    %     elseif j == 4
+    %         Fs = 20000;
+    %         time = 0:1/Fs:15;
+    %     elseif j >= 5 && j < 7
+    %         Fs = 25000;
+    %         time = 0:1/Fs:15;
+    %     elseif j >= 7
+    %         Fs = 30000;
+    %         time = 0:1/Fs:15;
+    %     end
+    
     j
     tic
     for i = 1:10
@@ -74,14 +74,14 @@ for j = 8:10 %6:9 %1:9 %:length(amp_vec)
         
         idx = linspace(1,length(Force),10000*15+1);
         if j < 2
-            Force_mat(i,:) = Force; 
+            Force_mat(i,:) = Force;
         else
             Force_mat(i,:) = interp1(1:length(Force),Force,idx,'linear');
         end
-        %Force_mat(i,:) = Force; 
+        %Force_mat(i,:) = Force;
     end
     toc
-    mean_pxx(j,:) = mean(pxx); 
+    mean_pxx(j,:) = mean(pxx);
     cd(data_folder)
     save(['Force_mat_' num2str(j)],'Force_mat')
     cd(code_folder)
@@ -112,7 +112,7 @@ set(gca,'box','off')
 
 figure(3)
 plot(amp_vec,mean(cov_Force),'LineWidth',2)
-hold on 
+hold on
 plot(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),'LineWidth',2)
 xlabel('Mean Force (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
