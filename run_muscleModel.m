@@ -11,9 +11,9 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_CTvsPTi_PR_100';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_CTvsPTi_constantT2T';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi_PR_100';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_constantT2T';
 
 %%
 cd(model_parameter_folder)
@@ -30,7 +30,7 @@ modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulat
 
 amp_vec = 0.1:0.1:1;
 trial_vec = [7 10];
-for j = 5 %7:length(amp_vec)
+for j = 1:10 %7:length(amp_vec)
     j
         if j <= 2
             Fs = 10000;
@@ -65,7 +65,7 @@ for j = 5 %7:length(amp_vec)
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
     
-    for i = 8:10
+    for i = 1:10
         tic
         output = spikeDrivenMuscleModel(Fs,time,input,modelParameter,1);
         toc
