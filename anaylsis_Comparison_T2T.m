@@ -21,7 +21,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1
+for i = 2
     if i == 1
         condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
         Fs = 2000;
@@ -35,10 +35,10 @@ for i = 1
         cd(code_folder)
         color_code = [43 45 66]/255;
     elseif i == 2
-        condition = '10_CoV_50_Ur_Rec_2_constantT2T';
+        condition = '10_CoV_50_Ur_Rec_2_CTvsPTi_constantT2T';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -160,7 +160,8 @@ figure(2)
 xlabel('Activation (%)','FontSize',14)
 ylabel('SD (N)','FontSize',14)
 %legend('Recruitment Scheme 1','Recruitment Scheme 2','Recruitment Scheme 3','Recruitment Scheme 4','location','northwest')
-%yticks([0.05 0.1 0.15 0.2 0.25])
+ylim([0.018 0.072])
+yticks(0.02:0.01:0.07)
 xlim([0 100])
 set(gca,'TickDir','out');
 set(gca,'box','off')

@@ -160,7 +160,7 @@ figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
 xlabel('Activation (%)','FontSize',14)
 ylabel('SD (N)','FontSize',14)
-legend('Default','RP = 100','Ur = 0.8','Constant Twitch-tetanus ratio','location','northwest')
+legend('Recruitment Scheme 1','Recruitment Scheme 2','Recruitment Scheme 3','Recruitment Scheme 4','location','northwest')
 yticks([0.05 0.1 0.15 0.2 0.25])
 xlim([0 100])
 set(gca,'TickDir','out');
@@ -174,7 +174,7 @@ figure(3)
 xlabel('Activation (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])
-legend('Default','RP = 100','Ur = 0.8','Constant Twitch-tetanus ratio')
+legend('Recruitment Scheme 1','Recruitment Scheme 2','Recruitment Scheme 3','Recruitment Scheme 4')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 % cd (figure_folder)
@@ -187,6 +187,6 @@ fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 4.56 4.56];
 cd (figure_folder)
-saveas(gcf,'pxx_SDN_comparison','pdf')
+saveas(gcf,'pxx_FV_comparison','pdf')
 cd (code_folder)
 
