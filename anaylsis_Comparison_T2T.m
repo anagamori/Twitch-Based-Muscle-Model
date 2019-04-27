@@ -21,7 +21,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 2
+for i = 1
     if i == 1
         condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
         Fs = 2000;
