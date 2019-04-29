@@ -7,7 +7,7 @@
 %   individual motor units
 %==========================================================================
 
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2');
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi');
 %% Peak tension of muscle
 density = 1.06; %
 L0 = 6.8; % optimal muscle length [cm]
@@ -75,9 +75,9 @@ PDR = FR_half*2;
 g_e = max((PDR-MDR)./(1-U_th_new));
 %g_e = 115.1750;
 %% 
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
 %% Discharge rate of motor unit
-U_vec = 0:0.01:1;
+U_vec = 0:0.001:1;
 DR_mat = zeros(N_MU,length(U_vec));
 for i = 1:length(U_vec)
     DR_MU = g_e.*(U_vec(i)-U_th_new)+MDR;
