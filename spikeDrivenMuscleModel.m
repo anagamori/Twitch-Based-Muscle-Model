@@ -114,6 +114,8 @@ for t = 1:length(time)
             DR_MU = g_e.*(U_eff-U_th_new)+MDR;
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
+        elseif recruitmentType == 3
+            DR_MU= PDR.*(1-exp(-(U_eff-U_th_new)./g_e))+MDR;
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
