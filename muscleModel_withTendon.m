@@ -138,7 +138,7 @@ for t = 1:length(time)
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
+            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
         elseif recruitmentType == 2
             DR_MU = g_e.*(U_eff-U_th_new)+MDR;
         elseif recruitmentType == 3
