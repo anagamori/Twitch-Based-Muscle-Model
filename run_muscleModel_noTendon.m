@@ -10,9 +10,9 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_50_Ur_Rec_2_CTvsPTi_PR_100';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_50_Ur_Rec_3_CTvsPTi';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi_PR_100';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_Ur_50_CTvsPTi_Rec_3';
 
 %% 
 cd(model_parameter_folder)
@@ -22,7 +22,7 @@ cd(code_folder)
 modelParameter.CV_MU = 0.1;
 
 %% Recruitment Type
-modelParameter.recruitment = 2; % 1: Variable gain, 2: Fuglevand's formulation
+modelParameter.recruitment = 3; % 1: Variable gain, 2: Fuglevand's formulation
 
 
 %% Simlulation parameters
