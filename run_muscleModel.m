@@ -11,16 +11,16 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_CTvsPTi_PR_100';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/30_CoV_50_Ur_Rec_2_CTvsPTi';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi_PR_100';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi';
 
 %%
 cd(model_parameter_folder)
 load('modelParameter')
 cd(code_folder)
 %% MU simulation parameters
-modelParameter.CV_MU = 0.1;
+modelParameter.CV_MU = 0.3;
 
 %% Recruitment Type
 modelParameter.recruitment = 2; % 1: Loeb's formulation, 2: Fuglevand's formulation
