@@ -14,7 +14,7 @@ condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
-amp_vec = 0.1:0.1:1;
+amp_vec = [0.05 0.1:0.1:1];
 mean_Force = zeros(10,length(amp_vec));
 std_Force = zeros(10,length(amp_vec));
 cov_Force = zeros(10,length(amp_vec));
@@ -96,7 +96,7 @@ for i = 1:4
     %%
     figure(4)
     subplot(2,2,1);
-    plot(f,mean_pxx(1,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(2,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -108,7 +108,7 @@ for i = 1:4
     
     
     subplot(2,2,2);
-    plot(f,mean_pxx(3,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(4,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -120,7 +120,7 @@ for i = 1:4
     hold on
     
     subplot(2,2,3);
-    plot(f,mean_pxx(5,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(6,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -132,7 +132,7 @@ for i = 1:4
     
     
     subplot(2,2,4);
-    plot(f,mean_pxx(8,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(9,:),'LineWidth',2,'color',color_code)
     xlim([0 50])
     hold on
     xlabel('Frequency (Hz)','FontSize',10)

@@ -13,7 +13,7 @@ clc
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
-amp_vec = 0.1:0.1:1;
+amp_vec = [0.05 0.1:0.1:1];
 mean_Force = zeros(10,length(amp_vec));
 std_Force = zeros(10,length(amp_vec));
 cov_Force = zeros(10,length(amp_vec));
@@ -21,7 +21,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:4
+for i = 1:3
     if i == 1
         condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
         Fs = 2000;
@@ -33,7 +33,7 @@ for i = 1:4
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [215 25 28]/255;
+        color_code = [37  65 178]/255;
     elseif i == 2
         condition = '10_CoV_50_Ur_Rec_2_CTvsPTi_PR_100';
         Fs = 2000;
@@ -45,7 +45,7 @@ for i = 1:4
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [255 128 0]/255;
+        color_code = [77 172 38]/255;
     elseif i == 3
         condition = '10_CoV_80_Ur_Rec_2_CTvsPTi';
         Fs = 2000;
@@ -57,7 +57,7 @@ for i = 1:4
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [38 128 255]/255;
+        color_code =  [208 28 139]/255;
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
     elseif i == 4
@@ -151,7 +151,7 @@ xlabel('Activation (%)','FontSize',14)
 ylabel('Force (N)','FontSize',14)
 set(gca,'TickDir','out');
 set(gca,'box','off')
-legend('Default','RP = 100','Ur = 0.8','Constant Twitch-tetanus ratio','location','northwest')
+legend('Default','RP = 100','Ur = 0.8','location','northwest')
 % cd (figure_folder)
 % saveas(gcf,'activation2meanForce_FV_comparison','pdf')
 % cd (code_folder)
@@ -160,8 +160,8 @@ figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
 xlabel('Activation (%)','FontSize',14)
 ylabel('SD (N)','FontSize',14)
-legend('Default','RP = 100','Ur = 0.8','Constant Twitch-tetanus ratio','location','northwest')
-yticks([0.05 0.1 0.15 0.2 0.25])
+legend('Default','RP = 100','Ur = 0.8','location','northwest')
+yticks(0.02:0.01:0.07)
 xlim([0 100])
 set(gca,'TickDir','out');
 set(gca,'box','off')
@@ -174,7 +174,7 @@ figure(3)
 xlabel('Activation (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])
-legend('Default','RP = 100','Ur = 0.8','Constant Twitch-tetanus ratio')
+legend('Default','RP = 100','Ur = 0.8')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 % cd (figure_folder)

@@ -9,13 +9,13 @@ clear all
 clc
 
 %%
-condition = '10_CoV_50_Ur_Rec_2_CTvsPTi_PR_100';
+condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
 data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 Fs = 2000;
-amp_vec = 0.1:0.1:1;
+amp_vec = [0.05 0.1:0.1:1];
 time =0:1/Fs:15;
 mean_Force = zeros(10,length(amp_vec));
 std_Force = zeros(10,length(amp_vec));
@@ -23,15 +23,15 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-for j = 1:10
+for j = 0:10
     cd(data_folder)
     load(['Force_mat_' num2str(j)])
     cd(code_folder)
     for i = 1:10
         Force =  Force_mat(i,:);
-        mean_Force(i,j) = mean(Force(5*Fs+1:end));
-        std_Force(i,j) = std(Force(5*Fs+1:end));
-        cov_Force(i,j) =  std_Force(i,j)/mean_Force(i,j)*100;
+        mean_Force(i,j+1) = mean(Force(5*Fs+1:end));
+        std_Force(i,j+1) = std(Force(5*Fs+1:end));
+        cov_Force(i,j+1) =  std_Force(i,j+1)/mean_Force(i,j+1)*100;
               
         [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),gausswin(5*Fs),0.9*5*Fs,0:0.5:100,Fs,'power');
     end
@@ -40,7 +40,7 @@ for j = 1:10
     plot(time,Force_mat)
     hold on
         
-    mean_pxx(j,:) = mean(pxx);
+    mean_pxx(j+1,:) = mean(pxx);
     %clear Force_mat
 end
 

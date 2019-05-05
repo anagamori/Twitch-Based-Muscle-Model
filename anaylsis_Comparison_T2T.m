@@ -13,7 +13,7 @@ clc
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
-amp_vec = 0.1:0.1:1;
+amp_vec = [0.05 0.1:0.1:1];
 mean_Force = zeros(10,length(amp_vec));
 std_Force = zeros(10,length(amp_vec));
 cov_Force = zeros(10,length(amp_vec));
@@ -21,7 +21,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1
+for i = 2
     if i == 1
         condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
         Fs = 2000;
@@ -33,7 +33,7 @@ for i = 1
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [43 45 66]/255;
+        color_code = [37  65 178]/255;
     elseif i == 2
         condition = '10_CoV_50_Ur_Rec_2_CTvsPTi_constantT2T';
         Fs = 2000;
