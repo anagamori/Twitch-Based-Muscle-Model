@@ -22,7 +22,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:4
+for i = 2
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
@@ -185,7 +185,5 @@ fig = gcf;
 %linkaxes([ax1,ax2,ax3,ax4],'y')
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 4.56 4.56];
-cd (figure_folder)
-saveas(gcf,'pxx_FV_comparison','pdf')
-cd (code_folder)
+
 
