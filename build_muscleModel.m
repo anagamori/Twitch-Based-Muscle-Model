@@ -72,7 +72,7 @@ modelParameter.PTi_new = PTi;%(index_MU_PTi);
 % Recruitment threshold is correlated to peak tetanic tension
 %   Use index_MU_PTi to appropriately index each MU
 Ur = 0.5; % recruitment threshold for the lastly recruited motor unit
-Ur_1 = 0.01; % reruitment threshold for the first unit
+Ur_1 = 0.005; % reruitment threshold for the first unit
 f_RT = fit([1 modelParameter.N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*modelParameter.i_MU); % the resulting recruitment threshold for individual units

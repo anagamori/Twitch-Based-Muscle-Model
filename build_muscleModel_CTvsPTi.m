@@ -14,7 +14,7 @@ clear all
 clc
 
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_Ur_50_CTvsPTi_Rec_3';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_Ur_50_CTvsPTi_Rec_2_v2';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
@@ -71,7 +71,7 @@ modelParameter.PTi_new = PTi ;
 % Recruitment threshold is correlated to peak tetanic tension
 %   Use index_MU_PTi to appropriately index each MU
 Ur = 0.5; % recruitment threshold for the lastly recruited motor unit
-Ur_1 = 0.01; % reruitment threshold for the first unit
+Ur_1 = 0.005; % reruitment threshold for the first unit
 f_RT = fit([1 modelParameter.N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*modelParameter.i_MU); % the resulting recruitment threshold for individual units
@@ -90,11 +90,11 @@ modelParameter.PDR = modelParameter.FR_half*2;
 %modelParameter.g_e = (2-0.5)./(1-modelParameter.U_th_new(end));
 %
 % Recruitment type = 2
-%modelParameter.g_e = max((modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th_new));
+modelParameter.g_e = max((modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th_new));
 % Recruitment type = 3
-R_max = min((-1+modelParameter.U_th_new)./log(-(modelParameter.PDR-modelParameter.MDR)./modelParameter.PDR+1));
-phi_R = linspace(0.02,R_max,300);
-modelParameter.g_e = phi_R;
+% R_max = min((-1+modelParameter.U_th_new)./log(-(modelParameter.PDR-modelParameter.MDR)./modelParameter.PDR+1));
+% phi_R = linspace(0.02,R_max,300);
+% modelParameter.g_e = phi_R;
 %% Sample 100 units from the base model
 
 %% Save model parameters
