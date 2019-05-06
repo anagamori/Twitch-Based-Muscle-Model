@@ -33,7 +33,7 @@ for i = 1:2
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [215 25 28]/255;
+        color_code = [37  65 178]/255;
     elseif i == 2
         condition = '10_CoV_50_Ur_Rec_3_CTvsPTi';
         Fs = 2000;
@@ -45,7 +45,7 @@ for i = 1:2
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [255 128 0]/255;
+        color_code = [217 4 41]/255;
     end
     mean_mean_Force = mean(mean_Force);
     figure(1)
@@ -133,10 +133,10 @@ legend('Linear Af','Non-linear Af','location','northwest')
 
 figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
-xlabel('Activation (%)','FontSize',14)
+xlabel('Mean Force (%)','FontSize',14)
 ylabel('SD (N)','FontSize',14)
 legend('Linear Af','Non-linear Af','location','northwest')
-yticks([0.05 0.1 0.15 0.2 0.25])
+yticks(0.02:0.01:0.07)
 xlim([0 100])
 set(gca,'TickDir','out');
 set(gca,'box','off')

@@ -33,7 +33,7 @@ for i = 1:4
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [77 172 38]/255;
+        color_code = [217 4 41]/255;
     elseif i == 2
         Fs = 10000;
         time =0:1/Fs:15;
@@ -44,7 +44,7 @@ for i = 1:4
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [123 50 148]/255;
+        color_code = [37  65 178]/255;
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
     elseif i == 3
@@ -69,7 +69,7 @@ for i = 1:4
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [208 28 139]/255;
+        color_code = [77 172 38]/255;
     end
     mean_mean_Force = mean(mean_Force);
     figure(1)
@@ -160,7 +160,7 @@ figure(2)
 xlabel('Activation (%)','FontSize',14)
 ylabel('SD (N)','FontSize',14)
 legend('Without Tendon','With Tendon','With Tendon & no FV','Shorter Tendon','location','northwest')
-yticks([0.05 0.1 0.15 0.2 0.25])
+yticks(0:0.04:0.2)
 xlim([0 100])
 set(gca,'TickDir','out');
 set(gca,'box','off')
