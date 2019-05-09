@@ -10,12 +10,12 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/No_100_sameForce_CTvsPTi';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_50_Ur_Rec_2_CTvsPTi_v2';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 %%
-amp_vec = 0.1:0.1:1;
+amp_vec = [0.05 0.1:0.1:1];
 
 Force_mat = zeros(10,15*10000+1);
 mean_Force = zeros(10,length(amp_vec));
@@ -24,11 +24,11 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 %%
-for j = 0:10 %1:9 %:length(amp_vec)
-    if j <= 2
+for j = 7 %1:9 %:length(amp_vec)
+    if j < 2
         Fs = 10000;
         time = 0:1/Fs:15;
-    elseif j > 2 && j <= 3
+    elseif j >= 2 && j <= 3
         Fs = 15000;
         time = 0:1/Fs:15;
     elseif j >= 4 && j < 7
