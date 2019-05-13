@@ -4,10 +4,10 @@
 % Last update: 4/21/19
 % Descriptions:
 %   Plot tiwtch amplitude of all motor units 
-%   Used to generatee Fig XX in the manuscript
+%   Used to generate Model_Characteristics in the manuscript
 %==========================================================================
 close all
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi');
+cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi');
 %% Peak tension of muscle
 density = 1.06; %
 L0 = 6.8; % optimal muscle length [cm]
@@ -78,7 +78,7 @@ g_e = (2-0.5)./(1-U_th_new(end));
 load('t2t')
 Pti = PTi_new.*t2t;
 %%
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
+cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model')
 
 %%
 %randperm(300,50)
