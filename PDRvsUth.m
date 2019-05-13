@@ -116,3 +116,38 @@ set(gca,'TickDir','out');
 set(gca,'box','off')
 ax = gca;
 ax.FontSize = 10;
+
+
+%%
+clear U_th_diff
+DR_MU = g_e.*(0.3-U_th_new)+MDR;
+DR_MU(DR_MU<MDR) = 0;
+DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
+
+comb = nchoosek(1:length(find(DR_MU>0)),2);
+rng shuffle
+for i = 1:1000
+    index = randperm(size(comb,1),1);
+    DR_diff(i) = DR_MU(comb(index,2)) - DR_MU(comb(index,1));
+    U_th_diff(i) = U_th_new(comb(index,2)) - U_th_new(comb(index,1));
+end
+
+figure(3)
+plot(U_th_new(1:length(find(DR_MU>0))),DR_MU(1:length(find(DR_MU>0))),'o')
+xlabel('Recruitment Threshold (%Maximum)','FontSize',14)
+ylabel('Discharge Rate (Hz)','FontSize',14)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+ax = gca;
+ax.FontSize = 10;
+
+figure(4)
+scatterhist(U_th_diff,DR_diff,'Color','k')
+hold on
+plot([-0.05 0.5],[0 0],'r','linewidth',2)
+xlabel('Difference in Recruitment Threshold (%Maximum)','FontSize',14)
+ylabel('Difference in Discharge Rate (Hz)','FontSize',14)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+ax = gca;
+ax.FontSize = 10;

@@ -16,7 +16,7 @@ figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model
 
 f = 0:0.5:100;
 
-for i = 1:3
+for i = 1
     if i == 1
         amp_vec = 0.1:0.1:1;
         data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_1';

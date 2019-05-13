@@ -138,7 +138,7 @@ for t = 1:length(time)
         index = [index_1 index_2];
         
         for j = 1:length(index) % loop through motor units whose firing rate is greater than minimum firing rate defined by the user
-            n = index(j);
+            n = index(j);0
             spike_train_temp = zeros(1,length(t));
             if ~any(spike_train(n,:)) % when the motor unit fires at the first time
                 spike_train(n,t) = 1; % add a spike to the vector
