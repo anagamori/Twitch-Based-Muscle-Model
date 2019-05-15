@@ -13,15 +13,15 @@ clear all
 clc
 
 %%
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
 
 %% 
-test_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
+test_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
 MU_No = 1;
 %% Simulation parameters
 % Simulation parameters
-Fs = 1000; %sampling frequency
+Fs = 2000; %sampling frequency
 h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 

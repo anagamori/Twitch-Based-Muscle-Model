@@ -138,7 +138,7 @@ for t = 1:length(time)
         index = [index_1 index_2];
         
         for j = 1:length(index) % loop through motor units whose firing rate is greater than minimum firing rate defined by the user
-            n = index(j);0
+            n = index(j);
             spike_train_temp = zeros(1,length(t));
             if ~any(spike_train(n,:)) % when the motor unit fires at the first time
                 spike_train(n,t) = 1; % add a spike to the vector
@@ -454,56 +454,6 @@ output.Vce = MuscleVelocity./(L0/100);
         
         Fse = cT_se * kT_se * log(exp((LT - LrT_se)/kT_se)+1);
         
-    end
-
-    function [Lce_initial,Lse_initial,Lmax] =  InitialLength_function(modeParameter)
-        %---------------------------
-        % Determine the initial lengths of muscle and tendon and maximal
-        % muscle length
-        %---------------------------
-        
-        % serires elastic element parameters
-        cT = 27.8;
-        kT = 0.0047;
-        LrT = 0.964;
-        % parallel passive element parameters
-        c1 = 23;
-        k1 = 0.046;
-        Lr1 = 1.17;
-        
-        % passive force produced by parallel passive element at maximal
-        % muscle length
-        PassiveForce = c1 * k1 * log(exp((1 - Lr1)/k1)+1);
-        % tendon length at the above passive force
-        Normalized_SE_Length = kT*log(exp(PassiveForce/cT/kT)-1)+LrT;
-        
-        % maximal musculotendon length defined by joint range of motion
-        Lmt_temp_max = modeParameter.optimalLength*cos(modeParameter.pennationAngle) ...
-            +modeParameter.tendonSlackLength + 1;
-        
-        % optimal muscle length
-        L0_temp = modeParameter.optimalLength;
-        % optimal tendon length (Song et al. 2008)
-        L0T_temp = modeParameter.tendonSlackLength*1.05;
-        
-        % tendon length at maximal muscle length
-        SE_Length =  L0T_temp * Normalized_SE_Length;
-        % maximal fasicle length
-        FasclMax = (Lmt_temp_max - SE_Length)/L0_temp;
-        % maximal muscle fiber length
-        Lmax = FasclMax/cos(modeParameter.pennationAngle);
-        
-        % initial musculotendon length defined by the user input
-        Lmt_temp = modeParameter.muscleInitialLength * cos(modeParameter.pennationAngle) + modeParameter.tendonInitialLength;
-        
-        % initial muscle length determined by passive muscle force and
-        % tendon force
-        InitialLength =  (Lmt_temp-(-L0T_temp*(kT/k1*Lr1-LrT-kT*log(c1/cT*k1/kT))))/(100*(1+kT/k1*L0T_temp/Lmax*1/L0_temp)*cos(modeParameter.pennationAngle));
-        % normalize the muscle legnth to optimal muscle length
-        Lce_initial = InitialLength/(L0_temp/100);
-        % calculate initial length of tendon and normalize it to optimal
-        % tendon length
-        Lse_initial = (Lmt_temp - InitialLength*cos(modeParameter.pennationAngle)*100)/L0T_temp;
     end
 
 end
