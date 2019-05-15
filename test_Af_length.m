@@ -1,13 +1,25 @@
+%==========================================================================
+% spikeDrivenMuscleModel_test.m
+% Author: Akira Nagamori
+% Last update: 5/15/19
+% Descriptions
+%   A new model driven by spike trains inspired by Williams et al. 1998
+%   Generate twitch response and test activation-frequency response with a
+%   given parameter set at different muscle lengths
+%   Used to generate c-h of Summary_spikeDrivenMuscleModel
+%==========================================================================
+
+
 close all
 clc
 clear all
 
-code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_2/ST';
+code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT';
 
-for trialN = 1
+for trialN = 230
     %1:300
-MU_type = 'slow';
+MU_type = 'fast';
 
 cd(data_folder)
 load(['MU_' num2str(trialN)])
@@ -38,6 +50,12 @@ end
 
 freq = Data{2,9};
 fusion = 1-p2p/p2p(5,1);
+%%
 figure()
-plot(freq,fusion','LineWidth',2,'color','b')
-xlim([0 3])
+plot(freq*FR_half,fusion'*100,'LineWidth',2,'color','b')
+xlim([0 100])
+xlabel('Frequency (Hz)')
+ylabel('Fusion (%)')
+%xlim([0 3])
+set(gca,'TickDir','out');
+set(gca,'box','off')

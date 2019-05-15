@@ -12,7 +12,7 @@ function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,
 %==========================================================================
 %% Simulation parameters
 Fs = 2000; %sampling frequency
-time = 0:1/Fs:5; %simulation time
+time = 0:1/Fs:6; %simulation time
 
 S = parameter(1); %7;
 C = parameter(2); %1.025;
@@ -34,9 +34,11 @@ for i = 1:2
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
         if strcmp(fiber_type,'slow')
-            FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100]; %10:10:100];
+            %FR_test = [2 5 8 10 12 15 18 20 25 30 40 50]; % 60 70 80 100]; %10:10:100];
+            FR_test = 2:1:50;
         elseif strcmp(fiber_type,'fast')
-            FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200 300];
+            %FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200 300];
+            FR_test = [2:2:100 200 300];
         end
         %FR_test = [2 10 20  50 200]; Fast twitch
         % FR_test = [2 5 10 20  50 100]; % slow twitch
@@ -57,8 +59,8 @@ for i = 1:2
             spike(1*Fs) = 1;
         else
             % Generate spike train
-            temp =spikeTrainGenerator(0:1/Fs:3,Fs,FR);
-            spike(1*Fs:4*Fs) = temp;
+            temp =spikeTrainGenerator(0:1/Fs:4,Fs,FR);
+            spike(1*Fs:5*Fs) = temp;
         end
         
         %%  initialization
@@ -102,7 +104,10 @@ for i = 1:2
             
             %% Stage 3
             % First-order dynamics to muscle activation, A
-            %tau_2 = tau_2_0*(1-0.8*A_tilda)^2;
+            %tau_2 = tau_2_0*(1-0.8*A)^2;
+%             b0 = 17.5;
+%             b1 = 0.6;
+%             tau_2 = tau_2_0*(1-b1.*A)^2;
             A_dot = (A_tilda-A)/tau_2;
             A = A_dot/Fs + A;
             
@@ -117,8 +122,8 @@ for i = 1:2
             
         end
         
-        mean_exc(f) = mean(A_vec(3.5*Fs:4*Fs));
-        p2p_exc(f) = max(A_vec(3.5*Fs:4*Fs))-min(A_vec(3.5*Fs:4*Fs));
+        mean_exc(f) = mean(A_vec(4.5*Fs:5*Fs));
+        p2p_exc(f) = max(A_vec(4.5*Fs:5*Fs))-min(A_vec(4.5*Fs:5*Fs));
         
         if i == 1
             %------------------------------------------------------------------
@@ -224,15 +229,17 @@ for i = 1:2
         error = sum(error_temp)
         if plotOpt == 1
             figure(6)
-            plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
+            %plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
+            plot(FR_test,mean_exc,'LineWidth',2,'color','b')
+            xlim([0 100])
             xlabel('Frequency (f_{0.5})','FontSize',14)
             ylabel('Activation','FontSize',14)
             set(gca,'TickDir','out');
             set(gca,'box','off')
             hold on
             %plot(f_eff,Af_new,'color','r')
-            plot(f_eff,Af_Song,'color','k','LineWidth',1)
-            xlim([0 3])
+            plot(f_eff*FR_half,Af_Song,'color','k','LineWidth',1)
+            %xlim([0 3])
             legend('New','Song')
             movegui('northeast')
             

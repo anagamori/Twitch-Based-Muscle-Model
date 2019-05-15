@@ -4,8 +4,9 @@
 % Last update: 3/27/19
 % Descriptions
 %   A new model driven by spike trains inspired by Williams et al. 1998
-%   Generatetwitch response and test activation-frequency response with a
+%   Generate twitch response and test activation-frequency response with a
 %   given parameter set
+%   Used to generate a and b of Summary_spikeDrivenMuscleModel
 %==========================================================================
 
 close all
@@ -17,11 +18,11 @@ code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
 data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
 
 %% 
-test_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
-MU_No = 1;
+test_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT';
+MU_No = 231;
 %% Simulation parameters
 % Simulation parameters
-Fs = 1000; %sampling frequency
+Fs = 2000; %sampling frequency
 h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
@@ -49,7 +50,7 @@ for i = 1:2
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
-        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
+        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %2:1:50; %[2  8 15 25 40]; %[2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
     end
     %% initialization
     mean_exc = zeros(1,length(FR_test));
@@ -176,6 +177,9 @@ for i = 1:2
         figure(i)
         plot(time,A_vec,'LineWidth',1)
         hold on
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
+        
         if i == 1
             plot(time,twitch_Milner(1:length(time)))
             hold on
@@ -225,10 +229,12 @@ for i = 1:2
         xlabel('Frequency (Hz)','FontSize',14)
         ylabel('Activation','FontSize',14)
         hold on
-        plot(f_eff,Af_new)
+        %plot(f_eff,Af_new)
         plot(f_eff,Af_Song,'color','k')
         xlim([0 3])
         legend('New','New Fit','Song')
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
         
         figure(7)
         plot(FR_test/FR_half,fusion,'LineWidth',1)
@@ -236,6 +242,8 @@ for i = 1:2
         ylabel('Fusion','FontSize',14)
         hold on
         xlim([0 3])
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
         
         figure(8)
         plot(mean_exc./max(mean_exc),fusion,'LineWidth',1)
@@ -243,6 +251,8 @@ for i = 1:2
         ylabel('Fusion','FontSize',14)
         hold on
         plot(0:0.1:1,0:0.1:1,'--','color','k')
+        set(gca,'TickDir','out');
+        set(gca,'box','off')
     end
     
 end
