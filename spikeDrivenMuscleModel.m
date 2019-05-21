@@ -1,9 +1,7 @@
 %==========================================================================
-% muscleModel_withTendon.m
+% spikeDrivenMuscleModel.m
 % Author: Akira Nagamori
 % Last update: 3/5/19
-% Descriptions:
-%   Full model without tendon
 %==========================================================================
 function [output] = spikeDrivenMuscleModel(Fs,time,input,modelParameter,figOpt)
 %% Simulation parameters
