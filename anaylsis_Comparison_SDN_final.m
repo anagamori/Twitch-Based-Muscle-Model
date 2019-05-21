@@ -21,7 +21,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:3
+for i = 1:4
     if i == 1
         condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
         Fs = 2000;
@@ -61,8 +61,7 @@ for i = 1:3
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
     elseif i == 4
-        condition = '10_CoV_50_Ur_Rec_2_CTvsPTi_constantT2T';
-        
+        condition = 'No_100_sameForce_CTvsPTi';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
@@ -72,19 +71,22 @@ for i = 1:3
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [0 0 143]/255;
+        color_code = [230 97 1]/255;
+        vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
+        vec2 = reshape(std_Force,[],1);
     end
     mean_mean_Force = mean(mean_Force);
+    MVC = mean_mean_Force(end);
     figure(1)
     %plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2,'Color',color_code)
     %plot([0 amp_vec]*100,[0 mean(mean_Force)],'LineWidth',2,'Color',color_code)
-    shadedErrorBar([0 amp_vec]*100,[0 mean(mean_Force)],[0 std(mean_Force)],'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code})
+    shadedErrorBar([0 amp_vec]*100,[0 mean(mean_Force./MVC.*100)],[0 std(mean_Force./MVC.*100)],'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code})
     hold on
     
     figure(2)
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
     %%errorbar(amp_vec*100,mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
-    shadedErrorBar(amp_vec*100,mean(std_Force),std(std_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(amp_vec*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     
@@ -151,17 +153,23 @@ xlabel('Activation (%)','FontSize',14)
 ylabel('Force (N)','FontSize',14)
 set(gca,'TickDir','out');
 set(gca,'box','off')
-legend('Default','RP = 100','Ur = 0.8','location','northwest')
+legend('Default','RP = 100','Ur = 0.8','N = 100','location','northwest')
 % cd (figure_folder)
 % saveas(gcf,'activation2meanForce_FV_comparison','pdf')
 % cd (code_folder)
 
+x = [0 amp_vec]*100;
+y_0 = 0.2*1/6;
+y_100 = 1.2+0.2*2.5/6;
+a = (y_100-y_0)/100;
+
 figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
-xlabel('Activation (%)','FontSize',14)
-ylabel('SD (N)','FontSize',14)
-legend('Default','RP = 100','Ur = 0.8','location','northwest')
-yticks(0.02:0.01:0.07)
+%plot(x,x*a+y_0,'LineWidth',2,'Color','k')
+xlabel('Mean Force (%)','FontSize',14)
+ylabel('SD (%MVC)','FontSize',14)
+legend('Default','RP = 100','Ur = 0.8','N = 100','Jones et al. 2002','location','northwest')
+yticks(0:0.2:1.4)
 xlim([0 100])
 set(gca,'TickDir','out');
 set(gca,'box','off')
@@ -174,7 +182,7 @@ figure(3)
 xlabel('Activation (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])
-legend('Default','RP = 100','Ur = 0.8')
+legend('Default','RP = 100','Ur = 0.8','N = 100')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 % cd (figure_folder)
@@ -186,7 +194,7 @@ fig = gcf;
 %linkaxes([ax1,ax2,ax3,ax4],'y')
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 4.56 4.56];
-cd (figure_folder)
-saveas(gcf,'pxx_SDN_comparison','pdf')
-cd (code_folder)
+% cd (figure_folder)
+% saveas(gcf,'pxx_SDN_comparison','pdf')
+% cd (code_folder)
 

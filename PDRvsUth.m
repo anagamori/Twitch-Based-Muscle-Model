@@ -5,6 +5,7 @@
 % Descriptions:
 %   Plot the relationship between excitation and discharge rate of
 %   individual motor units
+%   Used to generate figure (onion_skinVsAHP)
 %==========================================================================
 close all
 
@@ -52,7 +53,7 @@ index_fast = index_slow+1:N_MU;
 R_fast_temp = randperm(length(index_fast));
 R_fast = index_fast(R_fast_temp);
 index_MU_PTi = [R_slow R_fast]; % vector of indexes to match peak tetanic tension to appropriate contraction time
-PTi_new = PTi; % (index_MU_PTi);
+PTi_new = PTi(index_MU_PTi);
 
 %% Recruitment threshold
 % Find recruitment threshold for individual units using exponential fit
@@ -63,7 +64,7 @@ Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
-U_th_new = U_th; %(index_MU_PTi);
+U_th_new = U_th(index_MU_PTi);
 [~,loc_max_U_th] = max(U_th_new);
 
 %% FR_half for individual motor units
@@ -83,18 +84,25 @@ comb = nchoosek(1:300,2);
 rng shuffle
 for i = 1:1000
     index = randperm(size(comb,1),1);
-    PDR_diff(i) = PDR(comb(index,2)) - PDR(comb(index,1));
-    MDR_diff(i) = MDR(comb(index,2)) - MDR(comb(index,1));
-    U_th_diff(i) = U_th_new(comb(index,2)) - U_th_new(comb(index,1));
+    if U_th_new(comb(index,2)) >= U_th_new(comb(index,1))
+        U_th_diff(i) = U_th_new(comb(index,2)) - U_th_new(comb(index,1));
+        PDR_diff(i) = PDR(comb(index,2)) - PDR(comb(index,1));
+        MDR_diff(i) = MDR(comb(index,2)) - MDR(comb(index,1));
+    else
+        U_th_diff(i) = U_th_new(comb(index,1)) - U_th_new(comb(index,2));
+        PDR_diff(i) = PDR(comb(index,1)) - PDR(comb(index,2));
+        MDR_diff(i) = MDR(comb(index,1)) - MDR(comb(index,2));
+    end
+    
 end
 
 %%
-length(find(PDR_diff<0))/length(PDR_diff)
+length(find(PDR_diff>0))/length(PDR_diff)
 figure(1)
-scatterhist(U_th_diff,PDR_diff,'Color','k')
-xlim([-0.05 0.55])
+scatterhist(U_th_diff*100,PDR_diff,'Color','k','MarkerSize',10,'Marker','.')
+xlim([-5 55])
 hold on
-plot([-0.05 0.8],[0 0],'r','linewidth',2)
+plot([-5 55],[0 0],'r','linewidth',2)
 xlabel('Difference in Recruitment Threshold (%Maximum)','FontSize',8)
 ylabel('Difference in Peak Discharge Rate (Hz)','FontSize',8)
 set(gca,'TickDir','out');
@@ -105,11 +113,12 @@ fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 3.34 3.34];
 
+%%
 figure(2)
-scatterhist(U_th_diff,MDR_diff,'Color','k')
-xlim([-0.05 0.55])
+scatterhist(U_th_diff*100,MDR_diff,'Color','k')
+xlim([-5 55])
 hold on
-plot([-0.05 0.8],[0 0],'r','linewidth',2)
+plot([-5 55],[0 0],'r','linewidth',2)
 xlabel('Difference in Recruitment Threshold (%Maximum)','FontSize',14)
 ylabel('Difference in Peak Discharge Rate (Hz)','FontSize',14)
 set(gca,'TickDir','out');
@@ -120,34 +129,67 @@ ax.FontSize = 10;
 
 %%
 clear U_th_diff
-DR_MU = g_e.*(0.3-U_th_new)+MDR;
+DR_MU = g_e.*(0.2-U_th_new)+MDR;
 DR_MU(DR_MU<MDR) = 0;
 DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
 
-comb = nchoosek(1:length(find(DR_MU>0)),2);
-rng shuffle
-for i = 1:1000
-    index = randperm(size(comb,1),1);
-    DR_diff(i) = DR_MU(comb(index,2)) - DR_MU(comb(index,1));
-    U_th_diff(i) = U_th_new(comb(index,2)) - U_th_new(comb(index,1));
-end
+DR_vec = DR_MU(DR_MU>0)';
+U_th_vec = U_th_new(DR_MU>0)';
+U_th_vec = U_th_vec*100;
+
+X = [ones(length(U_th_vec),1) U_th_vec];
+b1 = X\DR_vec;
+DR_Calc = X*b1;
+Rsq = 1 - sum((DR_vec - DR_Calc).^2)/sum((DR_vec - mean(DR_vec)).^2)
+[R,P] = corrcoef(U_th_new(DR_MU>0),DR_MU(DR_MU>0))
 
 figure(3)
-plot(U_th_new(1:length(find(DR_MU>0))),DR_MU(1:length(find(DR_MU>0))),'o')
-xlabel('Recruitment Threshold (%Maximum)','FontSize',14)
-ylabel('Discharge Rate (Hz)','FontSize',14)
+scatter(U_th_vec,DR_vec,'filled','k','LineWidth',0.5)
+hold on 
+plot(U_th_vec,DR_Calc,'r','LineWidth',1)
+xticks([0 0.05 0.1 0.15 0.2]*100)
+xlabel('Recruitment Threshold (%Maximum)','FontSize',8)
+ylabel('Discharge Rate (Hz)','FontSize',8)
 set(gca,'TickDir','out');
 set(gca,'box','off')
 ax = gca;
-ax.FontSize = 10;
+ax.FontSize = 6;
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 3.34 3.34];
+
+%%
+
+comb = nchoosek(find(DR_MU>0),2);
+rng shuffle
+for i = 1:1000
+    index = randperm(size(comb,1),1);
+    if U_th_new(comb(index,2)) >= U_th_new(comb(index,1))
+        U_th_diff(i) = U_th_new(comb(index,2)) - U_th_new(comb(index,1));
+        DR_diff(i) = DR_MU(comb(index,2)) - DR_MU(comb(index,1));
+        
+    else
+        U_th_diff(i) = U_th_new(comb(index,1)) - U_th_new(comb(index,2));
+        DR_diff(i) = DR_MU(comb(index,1)) - DR_MU(comb(index,2));
+    end
+end
 
 figure(4)
 scatterhist(U_th_diff,DR_diff,'Color','k')
 hold on
 plot([-0.05 0.5],[0 0],'r','linewidth',2)
-xlabel('Difference in Recruitment Threshold (%Maximum)','FontSize',14)
-ylabel('Difference in Discharge Rate (Hz)','FontSize',14)
+xlabel('Difference in Recruitment Threshold (%Maximum)','FontSize',8)
+ylabel('Difference in Discharge Rate (Hz)','FontSize',8)
 set(gca,'TickDir','out');
 set(gca,'box','off')
 ax = gca;
-ax.FontSize = 10;
+ax.FontSize = 6;
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 3.34 3.34];
+
+length(find(DR_diff>0))/length(DR_diff)
+
+
+
+

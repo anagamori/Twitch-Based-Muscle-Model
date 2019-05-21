@@ -51,7 +51,7 @@ index_fast = index_slow+1:N_MU;
 R_fast_temp = randperm(length(index_fast));
 R_fast = index_fast(R_fast_temp);
 index_MU_PTi = [R_slow R_fast]; % vector of indexes to match peak tetanic tension to appropriate contraction time
-PTi_new = PTi;% (index_MU_PTi);
+PTi_new = PTi(index_MU_PTi);
 
 %% Recruitment threshold
 % Find recruitment threshold for individual units using exponential fit
@@ -62,7 +62,7 @@ Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
-U_th_new = U_th; %(index_MU_PTi);
+U_th_new = U_th(index_MU_PTi);
 [~,loc_max_U_th] = max(U_th_new);
 
 %% FR_half for individual motor units
@@ -89,8 +89,16 @@ for i = 1:length(U_vec)
     DR_mat(:,i) = DR_MU;
 end
 
+index_plot = [1 50 100 150 200 250 300];
 figure(1)
-plot(U_vec,DR_mat)
-xlabel('Synaptic Drive (%Maximum)')
-ylabel('Discharge Rate (Hz)')
+plot(U_vec*100,DR_mat(index_plot,:),'k','LineWidth',1)
+xlabel('Activation','FontSize',8)
+ylabel('Discharge Rate (Hz)','FontSize',8)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+ax = gca;
+ax.FontSize = 6;
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 3.34 3.34];
 hold on

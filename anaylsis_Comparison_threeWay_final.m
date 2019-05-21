@@ -10,13 +10,13 @@ clear all
 clc
 
 %%
-condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
+condition = '10_CoV_50_Ur_Rec_2';
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 f = 0:0.5:100;
 
-for i = 1
+for i = 1:3
     if i == 1
         amp_vec = 0.1:0.1:1;
         data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_1';
@@ -126,7 +126,7 @@ ylabel('Force (%Maximum)','FontSize',14)
 ylim([0 105])
 set(gca,'TickDir','out');
 set(gca,'box','off')
-legend('Fuglevand model','New model without tendon','New model without tendon','location','northwest')
+legend('Fuglevand model','New model without tendon','New model with tendon','location','northwest')
 % cd (figure_folder)
 % saveas(gcf,'activation2meanForce_FV_comparison','pdf')
 % cd (code_folder)
@@ -135,7 +135,7 @@ figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('SD (%Maximum Force)','FontSize',14)
-legend('Fuglevand model','New model without tendon','New model without tendon','location','northwest')
+legend('Fuglevand model','New model without tendon','New model with tendon','location','northwest')
 %yticks([0.05 0.1 0.15 0.2 0.25])
 xlim([0 100])
 set(gca,'TickDir','out');
