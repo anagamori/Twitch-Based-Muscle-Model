@@ -2,7 +2,7 @@
 %clear all
 %clc
 
-testUnit = 184;
+testUnit = 1;
 U_vec = 0:0.001:1;
 
 U_th = U_th_new(testUnit); %0.01;

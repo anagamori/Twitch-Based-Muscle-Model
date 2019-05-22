@@ -10,8 +10,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_3';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_3';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
@@ -87,14 +87,12 @@ modelParameter.MDR = FR_half/2;
 modelParameter.PDR = FR_half*2;
 
 %% Gain for frequency-activation relationship
-modelParameter.g_e = max((modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th_new));
+modelParameter.g_e = (modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
-g_e = (PDR-MDR)./(1-U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
-alpha = 30;
-
-modelParameter.a = (2*MDR+alpha*MDR)./(alpha*(1-U_th_new));
-modelParameter.U_th_tr = (a-MDR)./a;
+modelParameter.lamda = 40;
+modelParameter.k_e = (2*modelParameter.MDR+modelParameter.lamda*modelParameter.MDR)./(modelParameter.lamda*(1-modelParameter.U_th_new));
+modelParameter.U_th_t = (modelParameter.k_e-modelParameter.MDR)./modelParameter.k_e;
 %% Save model parameters
 cd(model_parameter_folder)
 save('modelParameter','modelParameter')

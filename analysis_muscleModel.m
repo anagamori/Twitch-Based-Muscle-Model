@@ -5,12 +5,12 @@
 % Descriptions:
 %   Run muscle model simulation
 %==========================================================================
-close all
-clear all
+%close all
+%clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_50_Ur_Rec_2';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/10_CoV_80_Ur_Rec_3';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -26,6 +26,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 %% 
 for j = 0:10 %length(amp_vec)
+    
     for i = 1:10
         cd(data_folder)
         load(['Data_' num2str(j) '_' num2str(i)])
@@ -70,7 +71,7 @@ set(gca,'box','off')
 figure(3)
 % plot(amp_vec,mean(cov_Force),'LineWidth',2)
 % hold on 
-plot(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),'LineWidth',2)
+plot(amp_vec,mean(cov_Force),'LineWidth',2)
 xlabel('Mean Force (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 set(gca,'TickDir','out');
