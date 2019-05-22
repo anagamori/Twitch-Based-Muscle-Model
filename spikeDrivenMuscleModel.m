@@ -45,7 +45,11 @@ MDR = modelParameter.MDR;
 PDR = modelParameter.PDR;
 
 g_e = modelParameter.g_e;
-
+if recruitmentType == 3
+    lamda = modelParameter.lamda;
+    k_e = modelParameter.k_e;
+    U_th_t = modelParameter.U_th_t;
+end
 %% Activation dynamics (Song et al., 2008)
 U_eff = 0;
 T_U = 0.03;
@@ -62,6 +66,7 @@ cv_MU = modelParameter.CV_MU; % coefficient of variation for interspike interval
 %% Muscle length
 V_ce = 0;
 %% Initilization
+DR_temp = zeros(N_MU,1);
 DR_mat = zeros(N_MU,length(time));
 
 spike_time = zeros(N_MU,1);
@@ -113,7 +118,15 @@ for t = 1:length(time)
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 3
-            DR_MU= PDR.*(1-exp(-(U_eff-U_th_new)./g_e))+MDR;
+            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+            for n = 1:index_slow
+                if U_eff <= U_th_t(n)
+                    DR_temp(n) = MDR(n) + lamda*k_e(n)*(U_eff-U_th_new(n));
+                else
+                    DR_temp(n) = PDR(n)-k_e(n)*(1-U_eff);
+                end
+            end
+            DR_MU(1:index_slow) = DR_temp(1:index_slow);
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         end
@@ -220,8 +233,8 @@ for t = 1:length(time)
             F_pe2 = 0;
         end
         
-        %f_i = A.*PTi_new'.*(FL.*FV+F_pe2);
-        f_i = A.*PTi_new'.*(FL+F_pe2);
+        f_i = A.*PTi_new'.*(FL.*FV+F_pe2);
+        %f_i = A.*PTi_new'.*(FL+F_pe2);
         force(:,t) = f_i;
         
         F_ce(t) = sum(f_i);
