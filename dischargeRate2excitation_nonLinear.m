@@ -76,7 +76,7 @@ PDR = FR_half*2;
 % we don't assume saturation 
 g_e = (PDR-MDR)./(1-U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
-Ur_t = 0.3;
+Ur_t = 0.2;
 index_saturation = find(U_th_new<Ur_t);
 f_k_e = fit([Ur_1 Ur_t]',[50 1]','poly1');
 coeffs_f_k_e = coeffvalues(f_k_e);
