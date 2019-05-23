@@ -231,6 +231,7 @@ if figOpt == 1
     hold on
 end
 
+output.DR = DR_mat;
 output.Force = Force;
 output.force = force;
 output.spike_train = spike_train;
