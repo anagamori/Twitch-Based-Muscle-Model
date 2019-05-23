@@ -7,7 +7,7 @@ function [output] = spikeDrivenMuscleModel(Fs,time,input,modelParameter,figOpt)
 %% Simulation parameters
 synaptic_drive = input;
 
-%% 
+%%
 recruitmentType = modelParameter.recruitment;
 
 %% Muscle architectural parameters
@@ -19,7 +19,7 @@ L0T = modelParameter.L0T;
 alpha = modelParameter.pennationAngle;
 Lmt =modelParameter.Lmt; % intial musculotendon length
 L_ce = modelParameter.L_ce;
-L_se = modelParameter.L_se; 
+L_se = modelParameter.L_se;
 Lmax = modelParameter.Lmax;
 %% Motor unit architecture
 N_MU = modelParameter.N_MU; % number of motor units
@@ -46,6 +46,7 @@ PDR = modelParameter.PDR;
 
 g_e = modelParameter.g_e;
 if recruitmentType == 3
+    index_saturation = modelParameter.index_saturation;
     lamda = modelParameter.lamda;
     k_e = modelParameter.k_e;
     U_th_t = modelParameter.U_th_t;
@@ -119,14 +120,15 @@ for t = 1:length(time)
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 3
             DR_MU = g_e.*(U_eff-U_th_new)+MDR;
-            for n = 1:index_slow
-                if U_eff <= U_th_t(n)
-                    DR_temp(n) = MDR(n) + lamda*k_e(n)*(U_eff-U_th_new(n));
+            for m = 1:index_slow
+                index = index_saturation(m);
+                if U_eff <= U_th_t(index)
+                    DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff-U_th_new(index));
                 else
-                    DR_temp(n) = PDR(n)-k_e(n)*(1-U_eff);
+                    DR_temp(index) = PDR(index)-k_e(index)*(1-U_eff);
                 end
             end
-            DR_MU(1:index_slow) = DR_temp(1:index_slow);
+            DR_MU(index_saturation) = DR_temp(index_saturation);
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         end
@@ -157,7 +159,7 @@ for t = 1:length(time)
                 mu = 1/DR_MU(n);
                 Z = randn(1);
                 Z(Z>3.9) = 3.9;
-                Z(Z<-3.9) = -3.9;                
+                Z(Z<-3.9) = -3.9;
                 spike_time_temp = (mu + mu*cv_MU*Z)*Fs;
                 if spike_time_temp <= 0.002*Fs
                     spike_time_temp = 0.002*Fs;
@@ -204,63 +206,63 @@ for t = 1:length(time)
             end
         end
     end
-        %% Convert spikes into activation
-        [c,cf,A_tilde,A] = spike2activation(R(:,t),c,cf,A,parameter_Matrix,L_ce,S_i,Y_i,Fs);
-        
-        c_mat(:,t) = c;
-        cf_mat(:,t) = cf;
-        A_tilde_mat(:,t) = A_tilde;
-        A_mat(:,t) = A;
-        
-        %% Force-length and force-velocity
-        FL(1:index_slow) = FL_slow_function(L_ce);
-        FL(index_slow+1:end) = FL_fast_function(L_ce);
-        
-        if V_ce > 0
-            FV(1:index_slow) = FVecc_slow_function(L_ce,V_ce);
-            FV(index_slow+1:end) = FVecc_fast_function(L_ce,V_ce);
-        else
-            FV(1:index_slow) = FVcon_slow_function(L_ce,V_ce);
-            FV(index_slow+1:end) = FVcon_fast_function(L_ce,V_ce);
-        end
-        
-        %% Passive element 1
-        F_pe1 = Fpe1_function(L_ce/Lmax,V_ce);
-        
-        %% Passive element 2
-        F_pe2 = Fpe2_function(L_ce);
-        if F_pe2 > 0
-            F_pe2 = 0;
-        end
-        
-        f_i = A.*PTi_new'.*(FL.*FV+F_pe2);
-        %f_i = A.*PTi_new'.*(FL+F_pe2);
-        force(:,t) = f_i;
-        
-        F_ce(t) = sum(f_i);
-        F_total(t) = F_ce(t) + F_pe1*F0;
-        
-        F_se(t) = Fse_function(L_se) * F0;
-        
-        k_0_de = h*MuscleVelocity(t);
-        l_0_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-            + (MuscleVelocity(t)).^2*tan(alpha).^2/(MuscleLength(t)));
-        k_1_de = h*(MuscleVelocity(t)+l_0_de/2);
-        l_1_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-            + (MuscleVelocity(t)+l_0_de/2).^2*tan(alpha).^2/(MuscleLength(t)+k_0_de/2));
-        k_2_de = h*(MuscleVelocity(t)+l_1_de/2);
-        l_2_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-            + (MuscleVelocity(t)+l_1_de/2).^2*tan(alpha).^2/(MuscleLength(t)+k_1_de/2));
-        k_3_de = h*(MuscleVelocity(t)+l_2_de);
-        l_3_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-            + (MuscleVelocity(t)+l_2_de).^2*tan(alpha).^2/(MuscleLength(t)+k_2_de));
-        MuscleLength(t+1) = MuscleLength(t) + 1/6*(k_0_de+2*k_1_de+2*k_2_de+k_3_de);
-        MuscleVelocity(t+1) = MuscleVelocity(t) + 1/6*(l_0_de+2*l_1_de+2*l_2_de+l_3_de);
-        
-        % normalize each variable to optimal muscle length or tendon length
-        V_ce = MuscleVelocity(t+1)/(L0/100);
-        L_ce = MuscleLength(t+1)/(L0/100);
-        L_se = (Lmt - L_ce*L0*cos(alpha))/L0T;
+    %% Convert spikes into activation
+    [c,cf,A_tilde,A] = spike2activation(R(:,t),c,cf,A,parameter_Matrix,L_ce,S_i,Y_i,Fs);
+    
+    c_mat(:,t) = c;
+    cf_mat(:,t) = cf;
+    A_tilde_mat(:,t) = A_tilde;
+    A_mat(:,t) = A;
+    
+    %% Force-length and force-velocity
+    FL(1:index_slow) = FL_slow_function(L_ce);
+    FL(index_slow+1:end) = FL_fast_function(L_ce);
+    
+    if V_ce > 0
+        FV(1:index_slow) = FVecc_slow_function(L_ce,V_ce);
+        FV(index_slow+1:end) = FVecc_fast_function(L_ce,V_ce);
+    else
+        FV(1:index_slow) = FVcon_slow_function(L_ce,V_ce);
+        FV(index_slow+1:end) = FVcon_fast_function(L_ce,V_ce);
+    end
+    
+    %% Passive element 1
+    F_pe1 = Fpe1_function(L_ce/Lmax,V_ce);
+    
+    %% Passive element 2
+    F_pe2 = Fpe2_function(L_ce);
+    if F_pe2 > 0
+        F_pe2 = 0;
+    end
+    
+    f_i = A.*PTi_new'.*(FL.*FV+F_pe2);
+    %f_i = A.*PTi_new'.*(FL+F_pe2);
+    force(:,t) = f_i;
+    
+    F_ce(t) = sum(f_i);
+    F_total(t) = F_ce(t) + F_pe1*F0;
+    
+    F_se(t) = Fse_function(L_se) * F0;
+    
+    k_0_de = h*MuscleVelocity(t);
+    l_0_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+        + (MuscleVelocity(t)).^2*tan(alpha).^2/(MuscleLength(t)));
+    k_1_de = h*(MuscleVelocity(t)+l_0_de/2);
+    l_1_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+        + (MuscleVelocity(t)+l_0_de/2).^2*tan(alpha).^2/(MuscleLength(t)+k_0_de/2));
+    k_2_de = h*(MuscleVelocity(t)+l_1_de/2);
+    l_2_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+        + (MuscleVelocity(t)+l_1_de/2).^2*tan(alpha).^2/(MuscleLength(t)+k_1_de/2));
+    k_3_de = h*(MuscleVelocity(t)+l_2_de);
+    l_3_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+        + (MuscleVelocity(t)+l_2_de).^2*tan(alpha).^2/(MuscleLength(t)+k_2_de));
+    MuscleLength(t+1) = MuscleLength(t) + 1/6*(k_0_de+2*k_1_de+2*k_2_de+k_3_de);
+    MuscleVelocity(t+1) = MuscleVelocity(t) + 1/6*(l_0_de+2*l_1_de+2*l_2_de+l_3_de);
+    
+    % normalize each variable to optimal muscle length or tendon length
+    V_ce = MuscleVelocity(t+1)/(L0/100);
+    L_ce = MuscleLength(t+1)/(L0/100);
+    L_se = (Lmt - L_ce*L0*cos(alpha))/L0T;
 end
 
 %%
