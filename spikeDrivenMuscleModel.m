@@ -120,7 +120,7 @@ for t = 1:length(time)
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 3
             DR_MU = g_e.*(U_eff-U_th_new)+MDR;
-            for m = 1:index_slow
+            for m = 1:length(index_saturation)
                 index = index_saturation(m);
                 if U_eff <= U_th_t(index)
                     DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff-U_th_new(index));
