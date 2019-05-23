@@ -7,7 +7,7 @@
 %   individual motor units
 %==========================================================================
 
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1');
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_3');
 %% Peak tension of muscle
 density = 1.06; %
 L0 = 6.8; % optimal muscle length [cm]
@@ -76,33 +76,43 @@ PDR = FR_half*2;
 % we don't assume saturation 
 g_e = (PDR-MDR)./(1-U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
-alpha = 50;
+Ur_t = 0.3;
+index_saturation = find(U_th_new<Ur_t);
+f_k_e = fit([Ur_1 Ur_t]',[50 1]','poly1');
+coeffs_f_k_e = coeffvalues(f_k_e);
 
-a = (2*MDR+alpha*MDR)./(alpha*(1-U_th_new));
-U_th_tr = (a-MDR)./a;
+lamda = coeffs_f_k_e(1)*U_th_new+coeffs_f_k_e(2);
+
+k_e = (2*MDR+lamda.*MDR)./(lamda.*(1-U_th_new));
+U_th_t = (k_e-MDR)./k_e;
 %% 
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
 %% Discharge rate of motor unit
 U_vec = 0:0.001:1;
 DR_mat = zeros(N_MU,length(U_vec));
 DR_temp = zeros(N_MU,1);
 for i = 1:length(U_vec)
     DR_MU = g_e.*(U_vec(i)-U_th_new)+MDR;   
-    for n = 1:index_slow
-        if U_vec(i) <= U_th_tr(n)
-            DR_temp(n) = MDR(n) + alpha*a(n)*(U_vec(i)-U_th_new(n));
+%    DR_temp = MDR + lamda.*k_e.*(U_vec(i)-U_th_new);
+    for n = 1:length(index_saturation)
+        index = index_saturation(n);
+        if U_vec(i) <= U_th_t(index)
+            DR_temp(index) = MDR(index) + lamda(index).*k_e(index).*(U_vec(i)-U_th_new(index));
         else
-            DR_temp(n) = PDR(n)-a(n)*(1-U_vec(i));
+            DR_temp(index) = PDR(index)-k_e(index)*(1-U_vec(i));
         end
     end
-    DR_MU(1:index_slow) = DR_temp(1:index_slow);
+    
+    DR_MU(index_saturation) = DR_temp(index_saturation);
+    % DR_MU(1:index_slow) = DR_temp(1:index_slow);
     DR_MU(DR_MU<MDR) = 0;
     DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
     DR_mat(:,i) = DR_MU;
 end
 
-index_plot = [1 50 100 150 200 250 300];
-figure(1)
+%%
+index_plot = 1:1:300; %[1 50 100 150 200 250 300];
+figure()
 plot(U_vec*100,DR_mat(index_plot,:),'k','LineWidth',1)
 xlabel('Activation (%Maximum)','FontSize',8)
 ylabel('Discharge Rate (Hz)','FontSize',8)

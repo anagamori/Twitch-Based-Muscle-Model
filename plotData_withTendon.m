@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'No_100_sameForce_CTvsPTi';
+condition = '10_CoV_80_Ur_Rec_3';
 data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
@@ -23,7 +23,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-for j = 0:10
+for j = 0:4
     cd(data_folder)
     load(['Force_mat_' num2str(j)])
     cd(code_folder)

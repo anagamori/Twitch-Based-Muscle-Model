@@ -39,6 +39,7 @@ PDR = modelParameter.PDR;
 g_e = modelParameter.g_e;
 
 if recruitmentType == 3
+    index_saturation = modelParameter.index_saturation;
     lamda = modelParameter.lamda;
     k_e = modelParameter.k_e;
     U_th_t = modelParameter.U_th_t;
@@ -108,14 +109,15 @@ for t = 1:length(time)
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 3
             DR_MU = g_e.*(U_eff-U_th_new)+MDR;
-            for n = 1:index_slow
-                if U_eff <= U_th_t(n)
-                    DR_temp(n) = MDR(n) + lamda*k_e(n)*(U_eff-U_th_new(n));
+            for m = 1:index_slow
+                index = index_saturation(m);
+                if U_eff <= U_th_t(index)
+                    DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff-U_th_new(index));
                 else
-                    DR_temp(n) = PDR(n)-k_e(n)*(1-U_eff);
+                    DR_temp(index) = PDR(index)-k_e(index)*(1-U_eff);
                 end
             end
-            DR_MU(1:index_slow) = DR_temp(1:index_slow);
+            DR_MU(index_saturation) = DR_temp(index_saturation);
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         end
