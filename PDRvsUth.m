@@ -72,10 +72,10 @@ load('FR_half')
 MDR = FR_half/2;
 PDR = FR_half*2;
 
-[~,index_DR_dif] = max(PDR-MDR);
-%g_e = (PDR(index_DR_dif)-MDR(index_DR_dif))/(1-U_th_new(index_DR_dif));
+% linear gain
 g_e = max((PDR-MDR)./(1-U_th_new));
-%g_e = 115.1750;
+
+% Non-linear gain
 %% 
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
 
@@ -129,7 +129,7 @@ ax.FontSize = 10;
 
 %%
 clear U_th_diff
-DR_MU = g_e.*(0.2-U_th_new)+MDR;
+DR_MU = g_e.*(0.1-U_th_new)+MDR;
 DR_MU(DR_MU<MDR) = 0;
 DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
 
