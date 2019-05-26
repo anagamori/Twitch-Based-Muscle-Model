@@ -11,7 +11,7 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_80_Ur_Rec_3';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/10_CoV_80_Ur_Rec_3_noFV';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_3';
 

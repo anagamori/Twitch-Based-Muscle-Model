@@ -235,8 +235,8 @@ for t = 1:length(time)
         F_pe2 = 0;
     end
     
-    f_i = A.*PTi_new'.*(FL.*FV+F_pe2);
-    %f_i = A.*PTi_new'.*(FL+F_pe2);
+    %f_i = A.*PTi_new'.*(FL.*FV+F_pe2);
+    f_i = A.*PTi_new'.*(FL+F_pe2);
     force(:,t) = f_i;
     
     F_ce(t) = sum(f_i);
