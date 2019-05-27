@@ -125,7 +125,7 @@ fig.PaperPosition = [0 0 3.34 3.34];
 %%
 clear U_th_diff
 DR_temp = zeros(N_MU,1);
-U = 0.2;
+U = 0.1;
 DR_MU = g_e.*(U-U_th_new)+MDR;
 
 %    DR_temp = MDR + lamda.*k_e.*(U_vec(i)-U_th_new);

@@ -10,16 +10,17 @@ clear all
 clc
 
 %%
-condition = '10_CoV_50_Ur_Rec_3';
+
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 f = 0:0.5:100;
 
-for i = 1:3
+for i = 1:2
     if i == 1
-        amp_vec = 0.1:0.1:1;
-        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_1';
+        condition = '10_CoV_50_Ur_Rec_2';
+        amp_vec = [0.05 0.1:0.1:1];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -28,6 +29,7 @@ for i = 1:3
         cd(code_folder)
         color_code = [100 100 100]/255;
     elseif i == 2
+        condition = '10_CoV_50_Ur_Rec_3';
         amp_vec = [0.05 0.1:0.1:1];
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
@@ -38,8 +40,9 @@ for i = 1:3
         cd(code_folder)
         color_code = [230 57 70]/255;
     elseif i == 3
+        condition = '10_CoV_50_Ur_Rec_1';
         amp_vec = [0.05 0.1:0.1:1];
-        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -58,14 +61,14 @@ for i = 1:3
     
     std_Force_norm = std_Force./mean_mean_Force(end)*100;
     figure(2)
-    shadedErrorBar(amp_vec*100,mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    %shadedErrorBar(mean(mean_Force_norm),mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(amp_vec*100,mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force_norm),mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     
     figure(3)
-    shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    %shadedErrorBar(mean(mean_Force_norm),mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force_norm),mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     %%

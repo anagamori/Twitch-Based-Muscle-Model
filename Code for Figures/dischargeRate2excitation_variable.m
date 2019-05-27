@@ -1,13 +1,13 @@
 %==========================================================================
-% dischargeRate2excitation_nonLinear.m
+% excitation2dischargeRate.m
 % Author: Akira Nagamori
-% Last update: 5/21/19
+% Last update: 3/5/19
 % Descriptions:
 %   Plot the relationship between excitation and discharge rate of
 %   individual motor units
 %==========================================================================
-
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_3');
+close all
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_CTvsPTi');
 %% Peak tension of muscle
 density = 1.06; %
 L0 = 6.8; % optimal muscle length [cm]
@@ -38,7 +38,7 @@ PTi = P_MU./sum(P_MU)*F0; % peak tetanic force for individual units
 
 %% Fractional PSCA
 F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
-[~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); 
+[~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); rng(1)
 %index_slow = 196;
 
 %% Assign peak tetanic force into each unit
@@ -51,7 +51,7 @@ index_fast = index_slow+1:N_MU;
 R_fast_temp = randperm(length(index_fast));
 R_fast = index_fast(R_fast_temp);
 index_MU_PTi = [R_slow R_fast]; % vector of indexes to match peak tetanic tension to appropriate contraction time
-PTi_new = PTi; %(index_MU_PTi);
+PTi_new = PTi(index_MU_PTi);
 
 %% Recruitment threshold
 % Find recruitment threshold for individual units using exponential fit
@@ -62,7 +62,7 @@ Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*i_MU); % the resulting recruitment threshold for individual units
-U_th_new = U_th; %(index_MU_PTi);
+U_th_new = U_th(index_MU_PTi);
 [~,loc_max_U_th] = max(U_th_new);
 
 %% FR_half for individual motor units
@@ -70,50 +70,30 @@ load('FR_half')
 MDR = FR_half/2;
 PDR = FR_half*2;
 
-%% Gain of discharge rate vs input excitation
-
-% fast-twitch units 
-% we don't assume saturation 
-g_e = (PDR-MDR)./(1-U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
-
-Ur_t = 0.2;
-index_saturation = find(U_th_new<Ur_t);
-f_k_e = fit([Ur_1 Ur_t]',[50 1]','poly1');
-coeffs_f_k_e = coeffvalues(f_k_e);
-
-lamda = coeffs_f_k_e(1)*U_th_new+coeffs_f_k_e(2);
-
-k_e = (2*MDR+lamda.*MDR)./(lamda.*(1-U_th_new));
-U_th_t = (k_e-MDR)./k_e;
+[~,index_DR_dif] = max(PDR-MDR);
+%g_e = (PDR(index_DR_dif)-MDR(index_DR_dif))/(1-U_th_new(index_DR_dif));
+g_e = (2-0.5)./(1-U_th_new(end));
+%g_e = 115.1750;
 %% 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 %% Discharge rate of motor unit
 U_vec = 0:0.001:1;
 DR_mat = zeros(N_MU,length(U_vec));
-DR_temp = zeros(N_MU,1);
 for i = 1:length(U_vec)
-    DR_MU = g_e.*(U_vec(i)-U_th_new)+MDR;   
-%    DR_temp = MDR + lamda.*k_e.*(U_vec(i)-U_th_new);
-    for n = 1:length(index_saturation)
-        index = index_saturation(n);
-        if U_vec(i) <= U_th_t(index)
-            DR_temp(index) = MDR(index) + lamda(index).*k_e(index).*(U_vec(i)-U_th_new(index));
-        else
-            DR_temp(index) = PDR(index)-k_e(index)*(1-U_vec(i));
-        end
-    end
     
-    DR_MU(index_saturation) = DR_temp(index_saturation);
-    % DR_MU(1:index_slow) = DR_temp(1:index_slow);
+    DR_MU = (PDR-MDR)./(1-U_th_new).*(U_vec(i)-U_th_new) + MDR;
     DR_MU(DR_MU<MDR) = 0;
     DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
     DR_mat(:,i) = DR_MU;
 end
 
 %%
-index_plot = 1:1:300; %[1 50 100 150 200 250 300];
-figure()
-plot(U_vec*100,DR_mat(index_plot,:),'k','LineWidth',1)
+%randperm(300,50)
+index_plot =  [1 10 20 40 100 210 250 279 282 300];
+figure(1)
+plot(U_vec,DR_mat(index_plot,:),'k','LineWidth',1)
+hold on 
+plot(U_vec,DR_mat(end,:),'k','LineWidth',1)
 xlabel('Activation (%Maximum)','FontSize',8)
 ylabel('Discharge Rate (Hz)','FontSize',8)
 set(gca,'TickDir','out');
@@ -123,3 +103,4 @@ ax.FontSize = 6;
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 3.34 3.34];
+

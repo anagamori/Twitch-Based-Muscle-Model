@@ -57,7 +57,7 @@ PTi_new = PTi(index_MU_PTi);
 % Find recruitment threshold for individual units using exponential fit
 % Recruitment threshold is correlated to peak tetanic tension
 %   Use index_MU_PTi to appropriately index each MU
-Ur = 0.8; % recruitment threshold for the lastly recruited motor unit
+Ur = 0.5; % recruitment threshold for the lastly recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
@@ -75,7 +75,7 @@ PDR = FR_half*2;
 g_e = max((PDR-MDR)./(1-U_th_new));
 %g_e = 115.1750;
 %% 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 %% Discharge rate of motor unit
 U_vec = 0:0.001:1;
 DR_mat = zeros(N_MU,length(U_vec));
@@ -86,7 +86,7 @@ for i = 1:length(U_vec)
     DR_mat(:,i) = DR_MU;
 end
 
-index_plot = [1 50 100 150 200 250 300];
+index_plot =  [1 10 20 40 100 210 250 279 282 300];
 figure(1)
 plot(U_vec*100,DR_mat(index_plot,:),'k','LineWidth',1)
 xlabel('Activation (%Maximum)','FontSize',8)
