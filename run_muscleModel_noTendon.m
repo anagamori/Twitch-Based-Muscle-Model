@@ -37,7 +37,7 @@ for j = 0:10 %1:length(amp_vec)
     
     output_temp = cell(1,10);
     
-    for i = 1
+    for i = 2:10
         tic
         output = spikeDrivenMuscleModel_noTendon(Fs,time,input,modelParameter,1);
         cd(data_folder)
