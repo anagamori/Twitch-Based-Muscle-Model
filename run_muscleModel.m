@@ -30,7 +30,7 @@ modelParameter.recruitment = 3; % 1: Loeb's formulation, 2: Fuglevand's formulat
 
 amp_vec = [0.05 0.1:0.1:1];
 trial_vec = [7 10];
-for j = 9:10
+for j = 10
     j
     if j < 2
         Fs = 10000;
@@ -64,29 +64,29 @@ for j = 9:10
     amp = amp_vec(j+1);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
-    if j == 9
-        for i = 3:10
-            i
-            tic
-            output = spikeDrivenMuscleModel(Fs,time,input,modelParameter,1);
-            toc
-            cd(data_folder)
-            save(['Data_' num2str(j) '_' num2str(i)],'output','-v7.3')
-            cd(code_folder)
-            clear output
-            
-        end
-    else
-        for i = 1:10
-            i
-            tic
-            output = spikeDrivenMuscleModel(Fs,time,input,modelParameter,1);
-            toc
-            cd(data_folder)
-            save(['Data_' num2str(j) '_' num2str(i)],'output','-v7.3')
-            cd(code_folder)
-            clear output
-            
-        end
+    %     if j == 9
+    %         for i = 3:10
+    %             i
+    %             tic
+    %             output = spikeDrivenMuscleModel(Fs,time,input,modelParameter,1);
+    %             toc
+    %             cd(data_folder)
+    %             save(['Data_' num2str(j) '_' num2str(i)],'output','-v7.3')
+    %             cd(code_folder)
+    %             clear output
+    %
+    %         end
+    %     else
+    for i = 1:10
+        i
+        tic
+        output = spikeDrivenMuscleModel(Fs,time,input,modelParameter,1);
+        toc
+        cd(data_folder)
+        save(['Data_' num2str(j) '_' num2str(i)],'output','-v7.3')
+        cd(code_folder)
+        clear output
+        
+        %        end
     end
 end
