@@ -5,8 +5,8 @@
 % Descriptions:
 %   Run muscle model simulation
 %==========================================================================
-%close all
-%clear all
+close all
+clear all
 clc
 
 %%
@@ -25,7 +25,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 %% 
-for j = 8:10 %length(amp_vec)
+for j = 0:10 %length(amp_vec)
     
     for i = 1:10
         cd(data_folder)
