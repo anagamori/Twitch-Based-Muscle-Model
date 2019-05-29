@@ -91,7 +91,7 @@ end
 
 mean_mean_Force = mean(mean_Force);
 figure(1)
-plot([0 amp_vec],[0 mean(mean_Force)]./mean_Force(end),'LineWidth',2)
+plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2)
 %plot([0 amp_vec],[0 mean_Force]./mean_Force(end),'LineWidth',2)
 xlabel('Activation (%)','FontSize',14)
 ylabel('Force (%MVC)','FontSize',14)
