@@ -17,14 +17,14 @@ figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures
 %%
 amp_vec = [0.05 0.1:0.1:1];
 
-Force_mat = zeros(10,15*10000+1);
-mean_Force = zeros(10,length(amp_vec));
-std_Force = zeros(10,length(amp_vec));
-cov_Force = zeros(10,length(amp_vec));
-pxx = zeros(10,1001);
-mean_pxx = zeros(length(amp_vec),1001);
-%%
-for j = 4 %:length(amp_vec)
+% Force_mat = zeros(10,15*10000+1);
+% mean_Force = zeros(10,length(amp_vec));
+% std_Force = zeros(10,length(amp_vec));
+% cov_Force = zeros(10,length(amp_vec));
+% pxx = zeros(10,1001);
+% mean_pxx = zeros(length(amp_vec),1001);
+% %%
+for j = 7  %:length(amp_vec)
     if j < 2
         Fs = 10000;
         time = 0:1/Fs:15;
@@ -91,7 +91,8 @@ end
 
 mean_mean_Force = mean(mean_Force);
 figure(1)
-plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2)
+plot([0 amp_vec],[0 mean(mean_Force)]./mean_Force(end),'LineWidth',2)
+%plot([0 amp_vec],[0 mean_Force]./mean_Force(end),'LineWidth',2)
 xlabel('Activation (%)','FontSize',14)
 ylabel('Force (%MVC)','FontSize',14)
 set(gca,'TickDir','out');
@@ -102,6 +103,7 @@ set(gca,'box','off')
 
 figure(2)
 plot(amp_vec,mean(std_Force),'LineWidth',2)
+%plot(amp_vec,std_Force,'LineWidth',2)
 xlabel('Mean Force (%)','FontSize',14)
 ylabel('SD (N)','FontSize',14)
 set(gca,'TickDir','out');
@@ -111,9 +113,10 @@ set(gca,'box','off')
 % cd (code_folder)
 
 figure(3)
+%plot(amp_vec,cov_Force,'LineWidth',2)
 plot(amp_vec,mean(cov_Force),'LineWidth',2)
-hold on
-plot(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),'LineWidth',2)
+% hold on
+% plot(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),'LineWidth',2)
 xlabel('Mean Force (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 set(gca,'TickDir','out');
