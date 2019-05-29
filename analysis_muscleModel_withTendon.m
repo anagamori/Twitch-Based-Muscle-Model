@@ -17,14 +17,14 @@ figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures
 %%
 amp_vec = [0.05 0.1:0.1:1];
 
-% Force_mat = zeros(10,15*10000+1);
-% mean_Force = zeros(10,length(amp_vec));
-% std_Force = zeros(10,length(amp_vec));
-% cov_Force = zeros(10,length(amp_vec));
-% pxx = zeros(10,1001);
-% mean_pxx = zeros(length(amp_vec),1001);
+Force_mat = zeros(10,15*10000+1);
+mean_Force = zeros(10,length(amp_vec));
+std_Force = zeros(10,length(amp_vec));
+cov_Force = zeros(10,length(amp_vec));
+pxx = zeros(10,1001);
+mean_pxx = zeros(length(amp_vec),1001);
 % %%
-for j = 7  %:length(amp_vec)
+for j = 0:10  %:length(amp_vec)
     if j < 2
         Fs = 10000;
         time = 0:1/Fs:15;
