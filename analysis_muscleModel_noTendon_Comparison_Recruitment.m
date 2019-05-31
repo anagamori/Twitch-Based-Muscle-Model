@@ -20,7 +20,7 @@ std_Force = zeros(10,length(amp_vec));
 cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
-for k = 1:2
+for k = 1:3
     if k == 1
         data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/10_CoV_80_Ur_Rec_2_CTvsPTi';
     elseif k == 2

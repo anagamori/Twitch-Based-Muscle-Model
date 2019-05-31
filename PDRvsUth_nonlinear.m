@@ -123,6 +123,30 @@ fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 3.34 3.34];
 
 %%
+U_th_vec = U_th_new';
+U_th_vec =  U_th_vec*100;
+X_1 = [ones(length(U_th_vec),1) U_th_vec];
+b_1 = X_1\PDR';
+PDR_Calc = X_1*b_1;
+Rsq_1 = 1 - sum((PDR' - PDR_Calc).^2)/sum((PDR' - mean(PDR)).^2)
+[R_1,P_1] = corrcoef(U_th_vec,PDR')
+
+figure(2)
+scatter(U_th_new*100,PDR,'filled','k','LineWidth',0.5)
+hold on
+plot(U_th_new*100,PDR_Calc,'r','LineWidth',1)
+xlim([-5 55])
+xticks([0 0.1 0.2 0.3 0.4 0.5]*100)
+xlabel('Recruitment Threshold (%Maximum)','FontSize',8)
+ylabel('Discharge Rate (Hz)','FontSize',8)
+set(gca,'TickDir','out');
+set(gca,'box','off')
+ax = gca;
+ax.FontSize = 6;
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 3.34 3.34];
+%%
 clear U_th_diff
 DR_temp = zeros(N_MU,1);
 U = 0.1;
@@ -157,6 +181,7 @@ figure(3)
 scatter(U_th_vec,DR_vec,'filled','k','LineWidth',0.5)
 hold on
 plot(U_th_vec,DR_Calc,'r','LineWidth',1)
+xlim([-1 11])
 xticks([0 0.05 0.1 0.15 0.2]*100)
 xlabel('Recruitment Threshold (%Maximum)','FontSize',8)
 ylabel('Discharge Rate (Hz)','FontSize',8)

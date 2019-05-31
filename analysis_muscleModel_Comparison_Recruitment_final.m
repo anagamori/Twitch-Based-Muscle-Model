@@ -16,7 +16,7 @@ figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model
 
 f = 0:0.5:100;
 
-for i = 1:2
+for i = 1:3
     if i == 1
         condition = '10_CoV_50_Ur_Rec_2';
         amp_vec = [0.05 0.1:0.1:1];
@@ -27,7 +27,7 @@ for i = 1:2
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [100 100 100]/255;
+        color_code = [37  65 178]/255;
     elseif i == 2
         condition = '10_CoV_50_Ur_Rec_3';
         amp_vec = [0.05 0.1:0.1:1];
@@ -49,7 +49,7 @@ for i = 1:2
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [37  65 178]/255;
+        color_code = [100 100 100]/255; 
     end
     mean_mean_Force = mean(mean_Force);
     mean_Force_norm = mean_Force./mean_mean_Force(end)*100;
@@ -124,12 +124,12 @@ end
 
 %%
 figure(1)
-xlabel('Activation (%)','FontSize',14)
+xlabel('Activation (%Maxmum)','FontSize',14)
 ylabel('Force (%Maximum)','FontSize',14)
 ylim([0 105])
 set(gca,'TickDir','out');
 set(gca,'box','off')
-legend('Fuglevand model','New model without tendon','New model with tendon','location','northwest')
+legend('Constant','Combined','Variable','location','northwest')
 % cd (figure_folder)
 % saveas(gcf,'activation2meanForce_FV_comparison','pdf')
 % cd (code_folder)
@@ -138,7 +138,7 @@ figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('SD (%Maximum Force)','FontSize',14)
-legend('Fuglevand model','New model without tendon','New model with tendon','location','northwest')
+legend('Constant','Combined','Variable','location','northwest')
 %yticks([0.05 0.1 0.15 0.2 0.25])
 xlim([0 100])
 set(gca,'TickDir','out');
@@ -152,7 +152,7 @@ figure(3)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])
-legend('Fuglevand model','New model without tendon','New model without tendon','location','northwest')
+legend('Constant','Combined','Variable','location','northeast')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 % cd (figure_folder)
