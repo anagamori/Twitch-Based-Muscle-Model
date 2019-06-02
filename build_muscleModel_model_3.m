@@ -11,14 +11,14 @@ clear all
 clc
 
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_3_Ur_50_N_100';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_3_Ur_50_shortTendon';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
-modelParameter.tendonSlackLength = 24.1; % [cm]
+modelParameter.tendonSlackLength = 12; %24.1; % [cm]
 modelParameter.mass = 0.01; % [g]
 modelParameter.muscleInitialLength = 6.8; % [cm]
-modelParameter.tendonInitialLength = 24.1; % [cm]
+modelParameter.tendonInitialLength = 12; %24.1; % [cm]
 
 density = 1.06; %
 L0 = modelParameter.optimalLength; % optimal muscle length [cm]
@@ -36,7 +36,7 @@ modelParameter.Lmt = Lm_initial*cos(alpha)+Lt_initial; % intial musculotendon le
 [modelParameter.L_ce,modelParameter.L_se,modelParameter.Lmax] =  InitialLength_function(modelParameter);
 
 %% Motor unit parameters
-modelParameter.N_MU = 100; % number of motor units
+modelParameter.N_MU = 300; % number of motor units
 modelParameter.i_MU = 1:modelParameter.N_MU; % index for motor units
 
 %% Peak tetanic force
@@ -52,7 +52,7 @@ F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
 %% Model parameters for activation-frequency relationship
 cd(model_parameter_folder )
 load('pool_parameter_matrix')
-modelParameter.parameterMatrix = parameter_Matrix(1:300/modelParameter.N_MU:300,:);
+modelParameter.parameterMatrix = parameter_Matrix; %(1:300/modelParameter.N_MU:300,:);
 cd(code_folder)
 
 %% Assign peak tetanic force into each unit
@@ -82,7 +82,7 @@ modelParameter.U_th_new = U_th(index_MU_PTi);
 cd(model_parameter_folder )
 load('FR_half')
 cd(code_folder)
-modelParameter.FR_half = FR_half(1:300/modelParameter.N_MU:300);
+modelParameter.FR_half = FR_half; %(1:300/modelParameter.N_MU:300);
 modelParameter.MDR = modelParameter.FR_half/2;
 modelParameter.PDR = modelParameter.FR_half*2;
 
