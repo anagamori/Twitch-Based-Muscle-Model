@@ -77,7 +77,7 @@ for j = 9
             
         end
     else
-        for i = 1:10
+        for i = 3:10
             i
             tic
             output = spikeDrivenMuscleModel(Fs,time,input,modelParameter,1);
