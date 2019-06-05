@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
+condition = '10_CoV_50_Ur_Rec_3';
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -22,7 +22,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 2
+for i = 1:4
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
@@ -81,22 +81,22 @@ for i = 2
     figure(2)
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
     %%errorbar(amp_vec*100,mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
-    %shadedErrorBar(amp_vec*100,mean(std_Force),std(std_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    shadedErrorBar(mean(mean_Force)/mean_mean_Force(end)*100,mean(std_Force),std(std_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(amp_vec*100,mean(std_Force),std(std_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(mean(mean_Force)/mean_mean_Force(end)*100,mean(std_Force),std(std_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     
     figure(3)
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec*100,mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
-    %shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    shadedErrorBar(mean(mean_Force)/mean_mean_Force(end)*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(mean(mean_Force)/mean_mean_Force(end)*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     %%
     figure(4)
     subplot(2,2,1);
-    plot(f,mean_pxx(2,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(1,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -108,7 +108,7 @@ for i = 2
     
     
     subplot(2,2,2);
-    plot(f,mean_pxx(4,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(3,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -120,7 +120,7 @@ for i = 2
     hold on
     
     subplot(2,2,3);
-    plot(f,mean_pxx(6,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(5,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -132,7 +132,7 @@ for i = 2
     
     
     subplot(2,2,4);
-    plot(f,mean_pxx(9,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(8,:),'LineWidth',2,'color',color_code)
     xlim([0 50])
     hold on
     xlabel('Frequency (Hz)','FontSize',10)

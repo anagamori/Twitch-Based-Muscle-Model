@@ -23,7 +23,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-trial_vec = [0:3 10];
+trial_vec = 0:10; %[0:5 7:10];
 for k = 1:length(trial_vec)
     j = trial_vec(k);
     cd(data_folder)
