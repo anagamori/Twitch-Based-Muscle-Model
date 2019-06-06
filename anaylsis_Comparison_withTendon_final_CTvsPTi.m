@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = '10_CoV_50_Ur_Rec_3';
+condition = 'Model_4_10_CoV_50_Ur_Rec_3';
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -22,7 +22,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:4
+for i = 2:2:4
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
