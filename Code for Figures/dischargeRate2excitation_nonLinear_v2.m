@@ -80,7 +80,7 @@ f_t = 1.2;
 
 Ur_t = 0.2;
 index_saturation = find(U_th_new<Ur_t);
-f_k_e = fit([Ur_1 Ur_t]',[50 1]','poly1');
+f_k_e = fit([Ur_1 Ur_t]',[20 1]','poly1');
 coeffs_f_k_e = coeffvalues(f_k_e);
 lamda = coeffs_f_k_e(1)*U_th_new+coeffs_f_k_e(2);
 
