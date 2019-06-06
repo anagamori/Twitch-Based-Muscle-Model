@@ -76,15 +76,16 @@ PDR = FR_half*2;
 % we don't assume saturation 
 g_e = (PDR-MDR)./(1-U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
+f_t = 1.2;
+
 Ur_t = 0.2;
 index_saturation = find(U_th_new<Ur_t);
 f_k_e = fit([Ur_1 Ur_t]',[50 1]','poly1');
 coeffs_f_k_e = coeffvalues(f_k_e);
-
 lamda = coeffs_f_k_e(1)*U_th_new+coeffs_f_k_e(2);
 
-k_e = (2*MDR+lamda.*MDR)./(lamda.*(1-U_th_new));
-U_th_t = (k_e-MDR)./k_e;
+k_e = (f_t*FR_half-MDR+lamda.*(PDR-f_t*FR_half))./(lamda.*(1-U_th_new));
+U_th_t = (k_e-(PDR-1.2*FR_half))./k_e;
 %% 
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 %% Discharge rate of motor unit
@@ -115,7 +116,7 @@ end
 %index_plot = 1:1:300; %[1 50 100 150 200 250 300];
 index_plot = [1 10 20 40 100 210 250 279 282 300];
 figure(1)
-plot(U_vec*100,DR_mat(index_plot,:),'r','LineWidth',1)
+plot(U_vec*100,DR_mat(index_plot,:),'k','LineWidth',1)
 xlabel('Activation (%Maximum)','FontSize',8)
 ylabel('Discharge Rate (Hz)','FontSize',8)
 set(gca,'TickDir','out');
@@ -125,3 +126,4 @@ ax.FontSize = 6;
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 3.34 3.34];
+hold on

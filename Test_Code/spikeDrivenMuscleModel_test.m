@@ -19,7 +19,7 @@ data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/M
 
 %% 
 test_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/ST';
-MU_No = 1;
+MU_No = 7;
 %% Simulation parameters
 % Simulation parameters
 Fs = 2000; %sampling frequency
