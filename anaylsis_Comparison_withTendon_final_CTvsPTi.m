@@ -22,7 +22,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 2:2:4
+for i = 2:4
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
@@ -47,6 +47,7 @@ for i = 2:2:4
         color_code = [37  65 178]/255;
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
+        cov_1 = cov_Force;
     elseif i == 3
         Fs = 10000;
         time =0:1/Fs:15;
@@ -70,6 +71,7 @@ for i = 2:2:4
         load('mean_pxx')
         cd(code_folder)
         color_code = [77 172 38]/255;
+        cov_2 = cov_Force;
     end
     mean_mean_Force = mean(mean_Force);
     figure(1)

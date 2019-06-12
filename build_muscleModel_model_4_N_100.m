@@ -36,7 +36,7 @@ modelParameter.Lmt = Lm_initial*cos(alpha)+Lt_initial; % intial musculotendon le
 [modelParameter.L_ce,modelParameter.L_se,modelParameter.Lmax] =  InitialLength_function(modelParameter);
 
 %% Motor unit parameters
-modelParameter.N_MU = 300; % number of motor units
+modelParameter.N_MU = 100; % number of motor units
 modelParameter.i_MU = 1:modelParameter.N_MU; % index for motor units
 
 %% Peak tetanic force
@@ -52,7 +52,7 @@ F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
 %% Model parameters for activation-frequency relationship
 cd(model_parameter_folder )
 load('pool_parameter_matrix')
-modelParameter.parameterMatrix = parameter_Matrix; %(1:300/modelParameter.N_MU:300,:);
+modelParameter.parameterMatrix = parameter_Matrix(1:300/modelParameter.N_MU:300,:);
 cd(code_folder)
 
 %% Assign peak tetanic force into each unit
@@ -82,7 +82,7 @@ modelParameter.U_th_new = U_th(index_MU_PTi);
 cd(model_parameter_folder )
 load('FR_half')
 cd(code_folder)
-modelParameter.FR_half = FR_half; %(1:300/modelParameter.N_MU:300);
+modelParameter.FR_half = FR_half(1:300/modelParameter.N_MU:300);
 modelParameter.MDR = modelParameter.FR_half/2;
 modelParameter.PDR = modelParameter.FR_half*2;
 
