@@ -10,7 +10,9 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/Model_4_10_CoV_50_Ur_Rec_3_noFV';
+condition = 'Model_4_10_CoV_50_Ur_Rec_3_PR_100';
+data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
+data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -24,7 +26,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 % %%
-for j = 10 %:length(amp_vec)
+for j = 9:10 %:length(amp_vec)
     if j < 2
         Fs = 10000;
         time = 0:1/Fs:15;
@@ -83,6 +85,9 @@ for j = 10 %:length(amp_vec)
     toc
     mean_pxx(j+1,:) = mean(pxx);
     cd(data_folder)
+    save(['Force_mat_' num2str(j)],'Force_mat')
+    cd(code_folder)
+    cd(data_folder_git)
     save(['Force_mat_' num2str(j)],'Force_mat')
     cd(code_folder)
 end
