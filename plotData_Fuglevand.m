@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_1';
+condition = 'Model_2_N_100';
 data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/' condition];
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';

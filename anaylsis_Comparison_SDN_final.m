@@ -87,16 +87,16 @@ for i = [1:2 4]
     figure(2)
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec*100,mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
-    %shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    shadedErrorBar(amp_vec*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(amp_vec*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     
     figure(3)
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec*100,mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
-    shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    %shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     %%
@@ -166,8 +166,10 @@ y_0 = 0.2*1/6;
 y_100 = 1.2+0.2*2.5/6;
 a = (y_100-y_0)/100;
 
-y_5_new = 0.08991;
-b = y_5_new - a*6.599;
+std_N_100 = mean(std_Force./MVC.*100);
+mean_force_N_100 = mean(mean_Force)./mean_mean_Force(end)*100;
+y_5_new = std_N_100(1);
+b = y_5_new - a*mean_force_N_100(1);
 
 figure(2)
 xlabel('Mean Force (%)','FontSize',14)
