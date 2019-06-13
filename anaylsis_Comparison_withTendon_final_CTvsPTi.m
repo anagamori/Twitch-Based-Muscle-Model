@@ -22,7 +22,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 2:4
+for i = 2:2:4
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
