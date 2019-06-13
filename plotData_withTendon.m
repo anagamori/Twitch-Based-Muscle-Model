@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_4_10_CoV_50_Ur_Rec_3_PR_100';
+condition = 'Model_4_10_CoV_50_Ur_Rec_3_N_100';
 data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
