@@ -21,7 +21,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = [1:2 4]
+for i = 1:4
     if i == 1
         condition = 'Model_4_10_CoV_50_Ur_Rec_3'; %_CTvsPTi';
         Fs = 2000;
@@ -47,7 +47,7 @@ for i = [1:2 4]
         cd(code_folder)
         color_code = [77 172 38]/255;
     elseif i == 3
-        condition = '10_CoV_80_Ur_Rec_3';
+        condition = 'Model_4_10_CoV_80_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
