@@ -307,6 +307,7 @@ output.force = force;
 output.ForceTendon = F_se;
 output.Lce = MuscleLength./(L0/100);
 output.Vce = MuscleVelocity./(L0/100);
+output.FR_Ia = FR_Ia;
 
 %% Convert spike trian into activation
     function [c,cf,A_tilde,A] = spike2activation(R,c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs)
