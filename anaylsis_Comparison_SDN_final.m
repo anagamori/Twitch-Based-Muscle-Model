@@ -81,7 +81,7 @@ for i = 1:4
     %plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2,'Color',color_code)
     %plot([0 amp_vec]*100,[0 mean(mean_Force)],'LineWidth',2,'Color',color_code)
     %shadedErrorBar([0 amp_vec]*100,[0 mean(mean_Force./MVC.*100)],[0 std(mean_Force./MVC.*100)],'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code})
-    shadedErrorBar([0 amp_vec]*100,[0 mean(mean_Force)],[0 std(mean_Force)],'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code})
+    shadedErrorBar([0 amp_vec]*100,[0 mean(mean_Force)]./MVC*100,[0 std(mean_Force)],'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code})
     hold on
     
     figure(2)
@@ -153,7 +153,7 @@ end
 %%
 figure(1)
 xlabel('Activation (%)','FontSize',14)
-ylabel('Force (N)','FontSize',14)
+ylabel('Force (% Maximum)','FontSize',14)
 set(gca,'TickDir','out');
 set(gca,'box','off')
 legend('Default','RP = 100','Ur = 0.8','N = 100','location','northwest')

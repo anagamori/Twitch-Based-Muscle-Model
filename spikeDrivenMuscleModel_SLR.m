@@ -518,13 +518,14 @@ output.FR_Ia = FR_Ia;
         else
             C = 0.42;
         end
-        df_dynamic = (float(pow(gamma_dynamic,p_bag_1))/(pow(gamma_dynamic,p_bag_1)+pow(freq_bag1,p_bag_1))-f_dynamic)/float(tau_bag1);
+        df_dynamic = (gamma_dynamic^p_bag_1/(gamma_dynamic^p_bag_1+freq_bag1^p_bag_1)-f_dynamic)/tau_bag1;
         f_dynamic = df_dynamic*step + f_dynamic;
         
         beta = beta0 + beta1 * f_dynamic;
         Gamma = Gamma1 * f_dynamic;
         
-        T_ddot = K_SR_bag_1/M_bag_1 * ((C*beta*sign(V-T_dot/K_SR_bag_1)*pow(abs(V-T_dot/K_SR_bag_1),a_bag_1))*(L-L0_SR_bag_1-T/K_SR_bag_1-R_bag_1)+K_PR_bag_1*(L-L0_SR_bag_1-T/K_SR_bag_1-L0_PR_bag_1)+M_bag_1*A+Gamma-T);
+        T_ddot =  K_SR/M_bag_1 * (C * beta * sign(V-T_dot/K_SR)*((abs(V-T_dot/K_SR))^a_bag_1)...
+        *(L-L0_SR_bag_1-T/K_SR-R_bag_1)+K_PR_bag_1*(L-L0_SR-T/K_SR-L0_PR_bag_1)+M_bag_1*A+Gamma-T);
         T_dot = T_ddot*step + T_dot;
         T = T_dot*step + T;
         
@@ -532,7 +533,7 @@ output.FR_Ia = FR_Ia;
     end
 
     function [AP_primary_bag2,AP_secondary_bag2,f_static,T,T_dot] = bag2_model(f_static,gamma_static,T,T_dot,L,V,A,step)
-        p_bag_2 = 2;
+        p = 2;
         R_bag_2 = 0.46;
         a_bag_2 = 0.3;
         K_SR_bag_2 = 10.4649;
@@ -555,12 +556,13 @@ output.FR_Ia = FR_Ia;
         else
             C = 0.42;
         end
-        df_static = (float(pow(gamma_static,p_bag_2))/(pow(gamma_static,p_bag_2)+pow(freq_bag2,p_bag_2))-f_static)/float(tau_bag2);
+        df_static = (gamma_static^p/(gamma_static^p+freq_bag2^p)-f_static)/tau_bag2;
         f_static = df_static*step + f_static;
         beta = beta0 + beta2 * f_static;
         Gamma = Gamma2 * f_static;
         
-        T_ddot = K_SR_bag_2/M_bag_2 * ((C*beta*sign(V-T_dot/K_SR_bag_2)*pow(abs(V-T_dot/K_SR_bag_2),a_bag_2))*(L-L0_SR_bag_2-T/K_SR_bag_2-R_bag_2)+K_PR_bag_2*(L-L0_SR_bag_2-T/K_SR_bag_2-L0_PR_bag_2)+M_bag_2*A+Gamma-T);
+        T_ddot = K_SR/M_bag_2 * (C * beta * sign(V-T_dot/K_SR)*((abs(V-T_dot/K_SR))^a_bag_2)...
+        *(L-L0_SR-T/K_SR-R_bag_2)+K_PR_bag_2*(L-L0_SR-T/K_SR-L0_PR)+M_bag_2*A+Gamma-T);
         T_dot = T_ddot*step + T_dot;
         T = T_dot*step + T;
         
@@ -593,11 +595,12 @@ output.FR_Ia = FR_Ia;
             C = 0.42;
         end
         
-        f_static_chain = float(pow(gamma_static,p_chain))/(pow(gamma_static,p_chain)+pow(freq_chain,p_chain));
+        f_static_chain = gamma_static^p/(gamma_static^p+freq_chain^p);
         beta = beta0 + beta2_chain * f_static_chain;
         Gamma = Gamma2_chain * f_static_chain;
         
-        T_ddot = K_SR_chain/M_chain * ((C*beta*sign(V-T_dot/K_SR_chain)*pow(abs(V-T_dot/K_SR_chain),a_chain))*(L-L0_SR_chain-T/K_SR_chain-R_chain)+K_PR_chain*(L-L0_SR_chain-T/K_SR_chain-L0_PR_chain)+M_chain*A+Gamma-T);
+        T_ddot = K_SR/M_chain * (C * beta * sign(V-T/K_SR)*((abs(V-T/K_SR))^a_chain)...
+        *(L-L0_SR-T/K_SR-R_chain)+K_PR_chain*(L-L0_SR-T/K_SR-L0_PR)+M_chain*A+Gamma-T);
         T_dot = T_ddot*step + T_dot;
         T = T_dot*step + T;
         
