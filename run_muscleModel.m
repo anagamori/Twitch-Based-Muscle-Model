@@ -65,7 +65,7 @@ for j = 7
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
     if j == 7
-        for i = 8:10
+        for i = 6:7
             i
             tic
             output = spikeDrivenMuscleModel(Fs,time,input,modelParameter,1);
