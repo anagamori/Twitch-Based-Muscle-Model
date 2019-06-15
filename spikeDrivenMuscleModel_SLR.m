@@ -624,7 +624,7 @@ output.FR_Ia = FR_Ia;
         if AP_secondary_chain < 0
             AP_secondary_chain = 0;
         end
-        if AP_bag1 > (AP_primary_bag2+AP_primary_chain):
+        if AP_bag1 > (AP_primary_bag2+AP_primary_chain)
             Larger = AP_bag1;
             Smaller = AP_primary_bag2+AP_primary_chain;
         else
