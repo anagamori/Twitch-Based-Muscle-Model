@@ -126,7 +126,6 @@ for t = 1:length(time)
     [AP_bag1,f_dynamic_bag1,T_bag1,T_dot_bag1] = bag1_model(f_dynamic_bag1,gamma_dynamic,T_bag1,T_dot_bag1,L_ce,V_ce,A_ce,Fs);
     [AP_primary_bag2,AP_secondary_bag2,f_static_bag2,T_bag2,T_dot_bag2] = bag2_model(f_static_bag2,gamma_static,T_bag2,T_dot_bag2,L_ce,V_ce,A_ce,Fs);
     [AP_primary_chain,AP_secondary_chain,T_chain,T_dot_chain] = chain_model(gamma_static,T_chain,T_dot_chain,L_ce,V_ce,A_ce,Fs);
-    [AP_primary_chain,AP_secondary_chain,T_chain,T_dot_chain] = chain_model(gamma_static,T,T_dot,L,V,A,Fs);
     [Output_Primary,Output_Secondary] = SpindleOutput(AP_bag1,AP_primary_bag2,AP_secondary_bag2,AP_primary_chain,AP_secondary_chain);
     
     output_AP_bag1(t) = AP_bag1;
@@ -136,7 +135,7 @@ for t = 1:length(time)
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
-        U_eff_dot = (synaptic_drive(t) - U_eff)/T_U;
+        U_eff_dot = (synaptic_drive(t) +FR_Ia(t) - U_eff)/T_U;
         U_eff = U_eff_dot*1/Fs + U_eff;
         
         %% Calculate firing rate
@@ -661,7 +660,7 @@ output.chain = output_AP_primary_chaine ;
         
         if Output_Primary < 0
             Output_Primary = 0;
-        elseif OutputPrimary > 100000
+        elseif Output_Primary > 100000
             Output_Primary = 100000;
         end
         if Output_Secondary < 0

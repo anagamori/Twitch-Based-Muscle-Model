@@ -135,7 +135,7 @@ for t = 1:length(time)
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
-        U_eff_dot = (synaptic_drive(t)  - U_eff)/T_U;
+        U_eff_dot = (synaptic_drive(t) +FR_Ia(t)/1000 - U_eff)/T_U;
         U_eff = U_eff_dot*1/Fs + U_eff;
         
         %% Calculate firing rate
