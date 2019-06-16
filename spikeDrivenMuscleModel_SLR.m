@@ -101,9 +101,10 @@ MuscleAcceleration = zeros(1,length(time));
 MuscleLength(1) = L_ce*L0/100;
 
 %%
-gamma_dynamic = 20;
-gamma_static = 20;
+gamma_dynamic = 40;
+gamma_static = 40;
 Ia_delay = 15*Fs/1000;
+Ia_gain = 2000;
 
 f_dynamic_bag1 = 0;
 T_bag1 = 0;
@@ -134,7 +135,7 @@ for t = 1:length(time)
     output_AP_primary_bag2(t) = AP_primary_bag2;
     output_AP_primary_chaine(t) = AP_primary_chain;
     FR_Ia(t) = Output_Primary;
-    Ia_Input(t) = FR_Ia(t)/1000;
+    Ia_Input(t) = FR_Ia(t)/Ia_gain;
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
@@ -143,8 +144,8 @@ for t = 1:length(time)
         else
             U = synaptic_drive(t);
         end
-        U_eff_dot = (U - U_eff)/T_U;
-        U_eff = U_eff_dot*1/Fs + U_eff;
+        %U_eff_dot = (U - U_eff)/T_U;
+        U_eff = U; %U_eff_dot*1/Fs + U_eff;
         
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur

@@ -11,7 +11,7 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/SLR/Spindle';
+data_folder = '/Volumes/DATA2/New_Model/SLR/Ia_gain_2000';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50';
 
@@ -20,7 +20,7 @@ cd(model_parameter_folder)
 load('modelParameter')
 cd(code_folder)
 %% MU simulation parameters
-modelParameter.CV_MU = 0.1;
+modelParameter.CV_MU = 0.2;
 
 %% Recruitment Type
 modelParameter.recruitment = 3; % 1: Loeb's formulation, 2: Fuglevand's formulation

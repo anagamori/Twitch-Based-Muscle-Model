@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Spindle';
+condition = 'Ia_gain_2000';
 data_folder = ['/Volumes/DATA2/New_Model/SLR/' condition];
 data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/SLR/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
