@@ -103,6 +103,7 @@ MuscleLength(1) = L_ce*L0/100;
 %%
 gamma_dynamic = 20;
 gamma_static = 20;
+Ia_delay = 15*Fs/1000;
 
 f_dynamic_bag1 = 0;
 T_bag1 = 0;
@@ -114,6 +115,7 @@ T_chain = 0;
 T_dot_chain = 0;
 
 FR_Ia = zeros(1,length(time));
+Ia_Input = zeros(1,length(time));
 output_AP_bag1 = zeros(1,length(time));
 output_AP_primary_bag2 = zeros(1,length(time));
 output_AP_primary_chaine = zeros(1,length(time));
@@ -132,10 +134,16 @@ for t = 1:length(time)
     output_AP_primary_bag2(t) = AP_primary_bag2;
     output_AP_primary_chaine(t) = AP_primary_chain;
     FR_Ia(t) = Output_Primary;
+    Ia_Input(t) = FR_Ia(t)/1000;
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
-        U_eff_dot = (synaptic_drive(t) +FR_Ia(t)/1000 - U_eff)/T_U;
+        if t > Ia_delay 
+            U = synaptic_drive(t) + Ia_Input(t-Ia_delay);
+        else
+            U = synaptic_drive(t);
+        end
+        U_eff_dot = (U - U_eff)/T_U;
         U_eff = U_eff_dot*1/Fs + U_eff;
         
         %% Calculate firing rate
