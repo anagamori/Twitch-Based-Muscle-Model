@@ -11,7 +11,7 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/SLR/Ia_gain_2000';
+data_folder = '/Volumes/DATA2/New_Model/SLR/Ia_gain_1000';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50';
 

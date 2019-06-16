@@ -101,6 +101,7 @@ MuscleAcceleration = zeros(1,length(time));
 MuscleLength(1) = L_ce*L0/100;
 
 %%
+
 SLRParameter.gamma_dynamic = 40;
 SLRParameter.gamma_static = 40;
 SLRParameter.Ia_delay = 15*Fs/1000;
