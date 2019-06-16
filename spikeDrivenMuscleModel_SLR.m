@@ -104,7 +104,7 @@ MuscleLength(1) = L_ce*L0/100;
 gamma_dynamic = 40;
 gamma_static = 40;
 Ia_delay = 15*Fs/1000;
-Ia_gain = 2000;
+Ia_gain = 1000;
 
 f_dynamic_bag1 = 0;
 T_bag1 = 0;
