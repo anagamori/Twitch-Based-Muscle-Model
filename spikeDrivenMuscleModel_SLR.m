@@ -3,7 +3,7 @@
 % Author: Akira Nagamori
 % Last update: 3/5/19
 %==========================================================================
-function [output] = spikeDrivenMuscleModel_SLR(Fs,time,input,modelParameter,figOpt)
+function [output] = spikeDrivenMuscleModel_SLR(Fs,time,input,modelParameter,SLRParameter,figOpt)
 %% Simulation parameters
 synaptic_drive = input;
 
@@ -101,10 +101,10 @@ MuscleAcceleration = zeros(1,length(time));
 MuscleLength(1) = L_ce*L0/100;
 
 %%
-gamma_dynamic = 40;
-gamma_static = 40;
-Ia_delay = 15*Fs/1000;
-Ia_gain = 2000;
+SLRParameter.gamma_dynamic = 40;
+SLRParameter.gamma_static = 40;
+SLRParameter.Ia_delay = 15*Fs/1000;
+SLRParameter.Ia_gain = 2000;
 
 f_dynamic_bag1 = 0;
 T_bag1 = 0;
