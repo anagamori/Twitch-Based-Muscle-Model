@@ -101,10 +101,10 @@ MuscleAcceleration = zeros(1,length(time));
 MuscleLength(1) = L_ce*L0/100;
 
 %%
-SLRParameter.gamma_dynamic = gamma_dynamic;
-SLRParameter.gamma_static = gamma_static;
-SLRParameter.Ia_delay = Ia_delay;
-SLRParameter.Ia_gain = Ia_gain;
+gamma_dynamic = SLRParameter.gamma_dynamic;
+gamma_static = SLRParameter.gamma_static;
+Ia_delay = SLRParameter.Ia_delay;
+Ia_gain = SLRParameter.Ia_gain;
 
 f_dynamic_bag1 = 0;
 T_bag1 = 0;

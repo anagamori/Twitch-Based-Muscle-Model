@@ -11,7 +11,7 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/SLR/Ia_gain_1000';
+data_folder = '/Volumes/DATA2/New_Model/SLR/GD_40_GS_40_Ia_2000_DL_30';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50';
 
@@ -25,11 +25,6 @@ modelParameter.CV_MU = 0.2;
 %% Recruitment Type
 modelParameter.recruitment = 3; % 1: Loeb's formulation, 2: Fuglevand's formulation
 
-%%
-SLRParameter.gamma_dynamic = 40;
-SLRParameter.gamma_static = 40;
-SLRParameter.Ia_delay = 15*Fs/1000;
-SLRParameter.Ia_gain = 2000;
 
 %% Simlulation parameters
 
@@ -50,11 +45,17 @@ for j = 1
         Fs = 25000;
         time = 0:1/Fs:15;
     end
+    %%
+    SLRParameter.gamma_dynamic = 40;
+    SLRParameter.gamma_static = 40;
+    SLRParameter.Ia_delay = 30*Fs/1000;
+    SLRParameter.Ia_gain = 2000;
+
     amp = amp_vec(j+1);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
     
-    for i = 1:10
+    for i = 1
         i
         tic
         output = spikeDrivenMuscleModel_SLR(Fs,time,input,modelParameter,SLRParameter,1);
