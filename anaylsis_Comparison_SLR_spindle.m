@@ -23,7 +23,7 @@ mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
 CoV = [];
-for i = 1:2
+for i = 1:3
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
@@ -48,6 +48,18 @@ for i = 1:2
         cd(code_folder)
         color_code = [37  65 178]/255;
         cov_2 = cov_Force;
+     elseif i == 3
+        Fs = 10000;
+        time =0:1/Fs:15;
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/SLR/Ia_gain_1000'];
+        cd(data_folder)
+        load('mean_Force')
+        load('std_Force')
+        load('cov_Force')
+        load('mean_pxx')
+        cd(code_folder)
+         color_code = [230 97 1]/255;
+        cov_3 = cov_Force;
     end
     mean_mean_Force = mean(mean_Force);
     CoV = [CoV cov_Force(:,2)];

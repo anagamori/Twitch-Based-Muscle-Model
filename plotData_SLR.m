@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Ia_gain_10000';
+condition = 'Ia_gain_1000';
 data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/SLR/' condition];
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';

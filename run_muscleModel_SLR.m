@@ -25,6 +25,11 @@ modelParameter.CV_MU = 0.2;
 %% Recruitment Type
 modelParameter.recruitment = 3; % 1: Loeb's formulation, 2: Fuglevand's formulation
 
+%%
+SLRParameter.gamma_dynamic = 40;
+SLRParameter.gamma_static = 40;
+SLRParameter.Ia_delay = 15*Fs/1000;
+SLRParameter.Ia_gain = 2000;
 
 %% Simlulation parameters
 
@@ -52,7 +57,7 @@ for j = 1
     for i = 1:10
         i
         tic
-        output = spikeDrivenMuscleModel_SLR(Fs,time,input,modelParameter,1);
+        output = spikeDrivenMuscleModel_SLR(Fs,time,input,modelParameter,SLRParameter,1);
         toc
         cd(data_folder)
         save(['Data_' num2str(j) '_' num2str(i)],'output','-v7.3')
