@@ -97,6 +97,7 @@ FV = zeros(N_MU,1);
 
 MuscleVelocity = zeros(1,length(time));
 MuscleLength = zeros(1,length(time));
+MuscleAcceleration = zeros(1,length(time));
 MuscleLength(1) = L_ce*L0/100;
 
 %%
@@ -113,22 +114,28 @@ T_chain = 0;
 T_dot_chain = 0;
 
 FR_Ia = zeros(1,length(time));
+output_AP_bag1 = zeros(1,length(time));
+output_AP_primary_bag2 = zeros(1,length(time));
+output_AP_primary_chaine = zeros(1,length(time));
 %%
 h = 1/Fs;
 %% Simulation
 rng('shuffle')
 for t = 1:length(time)
     %%
-    [AP_bag1,f_dynamic_bag1,T_bag1,T_dot_bag1] = bag1_model(f_dynamic_bag1,gamma_dynamic,T_bag1,T_dot_bag1,L_ce,V_ce,A_ce,h);
-    [AP_primary_bag2,AP_secondary_bag2,f_static,T_bag2,T_dot_bag2] = bag2_model(f_static_bag2,gamma_static,T_bag2,T_dot_bag2,L_ce,V_ce,A_ce,h);
-    [AP_primary_chain,AP_secondary_chain,T_chain,T_dot_chain] = chain_model(gamma_static,T_chain,T_dot_chain,L_ce,V_ce,A_ce,h);
+    [AP_bag1,f_dynamic_bag1,T_bag1,T_dot_bag1] = bag1_model(f_dynamic_bag1,gamma_dynamic,T_bag1,T_dot_bag1,L_ce,V_ce,A_ce,Fs);
+    [AP_primary_bag2,AP_secondary_bag2,f_static_bag2,T_bag2,T_dot_bag2] = bag2_model(f_static_bag2,gamma_static,T_bag2,T_dot_bag2,L_ce,V_ce,A_ce,Fs);
+    [AP_primary_chain,AP_secondary_chain,T_chain,T_dot_chain] = chain_model(gamma_static,T_chain,T_dot_chain,L_ce,V_ce,A_ce,Fs);
     [Output_Primary,Output_Secondary] = SpindleOutput(AP_bag1,AP_primary_bag2,AP_secondary_bag2,AP_primary_chain,AP_secondary_chain);
     
+    output_AP_bag1(t) = AP_bag1;
+    output_AP_primary_bag2(t) = AP_primary_bag2;
+    output_AP_primary_chaine(t) = AP_primary_chain;
     FR_Ia(t) = Output_Primary;
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
-        U_eff_dot = (synaptic_drive(t) - U_eff)/T_U;
+        U_eff_dot = (synaptic_drive(t)  - U_eff)/T_U;
         U_eff = U_eff_dot*1/Fs + U_eff;
         
         %% Calculate firing rate
@@ -267,7 +274,7 @@ for t = 1:length(time)
     
     F_se(t) = Fse_function(L_se) * F0;
     
-    MuscleAcceleration =(F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
+    MuscleAcceleration(t+1) =(F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
         + (MuscleVelocity(t)).^2*tan(alpha).^2/(MuscleLength(t));
     k_0_de = h*MuscleVelocity(t);
     l_0_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
@@ -285,7 +292,7 @@ for t = 1:length(time)
     MuscleVelocity(t+1) = MuscleVelocity(t) + 1/6*(l_0_de+2*l_1_de+2*l_2_de+l_3_de);
     
     % normalize each variable to optimal muscle length or tendon length
-    A_ce = MuscleAcceleration/(L0/100);
+    A_ce = MuscleAcceleration(t+1)/(L0/100);
     V_ce = MuscleVelocity(t+1)/(L0/100);
     L_ce = MuscleLength(t+1)/(L0/100);
     L_se = (Lmt - L_ce*L0*cos(alpha))/L0T;
@@ -307,8 +314,11 @@ output.force = force;
 output.ForceTendon = F_se;
 output.Lce = MuscleLength./(L0/100);
 output.Vce = MuscleVelocity./(L0/100);
+output.Ace = MuscleAcceleration./(L0/100);
 output.FR_Ia = FR_Ia;
-
+output.bag_1 = output_AP_bag1;
+output.bag_2 = output_AP_primary_bag2;
+output.chain = output_AP_primary_chaine ;
 %% Convert spike trian into activation
     function [c,cf,A_tilde,A] = spike2activation(R,c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs)
         S = parameter_Matrix(:,1); %7;
@@ -497,7 +507,7 @@ output.FR_Ia = FR_Ia;
     end
 
 %% Muscle Spindle
-    function [AP_bag1,f_dynamic,T,T_dot] = bag1_model(f_dynamic,gamma_dynamic,T,T_dot,L,V,A,step)
+    function [AP_bag1,f_dynamic,T,T_dot] = bag1_model(f_dynamic,gamma_dynamic,T,T_dot,L,V,A,Fs)
         p_bag_1 = 2;
         R_bag_1 = 0.46;
         a_bag_1 = 0.3;
@@ -519,20 +529,20 @@ output.FR_Ia = FR_Ia;
             C = 0.42;
         end
         df_dynamic = (gamma_dynamic^p_bag_1/(gamma_dynamic^p_bag_1+freq_bag1^p_bag_1)-f_dynamic)/tau_bag1;
-        f_dynamic = df_dynamic*step + f_dynamic;
+        f_dynamic = df_dynamic*1/Fs + f_dynamic;
         
         beta = beta0 + beta1 * f_dynamic;
         Gamma = Gamma1 * f_dynamic;
         
         T_ddot =  K_SR_bag_1/M_bag_1 * (C * beta * sign(V-T_dot/K_SR_bag_1)*((abs(V-T_dot/K_SR_bag_1))^a_bag_1)...
-        *(L-L0_SR_bag_1-T/K_SR_bag_1-R_bag_1)+K_PR_bag_1*(L-L0_SR_bag_1-T/K_SR_bag_1-L0_PR_bag_1)+M_bag_1*A+Gamma-T);
-        T_dot = T_ddot*step + T_dot;
-        T = T_dot*step + T;
+            *(L-L0_SR_bag_1-T/K_SR_bag_1-R_bag_1)+K_PR_bag_1*(L-L0_SR_bag_1-T/K_SR_bag_1-L0_PR_bag_1)+M_bag_1*A+Gamma-T);
+        T_dot = T_ddot*1/Fs + T_dot;
+        T = T_dot*1/Fs + T;
         
         AP_bag1 = G*(T/K_SR_bag_1-(LN_SR_bag_1-L0_SR_bag_1));
     end
 
-    function [AP_primary_bag2,AP_secondary_bag2,f_static,T,T_dot] = bag2_model(f_static,gamma_static,T,T_dot,L,V,A,step)
+    function [AP_primary_bag2,AP_secondary_bag2,f_static,T,T_dot] = bag2_model(f_static,gamma_static,T,T_dot,L,V,A,Fs)
         p = 2;
         R_bag_2 = 0.46;
         a_bag_2 = 0.3;
@@ -557,55 +567,55 @@ output.FR_Ia = FR_Ia;
             C = 0.42;
         end
         df_static = (gamma_static^p/(gamma_static^p+freq_bag2^p)-f_static)/tau_bag2;
-        f_static = df_static*step + f_static;
+        f_static = df_static*1/Fs + f_static;
         beta = beta0 + beta2 * f_static;
         Gamma = Gamma2 * f_static;
         
         T_ddot = K_SR_bag_2/M_bag_2 * (C * beta * sign(V-T_dot/K_SR_bag_2)*((abs(V-T_dot/K_SR_bag_2))^a_bag_2)...
-        *(L-L0_SR_bag_2-T/K_SR_bag_2-R_bag_2)+K_PR_bag_2*(L-L0_SR_bag_2-T/K_SR_bag_2-L0_PR_bag_2)+M_bag_2*A+Gamma-T);
-        T_dot = T_ddot*step + T_dot;
-        T = T_dot*step + T;
+            *(L-L0_SR_bag_2-T/K_SR_bag_2-R_bag_2)+K_PR_bag_2*(L-L0_SR_bag_2-T/K_SR_bag_2-L0_PR_bag_2)+M_bag_2*A+Gamma-T);
+        T_dot = T_ddot*1/Fs + T_dot;
+        T = T_dot*1/Fs + T;
         
         AP_primary_bag2 = G*(T/K_SR_bag_2-(LN_SR_bag_2-L0_SR_bag_2));
         AP_secondary_bag2 = G*(X*L_secondary/L0_SR_bag_2*(T/K_SR_bag_2-(LN_SR_bag_2-L0_SR_bag_2))+(1-X)*L_secondary/L0_PR_bag_2*(L-T/K_SR_bag_2-L0_SR_bag_2-LN_PR_bag_2));
         
     end
 
-    function [AP_primary_chain,AP_secondary_chain,T,T_dot] = chain_model(gamma_static,T,T_dot,L,V,A,step)
-        p_chain = 2;
-        R_chain = 0.46;
-        a_chain = 0.3;
-        K_SR_chain = 10.4649;
-        K_PR_chain= 0.15;
-        M_chain = 0.0002;
-        LN_SR_chain = 0.0423;
-        LN_PR_chain = 0.89;
-        L0_SR_chain = 0.04;
-        L0_PR_chain = 0.76;
+    function [AP_primary_chain,AP_secondary_chain,T,T_dot] = chain_model(gamma_static,T,T_dot,L,V,A,Fs)
+        p = 2;
+        R_sp = 0.46;
+        a = 0.3;
+        K_SR = 10.4649;
+        K_PR= 0.15;
+        M = 0.0002;
+        LN_SR = 0.0423;
+        LN_PR = 0.89;
+        L0_SR = 0.04;
+        L0_PR = 0.76;
         L_secondary = 0.04;
         X = 0.7;
         freq_chain = 90;
         beta0 = 0.0822;
         beta2_chain = -0.069;
         Gamma2_chain = 0.0954;
-        G = 10000;
+        G_chain = 10000;
         if V >= 0
             C = 1;
         else
             C = 0.42;
         end
         
-        f_static_chain = gamma_static^p_chain/(gamma_static^p_chain+freq_chain^p_chain);
-        beta = beta0 + beta2_chain * f_static_chain;
-        Gamma = Gamma2_chain * f_static_chain;
+        f_static_chain = gamma_static^p/(gamma_static^p+freq_chain^p);
+        beta_chain = beta0 + beta2_chain * f_static_chain;
+        Gamma_chain = Gamma2_chain * f_static_chain;
         
-        T_ddot = K_SR_chain/M_chain * (C * beta * sign(V-T/K_SR_chain)*((abs(V-T/K_SR_chain))^a_chain)...
-        *(L-L0_SR_chain-T/K_SR_chain-R_chain)+K_PR_chain*(L-L0_SR_chain-T/K_SR_chain-L0_PR_chain)+M_chain*A+Gamma-T);
-        T_dot = T_ddot*step + T_dot;
-        T = T_dot*step + T;
+        T_ddot_chain = K_SR/M * (C * beta_chain * sign(V-T_dot/K_SR)*((abs(V-T_dot/K_SR))^a)...
+            *(L-L0_SR-T/K_SR-R_sp)+K_PR*(L-L0_SR-T/K_SR-L0_PR)+M*A+Gamma_chain-T);
+        T_dot = T_ddot_chain*1/Fs + T_dot;
+        T = T_dot*1/Fs + T;
         
-        AP_primary_chain = G*(T/K_SR_chain-(LN_SR_chain-L0_SR_chain));
-        AP_secondary_chain = G*(X*L_secondary/L0_SR_chain*(T/K_SR_chain-(LN_SR_chain-L0_SR_chain))+(1-X)*L_secondary/L0_PR_chain*(L-T/K_SR_chain-L0_SR_chain-LN_PR_chain));
+        AP_primary_chain = G_chain*(T/K_SR-(LN_SR-L0_SR));
+        AP_secondary_chain = G_chain*(X*L_secondary/L0_SR*(T/K_SR-(LN_SR-L0_SR))+(1-X)*L_secondary/L0_PR*(L-T/K_SR-L0_SR-LN_PR));
         
     end
 
@@ -615,38 +625,49 @@ output.FR_Ia = FR_Ia;
         if AP_bag1 < 0
             AP_bag1 = 0;
         end
+        
         if AP_primary_bag2 < 0
             AP_primary_bag2 = 0;
         end
+        
         if AP_primary_chain < 0
             AP_primary_chain = 0;
         end
+        
+        
         if AP_secondary_bag2 < 0
             AP_secondary_bag2 = 0;
         end
+        
         if AP_secondary_chain < 0
             AP_secondary_chain = 0;
         end
+        
+        
         if AP_bag1 > (AP_primary_bag2+AP_primary_chain)
             Larger = AP_bag1;
             Smaller = AP_primary_bag2+AP_primary_chain;
-        else
+        elseif AP_bag1 < (AP_primary_bag2+AP_primary_chain)
             Larger = AP_primary_bag2+AP_primary_chain;
             Smaller = AP_bag1;
+        elseif AP_bag1 == (AP_primary_bag2+AP_primary_chain)
+            Larger = 0;
+            Smaller = 0;
         end
         
         Output_Primary = Larger + S * Smaller;
         Output_Secondary = AP_secondary_bag2 + AP_secondary_chain;
+        
         if Output_Primary < 0
             Output_Primary = 0;
         elseif Output_Primary > 100000
             Output_Primary = 100000;
-            if Output_Secondary < 0
-                Output_Secondary = 0;
-            elseif Output_Secondary > 100000
-                Output_Secondary = 100000;
-            end
-            
         end
+        if Output_Secondary < 0
+            Output_Secondary = 0;
+        elseif Output_Secondary > 100000
+            Output_Secondary = 100000;
+        end
+        
     end
 end
