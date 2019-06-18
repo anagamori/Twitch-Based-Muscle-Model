@@ -52,9 +52,6 @@ if recruitmentType == 3
     U_th_t = modelParameter.U_th_t;
 end
 %% Activation dynamics (Song et al., 2008)
-U_eff = 0;
-T_U = 0.03;
-
 tau_1 = parameter_Matrix(:,9);
 R_temp = exp(-time./tau_1);
 gamma = parameter_Matrix(:,15);
@@ -117,9 +114,27 @@ T_dot_chain = 0;
 
 FR_Ia = zeros(1,length(time));
 Ia_Input = zeros(1,length(time));
-output_AP_bag1 = zeros(1,length(time));
-output_AP_primary_bag2 = zeros(1,length(time));
-output_AP_primary_chaine = zeros(1,length(time));
+
+%%
+Ib_gain = SLRParameter.Ib_gain;
+Ib_delay = SLRParameter.Ib_delay;
+
+x_GTO = zeros(1,length(time));
+FR_Ib_temp = zeros(1,length(time));
+FR_Ib = zeros(1,length(time));
+Ib_Input = zeros(1,length(time));
+
+%%
+RI_gain = SLRParameter.Ib_gain;
+RI_delay = SLRParameter.RI_delay;
+
+
+FR_RI_temp = zeros(1,length(time));
+FR_RI = zeros(1,length(time));
+RI_Input = zeros(1,length(time));
+
+%%
+U_eff = zeros(1,length(time));
 %%
 h = 1/Fs;
 %% Simulation
@@ -131,40 +146,50 @@ for t = 1:length(time)
     [AP_primary_chain,AP_secondary_chain,T_chain,T_dot_chain] = chain_model(gamma_static,T_chain,T_dot_chain,L_ce,V_ce,A_ce,Fs);
     [Output_Primary,Output_Secondary] = SpindleOutput(AP_bag1,AP_primary_bag2,AP_secondary_bag2,AP_primary_chain,AP_secondary_chain);
     
-    output_AP_bag1(t) = AP_bag1;
-    output_AP_primary_bag2(t) = AP_primary_bag2;
-    output_AP_primary_chaine(t) = AP_primary_chain;
     FR_Ia(t) = Output_Primary;
     Ia_Input(t) = FR_Ia(t)/Ia_gain;
+    
+    %%
+    if t > 5
+        [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,F_se(t-1),t);
+        [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_eff,t);
+    end
+    Ib_Input(t) = FR_Ib(t)/Ib_gain;
+    RI_Input(t) = FR_RI(t)/RI_gain;
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
-        if t > Ia_delay 
-            U = synaptic_drive(t) + Ia_Input(t-Ia_delay);
+        if t > Ia_delay && t <= Ib_delay
+            U = synaptic_drive(t) + Ia_Input(t-Ia_delay) - RI_Input(t-RI_delay);
+        elseif t > Ib_delay
+            U = synaptic_drive(t) + Ia_Input(t-Ia_delay) - Ib_Input(t-Ib_delay) - RI_Input(t-RI_delay);
         else
             U = synaptic_drive(t);
         end
+        if U < 0 
+            U = 0;
+        end
         %U_eff_dot = (U - U_eff)/T_U;
-        U_eff = U; %U_eff_dot*1/Fs + U_eff;
+        U_eff(t) = U; %U_eff_dot*1/Fs + U_eff;
         
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
+            DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff(t)-U_th_new) + MDR;
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 2
-            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+            DR_MU = g_e.*(U_eff(t)-U_th_new)+MDR;
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 3
-            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+            DR_MU = g_e.*(U_eff(t)-U_th_new)+MDR;
             for m = 1:length(index_saturation)
                 index = index_saturation(m);
-                if U_eff <= U_th_t(index)
-                    DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff-U_th_new(index));
+                if U_eff(t) <= U_th_t(index)
+                    DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff(t)-U_th_new(index));
                 else
-                    DR_temp(index) = PDR(index)-k_e(index)*(1-U_eff);
+                    DR_temp(index) = PDR(index)-k_e(index)*(1-U_eff(t));
                 end
             end
             DR_MU(index_saturation) = DR_temp(index_saturation);
@@ -325,9 +350,11 @@ output.Lce = MuscleLength./(L0/100);
 output.Vce = MuscleVelocity./(L0/100);
 output.Ace = MuscleAcceleration./(L0/100);
 output.FR_Ia = FR_Ia;
-output.bag_1 = output_AP_bag1;
-output.bag_2 = output_AP_primary_bag2;
-output.chain = output_AP_primary_chaine ;
+output.FR_Ib = FR_Ib;
+output.FR_RI = FR_RI;
+output.U_eff = U_eff;
+
+
 %% Convert spike trian into activation
     function [c,cf,A_tilde,A] = spike2activation(R,c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs)
         S = parameter_Matrix(:,1); %7;
@@ -676,6 +703,41 @@ output.chain = output_AP_primary_chaine ;
             Output_Secondary = 0;
         elseif Output_Secondary > 100000
             Output_Secondary = 100000;
+        end
+        
+    end
+    function [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,Force,index)
+        G1 = 60;
+        G2 = 4;
+        num1 = 1.7;
+        num2 = -3.399742022978487;
+        num3 = 1.699742026978047;
+        den1 = 1.0;
+        den2 = -1.999780020198665;
+        den3 = 0.999780024198225;
+                
+        x_GTO(index) = G1*log(Force/G2+1);
+              
+        FR_Ib_temp(index) = (num3*x_GTO(index-2) + num2*x_GTO(index-1) + num1*x_GTO(index) - ...
+                  den3*FR_Ib_temp(index-2) - den2*FR_Ib_temp(index-1))/den1;
+        FR_Ib(index) = FR_Ib_temp(index);
+        if FR_Ib(index)<0
+            FR_Ib(index) = 0;
+        end
+    end
+
+    function [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,ND,index)
+        num1 = 0.238563173450928;
+        num2 = -0.035326319453965;
+        num3 = -0.200104635331441;
+        den1 = 1.0;
+        den2 = -1.705481699867712;
+        den3 = 0.708613918533233;
+        
+        FR_RI_temp(index) = (num3*ND(index-2)+num2*ND(index-1)+num1*ND(index)-den3*FR_RI_temp(index-2)-den2*FR_RI_temp(index-1))/den1;
+        FR_RI(index) = FR_RI_temp(index); 
+        if FR_RI(index) < 0
+            FR_RI(index) = 0;
         end
         
     end

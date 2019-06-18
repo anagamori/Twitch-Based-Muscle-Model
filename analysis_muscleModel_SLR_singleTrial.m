@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Ia_gain_2000';
+condition = 'GD_40_GS_40_Ia_2000_DL_30';
 data_folder = ['/Volumes/DATA2/New_Model/SLR/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
@@ -52,7 +52,7 @@ for j = 1  %:length(amp_vec)
 %     
     j
     tic
-    for i = 1
+    for i = 2
         cd(data_folder)
         load(['Data_' num2str(j) '_' num2str(i)])
         cd(code_folder)
@@ -66,7 +66,9 @@ for j = 1  %:length(amp_vec)
         plot(time,Force)
         hold on
         
-        
+        figure(12)
+        plot(f,pxx)
+        xlim([0 50])
         
     end
     toc
