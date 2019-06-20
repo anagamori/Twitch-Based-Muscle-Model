@@ -1,0 +1,53 @@
+%==========================================================================
+% build_MNs.m
+% Author: Akira Nagamori
+% Last update: 6/18/19
+%==========================================================================
+
+
+close all
+clear all
+clc
+
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50';
+
+%%
+cd(model_parameter_folder )
+load('modelParameter')
+cd(code_folder)
+MDR = modelParameter.FR_half/2;
+PDR = modelParameter.FR_half*2;
+U_th = modelParameter.U_th_new;
+[val,loc] = min(U_th);
+testUnit = loc;
+%%
+Fs = 10000;
+time = 0:1/Fs:5;
+
+input_vec = 1:30;
+for i = 1:length(input_vec)
+%% Input 
+input = zeros(1,length(time));
+input(2*Fs+1:end) = 11.75;
+
+%% Model parameters
+parameter.a = 0.0326; %0.02 %the time scale of the recovery variable. Smaller values result in slower recovery. %0.005 for 2.4573 Hz 
+parameter.b = 0.25; %0.2 %the sensitivity of the recovery variableu to the subthreshold fluctuations of the membrane potential v. 
+%Greater values couple v and u more strongly resulting in possible subthreshold oscillations and low-threshold spiking dynamics
+parameter.c = -65; % -65 %the after-spike reset value of the membrane potential v caused by the fast high-threshold K+ conductances
+parameter.d = 8; %8 %after-spike reset of the recovery variable u caused by slowhigh-threshold Na+ andK+ conductances
+parameter.v = -65; %-65
+
+parameter.alpha = 0.04;
+parameter.beta = 5;
+parameter.gamma = 140;
+
+%% Run Izhikevich model
+[v_vec,binary] = Izhikevich(time,input,parameter,Fs);
+
+spike_time = find(binary(3*Fs+1:end));
+ISI = diff(spike_time)/(Fs/1000);
+mean_FR = mean(1./ISI*1000)
+minimum_rate = MDR(testUnit)
+maximum_rate = PDR(testUnit)
