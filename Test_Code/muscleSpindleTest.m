@@ -23,3 +23,6 @@ gamma_static = 20; % gamma static
 % Run a simulation 
 [outputIa,outputII,AP_bag1,AP_primary_bag2,AP_primary_chain] = muscleSpindle(Lce,Vce,Ace,Fs,gamma_dynamic,gamma_static);
 
+[pxx,f] = pwelch(outputIa(5*Fs+1:end)-mean(outputIa(5*Fs+1:end)),gausswin(5*Fs),5*Fs*0.9,0:0.1:100,Fs,'power');
+figure()
+plot(f,pxx)

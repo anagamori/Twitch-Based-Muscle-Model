@@ -52,7 +52,7 @@ for j = 1  %:length(amp_vec)
 %     
     j
     tic
-    for i = 2
+    for i = 7
         cd(data_folder)
         load(['Data_' num2str(j) '_' num2str(i)])
         cd(code_folder)

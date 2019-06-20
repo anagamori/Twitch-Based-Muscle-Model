@@ -27,10 +27,8 @@ time = 0:1/Fs:5;
 
 %% Input 
 %input = zeros(1,length(time));
-input = zeros(1,length(time));
-input(2*Fs+1:end) = 1;
-% amp = 1.2;
-% input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
+amp = 2;
+input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
 %% Model parameters
 parameter.a = 0.041; %0.02 %the time scale of the recovery variable. Smaller values result in slower recovery. %0.005 for 2.4573 Hz 
 parameter.b = 0.245; %0.2 %the sensitivity of the recovery variableu to the subthreshold fluctuations of the membrane potential v. 
@@ -47,11 +45,10 @@ parameter.gamma = 140;
 [v_vec,binary] = Izhikevich(time,input,parameter,Fs);
 
 figure(1)
-ax1 = subplot(2,1,1);
+subplot(2,1,1)
 plot(time,input)
-ax2 = subplot(2,1,2);
+subplot(2,1,2)
 plot(time,v_vec)
-linkaxes([ax1 ax2],'x')
 
 spike_time = find(binary(3*Fs+1:end));
 ISI = diff(spike_time)/(Fs/1000);

@@ -13,7 +13,7 @@ clc
 %%
 data_folder = '/Volumes/DATA2/New_Model/SLR/GD_40_GS_40_Ia_2000_DL_30';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50_shortTendon';
 
 %%
 cd(model_parameter_folder)
@@ -50,9 +50,9 @@ for j = 1
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 30*Fs/1000;
     SLRParameter.Ia_gain = 2000;
-    SLRParameter.Ib_gain = 2000;
+    SLRParameter.Ib_gain = 10000;
     SLRParameter.Ib_delay = 40*Fs/1000;
-    SLRParameter.RI_gain = 2;
+    SLRParameter.RI_gain = 10;
     SLRParameter.RI_delay = 5*Fs/1000;
 
     amp = amp_vec(j+1);
@@ -61,7 +61,7 @@ for j = 1
     input(5*Fs+1:end) = input(5*Fs+1:end) + input_e(5*Fs+1:end);
     %%
     
-    for i = 2
+    for i = 7
         i
         tic
         output = spikeDrivenMuscleModel_SLR(Fs,time,input,modelParameter,SLRParameter,1);
