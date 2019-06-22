@@ -291,6 +291,7 @@ end
 
 output.spike_train = spike_train;
 output.v_mat = v_mat;
+output.I_mat = I_mat;
 output.Force = F_ce;
 output.force = force;
 output.ForceTendon = F_se;
