@@ -174,9 +174,9 @@ for t = 1:length(time)
     if t > 1
         %% Effective activation (Song et al., 2008)
         if t > Ia_delay && t <= Ib_delay
-            U = synaptic_drive(t); % + Ia_Input(t-Ia_delay) - RI_Input(t-RI_delay);
+            U = synaptic_drive(t) + Ia_Input(t-Ia_delay) - RI_Input(t-RI_delay);
         elseif t > Ib_delay
-            U = synaptic_drive(t); % + Ia_Input(t-Ia_delay) - Ib_Input(t-Ib_delay) - RI_Input(t-RI_delay);
+            U = synaptic_drive(t) + Ia_Input(t-Ia_delay) - Ib_Input(t-Ib_delay) - RI_Input(t-RI_delay);
         else
             U = synaptic_drive(t);
         end
