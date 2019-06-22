@@ -8,15 +8,15 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50_constantT2T';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50_constantT2T';
 
 %%
 Fs = 10000;
 time = 0:1/Fs:5;
 
 %%
-for n = 300
+for n = 151:188
     cd(model_parameter_folder )
     load('modelParameter')
     cd(code_folder)
@@ -63,4 +63,5 @@ for n = 300
     plot(U_vec,mean_FR/FR_half_target,'LineWidth',2)
     xlabel('Synaptic Input (AU)','FontSize',14)
     ylabel('Discharge Rate (Hz)','FontSize',14)
+    hold on
 end
