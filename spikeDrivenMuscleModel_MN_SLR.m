@@ -80,8 +80,10 @@ F_total = zeros(1,length(time));
 DR_MU = zeros(1,N_MU);
 spike_train = zeros(N_MU,length(time));
 
-u_MN = ones(N_MU,1)*0.2*-65; 
-v_MN = ones(N_MU,1)*-65; 
+I_initial = (I_max-I_th)./(1-U_th_new).*(0-U_th_new) + I_th;
+v_MN = (-5+0.2-sqrt((5-0.2)^2-4*0.04*(140+I_initial)))/(2*0.04);
+u_MN = 0.2*v_MN; 
+%v_MN = ones(N_MU,1)*-65; 
 v_mat = zeros(N_MU,length(time));
 I_mat = zeros(N_MU,length(time));
 
