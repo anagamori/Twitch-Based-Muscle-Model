@@ -83,6 +83,7 @@ spike_train = zeros(N_MU,length(time));
 u_MN = ones(N_MU,1)*0.2*-65; 
 v_MN = ones(N_MU,1)*-65; 
 v_mat = zeros(N_MU,length(time));
+I_mat = zeros(N_MU,length(time));
 
 % activation-frequency 
 R = zeros(N_MU,length(time));
@@ -193,6 +194,7 @@ for t = 1:length(time)
         [u_MN,v_MN,spike_vec] = motoneuron(I',u_MN,v_MN,spike_vec,a_MN,Fs);
         spike_train(:,t) = spike_vec;
         v_mat(:,t) = v_MN;
+        I_mat(:,t) = I;
         
         %% Sag & Yield (Song et al., 2008)
         f_eff = DR_MU./FR_half;
