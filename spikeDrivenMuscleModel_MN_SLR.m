@@ -223,6 +223,7 @@ for t = 1:length(time)
             I(index_2) = I_temp_2(index_2);
             I_temp_3 = g_e.*(U_temp-U_th_new)+I_th;
             I(index_t) = I_temp_3(index_t);
+            I = I';
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
