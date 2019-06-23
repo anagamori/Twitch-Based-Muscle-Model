@@ -5,7 +5,7 @@
 %==========================================================================
 function [output] = spikeDrivenMuscleModel_MN_SLR(Fs,time,input,modelParameter,parameterMN,SLRParameter,figOpt)
 %% Simulation parameters
-synaptic_drive = input;
+C_input = input;
 
 %%
 recruitmentType = modelParameter.recruitment;
@@ -147,6 +147,12 @@ FR_RI_temp = zeros(1,length(time));
 FR_RI = zeros(1,length(time));
 RI_Input = zeros(1,length(time));
 
+%% 
+noise_Ia = 0;
+noise_Ib = 0;
+noise_RI = 0;
+noise_C = 0;
+noise_ID = zeros(N_MU,1);
 %%
 U_eff = zeros(1,length(time));
 %%
@@ -162,23 +168,39 @@ for t = 1:length(time)
     
     FR_Ia(t) = Output_Primary;
     Ia_Input(t) = FR_Ia(t)/Ia_gain;
-    
+    [noise_Ia] = noise(noise_Ia,Fs);
+    Ia_Input(t) = Ia_Input(t) + Ia_Input(t)*noise_Ia;
     %%
     if t > 5
         [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,F_se(t-1),t);
         [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_eff,t);
     end
     Ib_Input(t) = FR_Ib(t)/Ib_gain;
+    [noise_Ib] = noise(noise_Ib,Fs);
+    Ib_Input(t) = Ib_Input(t) + Ib_Input(t)*noise_Ib;
+    
     RI_Input(t) = FR_RI(t)/RI_gain;
+    [noise_RI] = noise(noise_RI,Fs);
+    RI_Input(t) = RI_Input(t) + RI_Input(t)*noise_RI;
+    
+    %%
+    [noise_C] = noise(noise_C,Fs);
+    
+    [noise_ID] = noise(noise_ID,Fs);
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
         if t > Ia_delay && t <= Ib_delay
-            U = synaptic_drive(t) + Ia_Input(t-Ia_delay) - RI_Input(t-RI_delay);
+            U = C_input(t) + noise_C*C_input(t) ...
+                + Ia_Input(t-Ia_delay) ...
+                - RI_Input(t-RI_delay);
         elseif t > Ib_delay
-            U = synaptic_drive(t) + Ia_Input(t-Ia_delay) - Ib_Input(t-Ib_delay) - RI_Input(t-RI_delay);
+            U = C_input(t) + noise_C*C_input(t) ...
+                + Ia_Input(t-Ia_delay) ...
+                - Ib_Input(t-Ib_delay)...
+                - RI_Input(t-RI_delay);
         else
-            U = synaptic_drive(t);
+            U = C_input(t) + noise_C*C_input(t);
         end
         if U < 0 
             U = 0;
@@ -189,7 +211,7 @@ for t = 1:length(time)
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            I = (I_max-I_th)./(1-U_th_new).*(U-U_th_new) + I_th;
+            I = (I_max-I_th)./(1-U_th_new).*(U+noise_ID*U-U_th_new) + I_th;
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
@@ -723,5 +745,13 @@ output.U_eff = U_eff;
         
     end
 
+    function [x] = noise(x,Fs)
+        vec_length = size(x,1);
+        D = 10000;
+        tau = 0.01;
+        chi = normrnd(0,1,[vec_length,1]);
+        x_dot = -x./tau + sqrt(D)*chi;
+        x = x_dot.*1/Fs + x;
+    end
 
 end
