@@ -218,7 +218,7 @@ for t = 1:length(time)
             I_temp_1 = I_th + lamda.*k_e.*(U_temp-U_th_new);
             index_1 = find(U_temp <= U_th_t);
             I(index_1) = I_temp_1(index_1);
-            I_temp_2 = I_max-k_e*(1-U_temp);
+            I_temp_2 = I_max-k_e.*(1-U_temp);
             index_2 = find(U_temp > U_th_t);
             I(index_2) = I_temp_2(index_2);
             I_temp_3 = g_e.*(U_temp-U_th_new)+I_th;
