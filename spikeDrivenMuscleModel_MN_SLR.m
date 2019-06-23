@@ -46,7 +46,7 @@ PDR = modelParameter.PDR;
 
 g_e = modelParameter.g_e;
 if recruitmentType == 3
-    index_saturation = modelParameter.index_saturation;
+    index_t  = modelParameter.index_t;
     lamda = modelParameter.lamda;
     k_e = modelParameter.k_e;
     U_th_t = modelParameter.U_th_t;
@@ -211,7 +211,18 @@ for t = 1:length(time)
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            I = (I_max-I_th)./(1-U_th_new).*(U+noise_ID*U-U_th_new) + I_th;
+            I = g_e.*(U+noise_ID*U-U_th_new) + I_th;
+        elseif recruitmentType == 3
+            I = zeros(N_MU,1);
+            U_temp = U+noise_ID*U;
+            I_temp_1 = I_th + lamda.*k_e.*(U_temp-U_th_new);
+            index_1 = find(U_temp <= U_th_t);
+            I(index_1) = I_temp_1(index_1);
+            I_temp_2 = I_max-k_e*(1-U_temp);
+            index_2 = find(U_temp > U_th_t);
+            I(index_2) = I_temp_2(index_2);
+            I_temp_3 = g_e.*(U_temp-U_th_new)+I_th;
+            I(index_t) = I_temp_3(index_t);
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate

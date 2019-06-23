@@ -87,16 +87,22 @@ modelParameter.MDR = modelParameter.FR_half/2;
 modelParameter.PDR = modelParameter.FR_half*2;
 
 %% Gain for frequency-activation relationship
-modelParameter.g_e = (modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
+cd(model_parameter_folder )
+load('parameterMN')
+modelParameter.parameterMatrix = parameter_Matrix; %(1:300/modelParameter.N_MU:300,:);
+cd(code_folder)
+
+modelParameter.g_e = (parameterMN.I_max- parameterMN.I_th)./(1-modelParameter.U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
 Ur_t = 0.2;
 f_t = 1.2;
-modelParameter.index_saturation = find(modelParameter.U_th_new<Ur_t);
+modelParameter.index_t = find(modelParameter.U_th_new>=Ur_t);
 f_k_e = fit([Ur_1 Ur_t]',[30 1]','poly1');
 coeffs_f_k_e = coeffvalues(f_k_e);
+I_half = (parameterMN.I_max-parameterMN.I_th);
 modelParameter.lamda = coeffs_f_k_e(1)*modelParameter.U_th_new+coeffs_f_k_e(2);
-modelParameter.k_e = (f_t*modelParameter.FR_half-modelParameter.MDR+modelParameter.lamda.*(modelParameter.PDR-f_t*modelParameter.FR_half))./(modelParameter.lamda.*(1-modelParameter.U_th_new));
-modelParameter.U_th_t = (modelParameter.k_e-(modelParameter.PDR-f_t*modelParameter.FR_half))./modelParameter.k_e;
+modelParameter.k_e = (f_t*I_half-parameterMN.I_th+modelParameter.lamda.*(parameterMN.I_max-f_t*I_half))./(modelParameter.lamda.*(1-modelParameter.U_th_new));
+modelParameter.U_th_t = (modelParameter.k_e-(parameterMN.I_max-f_t*I_half))./modelParameter.k_e;
 
 %% Save model parameters
 cd(model_parameter_folder)
