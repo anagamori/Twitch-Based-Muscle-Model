@@ -12,8 +12,8 @@ clc
 
 %%
 data_folder = '/Volumes/DATA2/New_Model/SLR/GD_40_GS_40_Ia_2000_DL_30';
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_5_constantT2T';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_5_constantT2T';
 
 %%
 cd(model_parameter_folder)
@@ -35,7 +35,7 @@ for j = 1
     j
     if j < 2
         Fs = 10000;
-        time = 0:1/Fs:5;
+        time = 0:1/Fs:10;
     elseif j >= 2 && j < 4
         Fs = 15000;
         time = 0:1/Fs:15;
@@ -51,15 +51,15 @@ for j = 1
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 30*Fs/1000;
     SLRParameter.Ia_gain = 2000;
-    SLRParameter.Ib_gain = 10000;
+    SLRParameter.Ib_gain = 2000;
     SLRParameter.Ib_delay = 40*Fs/1000;
-    SLRParameter.RI_gain = 10;
+    SLRParameter.RI_gain = 3;
     SLRParameter.RI_delay = 5*Fs/1000;
 
     amp = amp_vec(j+1);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
-    input_e =0.01*sin(2*pi*10*time);
-    input(5*Fs+1:end) = input(5*Fs+1:end) + input_e(5*Fs+1:end);
+    %input_e =0.01*sin(2*pi*10*time);
+    %input(5*Fs+1:end) = input(5*Fs+1:end) + input_e(5*Fs+1:end);
     %%
     
     for i = 1
@@ -75,3 +75,14 @@ for j = 1
     end
     
 end
+temp = output.ForceTendon(5*Fs+1:end);
+[pxx,f] = pwelch(temp-mean(temp),gausswin(5*Fs),5*Fs*0.9,0:0.1:100,Fs,'power');
+figure(2)
+plot(f,pxx)
+xlim([0 30])
+
+spike_time = find(output.spike_train(86,5*Fs+1:end));
+ISI = diff(spike_time)/(Fs/1000);
+FR = mean(1./ISI*1000)
+FR_sd = std(1./ISI*1000);
+ISI_CoV = FR_sd/FR*100

@@ -747,7 +747,7 @@ output.U_eff = U_eff;
 
     function [x] = noise(x,Fs)
         vec_length = size(x,2);
-        D = 10000;
+        D = 50000;
         tau = 0.01;
         chi = normrnd(0,1,[1,vec_length]);
         x_dot = -x./tau + sqrt(D)*chi;
