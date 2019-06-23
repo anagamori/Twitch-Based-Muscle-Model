@@ -152,7 +152,7 @@ noise_Ia = 0;
 noise_Ib = 0;
 noise_RI = 0;
 noise_C = 0;
-noise_ID = zeros(N_MU,1);
+noise_ID = zeros(1,N_MU);
 %%
 U_eff = zeros(1,length(time));
 %%
@@ -746,10 +746,10 @@ output.U_eff = U_eff;
     end
 
     function [x] = noise(x,Fs)
-        vec_length = size(x,1);
+        vec_length = size(x,2);
         D = 10000;
         tau = 0.01;
-        chi = normrnd(0,1,[vec_length,1]);
+        chi = normrnd(0,1,[1,vec_length]);
         x_dot = -x./tau + sqrt(D)*chi;
         x = x_dot.*1/Fs + x;
     end
