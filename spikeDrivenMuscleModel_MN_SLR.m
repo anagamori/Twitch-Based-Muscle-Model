@@ -142,11 +142,13 @@ Ib_Input = zeros(1,length(time));
 RI_gain = SLRParameter.Ib_gain;
 RI_delay = SLRParameter.RI_delay;
 
-
 FR_RI_temp = zeros(1,length(time));
 FR_RI = zeros(1,length(time));
 RI_Input = zeros(1,length(time));
 
+%% 
+C_delay = SLRParameter.C_delay;
+K_C = SLRParameter.K_C;
 %% 
 noise_Ia = 0;
 noise_Ib = 0;
@@ -194,11 +196,13 @@ for t = 1:length(time)
             U = C_input(t);% + noise_C*C_input(t) ...
                 %+ Ia_Input(t-Ia_delay) ...
                 %- RI_Input(t-RI_delay);
-        elseif t > Ib_delay
+        elseif t > Ib_delay && t <= C_delay 
             U = C_input(t);% + noise_C*C_input(t) ...
 %                 + Ia_Input(t-Ia_delay) ...
 %                 - Ib_Input(t-Ib_delay)...
 %                 - RI_Input(t-RI_delay);
+        elseif t > C_delay 
+            U = K_C*(C_input(t) - F_se(t-C_delay)/F0);
         else
             U = C_input(t);% + noise_C*C_input(t);
         end

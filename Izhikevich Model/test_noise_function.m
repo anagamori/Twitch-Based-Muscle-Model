@@ -36,7 +36,7 @@ for n = 1
     load(['MN_' num2str(n)])
     cd(code_folder)
     
-    U_amp = 1;
+    U_amp = 0.1;
     input = [zeros(1,1*Fs) U_amp/2*[0:1/Fs:2] U_amp*ones(1,length(time)-1*Fs-length(U_amp*[0:1/Fs:2]))];
     
     I_initial = (parameter.I_max-parameter.I_th)./(1-U_th(testUnit)).*(0-U_th(testUnit)) + parameter.I_th;
@@ -51,7 +51,7 @@ for n = 1
     x_noise_vec = zeros(1,length(time));
     for t = 1:length(time)
         [x_noise] = noise(x_noise,Fs);
-        U = input(t)+x_noise*input(t);
+        U = input(t)+x_noise*(input(t)*100);
         I = (parameter.I_max-parameter.I_th)/(1-U_th(testUnit))*(U-U_th(testUnit)) + parameter.I_th;
         spike_vec = zeros(1,1);
         [u,v,spike_vec] = motoneuron(I,u,v,spike_vec,parameter.a,Fs);
@@ -103,7 +103,7 @@ u = u_dot*1000/Fs + u;
 end
 
 function [x] = noise(x,Fs)
-    D = 100000;
+    D = 10;
     tau = 0.01; 
     chi = normrnd(0,1,[1,1]);
     x_dot = -x/tau + sqrt(D)*chi;
