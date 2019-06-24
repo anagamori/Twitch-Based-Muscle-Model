@@ -81,9 +81,9 @@ figure(2)
 plot(f,pxx)
 xlim([0 30])
 
-Force_CoV = std(temp)/mean(temp)*100
+Force_CoV = std(temp/)mean(temp)
 
-spike_time = find(output.spike_train(100,5*Fs+1:end));
+spike_time = find(output.spike_train(1,5*Fs+1:end));
 ISI = diff(spike_time)/(Fs/1000);
 FR = mean(1./ISI*1000)
 FR_sd = std(1./ISI*1000);

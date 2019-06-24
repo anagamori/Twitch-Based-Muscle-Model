@@ -191,16 +191,16 @@ for t = 1:length(time)
     if t > 1
         %% Effective activation (Song et al., 2008)
         if t > Ia_delay && t <= Ib_delay
-            U = C_input(t) + noise_C*C_input(t) ...
-                + Ia_Input(t-Ia_delay) ...
-                - RI_Input(t-RI_delay);
+            U = C_input(t);% + noise_C*C_input(t) ...
+                %+ Ia_Input(t-Ia_delay) ...
+                %- RI_Input(t-RI_delay);
         elseif t > Ib_delay
-            U = C_input(t) + noise_C*C_input(t) ...
-                + Ia_Input(t-Ia_delay) ...
-                - Ib_Input(t-Ib_delay)...
-                - RI_Input(t-RI_delay);
+            U = C_input(t);% + noise_C*C_input(t) ...
+%                 + Ia_Input(t-Ia_delay) ...
+%                 - Ib_Input(t-Ib_delay)...
+%                 - RI_Input(t-RI_delay);
         else
-            U = C_input(t) + noise_C*C_input(t);
+            U = C_input(t);% + noise_C*C_input(t);
         end
         if U < 0 
             U = 0;
@@ -214,7 +214,7 @@ for t = 1:length(time)
             I = g_e.*(U+noise_ID*U-U_th_new) + I_th;
         elseif recruitmentType == 3
             I = zeros(N_MU,1);
-            U_temp = U+noise_ID*U;
+            U_temp = U+noise_ID*(100*U);
             I_temp_1 = I_th + lamda.*k_e.*(U_temp-U_th_new);
             index_1 = find(U_temp <= U_th_t);
             I(index_1) = I_temp_1(index_1);
@@ -759,7 +759,7 @@ output.U_eff = U_eff;
 
     function [x] = noise(x,Fs)
         vec_length = size(x,2);
-        D = 50000;
+        D = 10;
         tau = 0.01;
         chi = normrnd(0,1,[1,vec_length]);
         x_dot = -x./tau + sqrt(D)*chi;
