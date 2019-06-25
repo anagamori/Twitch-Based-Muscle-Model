@@ -51,7 +51,7 @@ for n = 1
     x_noise_vec = zeros(1,length(time));
     for t = 1:length(time)
         [x_noise] = noise(x_noise,Fs);
-        U = input(t)+x_noise*(input(t)*100);
+        U = input(t)+x_noise; %*(input(t)*100);
         I = (parameter.I_max-parameter.I_th)/(1-U_th(testUnit))*(U-U_th(testUnit)) + parameter.I_th;
         spike_vec = zeros(1,1);
         [u,v,spike_vec] = motoneuron(I,u,v,spike_vec,parameter.a,Fs);
@@ -104,7 +104,7 @@ end
 
 function [x] = noise(x,Fs)
     D = 10;
-    tau = 0.01; 
+    tau = 0.05; 
     chi = normrnd(0,1,[1,1]);
     x_dot = -x/tau + sqrt(D)*chi;
     x = x_dot*1/Fs + x;

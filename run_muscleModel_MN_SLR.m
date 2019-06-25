@@ -77,11 +77,14 @@ for j = 1
     end
     
 end
+%%
 temp = output.ForceTendon(5*Fs+1:end);
 [pxx,f] = pwelch(temp-mean(temp),gausswin(5*Fs),5*Fs*0.9,0:0.1:100,Fs,'power');
 figure(2)
-plot(f,pxx)
+plot(f,pxx,'LineWidth',2)
 xlim([0 30])
+xlabel('Frequency (Hz)','FontSize',14)
+ylabel('Power (N^2)','FontSize',14)
 
 Force_CoV = std(temp)/mean(temp)*100
 
@@ -91,13 +94,28 @@ FR = mean(1./ISI*1000)
 FR_sd = std(1./ISI*1000);
 ISI_CoV = FR_sd/FR*100
 
-%% 
-temp1 = zeros(1,length(time));
-temp1(find(output.spike_train(1,:))) = 1;
-temp1 = temp1(5*Fs+1:end);
-temp2 = zeros(1,length(time));
-temp2(find(output.spike_train(10,:))) = 1;
-temp2 = temp2(5*Fs+1:end);
-[C,f] = mscohere(temp1-mean(temp1),temp2-mean(temp2),gausswin(2*Fs),2*Fs*0.9,0:0.5:100,Fs);
+FR_vec = zeros(1,length(data));
+for i = 2:length(spike_time)
+    ISI_temp = (spike_time(i) - spike_time(i-1))/(Fs/1000);
+    FR = 1./ISI_temp*1000;
+    FR_vec(spike_time(i-1):spike_time(i)) = FR;
+    if i == 2
+        FR_vec(1:spike_time(i-1)) = FR;
+    elseif i == length(spike_time)
+        FR_vec(spike_time(i):end) = FR;
+    end
+end
 figure(3)
-plot(f,C)
+plot(time,FR_vec)
+xlabel('Time (s)','FontSize',14)
+ylabel('Discharge Rate (Hz)','FontSize',14)
+%% 
+% temp1 = zeros(1,length(time));
+% temp1(find(output.spike_train(1,:))) = 1;
+% temp1 = temp1(5*Fs+1:end);
+% temp2 = zeros(1,length(time));
+% temp2(find(output.spike_train(10,:))) = 1;
+% temp2 = temp2(5*Fs+1:end);
+% [C,f] = mscohere(temp1-mean(temp1),temp2-mean(temp2),gausswin(2*Fs),2*Fs*0.9,0:0.5:100,Fs);
+% figure(3)
+% plot(f,C)
