@@ -50,13 +50,13 @@ for j = 1
     SLRParameter.gamma_dynamic = 20;
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 30*Fs/1000;
-    SLRParameter.Ia_gain = 10000;
+    SLRParameter.Ia_gain = 3000;
     SLRParameter.Ib_gain = 10000;
     SLRParameter.Ib_delay = 40*Fs/1000;
     SLRParameter.RI_gain = 10;
     SLRParameter.RI_delay = 5*Fs/1000;
-    SLRParameter.C_delay = 100*Fs/1000;
-    SLRParameter.K_C = 0.001;
+    SLRParameter.C_delay = 200*Fs/1000;
+    SLRParameter.K_C = 0.0001;
     
     amp = amp_vec(j+1);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
@@ -90,3 +90,14 @@ ISI = diff(spike_time)/(Fs/1000);
 FR = mean(1./ISI*1000)
 FR_sd = std(1./ISI*1000);
 ISI_CoV = FR_sd/FR*100
+
+%% 
+temp1 = zeros(1,length(time));
+temp1(find(output.spike_train(1,:))) = 1;
+temp1 = temp1(5*Fs+1:end);
+temp2 = zeros(1,length(time));
+temp2(find(output.spike_train(10,:))) = 1;
+temp2 = temp2(5*Fs+1:end);
+[C,f] = mscohere(temp1-mean(temp1),temp2-mean(temp2),gausswin(2*Fs),2*Fs*0.9,0:0.5:100,Fs);
+figure(3)
+plot(f,C)

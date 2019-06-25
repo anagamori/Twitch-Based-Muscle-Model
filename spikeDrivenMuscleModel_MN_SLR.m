@@ -170,7 +170,7 @@ for t = 1:length(time)
     
     FR_Ia(t) = Output_Primary;
     Ia_Input(t) = FR_Ia(t)/Ia_gain;
-    [noise_Ia] = noise(noise_Ia,Fs);
+    [noise_Ia] = noise(noise_Ia,10,Fs);
     Ia_Input(t) = Ia_Input(t) + Ia_Input(t)*noise_Ia;
     %%
     if t > 5
@@ -178,17 +178,17 @@ for t = 1:length(time)
         [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_eff,t);
     end
     Ib_Input(t) = FR_Ib(t)/Ib_gain;
-    [noise_Ib] = noise(noise_Ib,Fs);
+    [noise_Ib] = noise(noise_Ib,10,Fs);
     Ib_Input(t) = Ib_Input(t) + Ib_Input(t)*noise_Ib;
     
     RI_Input(t) = FR_RI(t)/RI_gain;
-    [noise_RI] = noise(noise_RI,Fs);
+    [noise_RI] = noise(noise_RI,10,Fs);
     RI_Input(t) = RI_Input(t) + RI_Input(t)*noise_RI;
     
     %%
-    [noise_C] = noise(noise_C,Fs);
+    [noise_C] = noise(noise_C,0.001,Fs);
     
-    [noise_ID] = noise(noise_ID,Fs);
+    [noise_ID] = noise(noise_ID,10,Fs);
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
@@ -202,13 +202,14 @@ for t = 1:length(time)
 %                 - Ib_Input(t-Ib_delay)...
 %                 - RI_Input(t-RI_delay);
         elseif t > C_delay 
-            U = K_C*(C_input(t) - F_se(t-C_delay)/F0);
+            U = K_C*(C_input(t) - F_se(t-C_delay)/F0) + U;
         else
             U = C_input(t);% + noise_C*C_input(t);
         end
         if U < 0 
             U = 0;
         end
+        U = U+noise_C*U;
         %U_eff_dot = (U - U_eff)/T_U;
         U_eff(t) = U; %U_eff_dot*1/Fs + U_eff;
         
@@ -218,7 +219,7 @@ for t = 1:length(time)
             I = g_e.*(U+noise_ID*U-U_th_new) + I_th;
         elseif recruitmentType == 3
             I = zeros(N_MU,1);
-            U_temp = U+noise_ID*(100*U);
+            U_temp = U + noise_ID*U*100;
             I_temp_1 = I_th + lamda.*k_e.*(U_temp-U_th_new);
             index_1 = find(U_temp <= U_th_t);
             I(index_1) = I_temp_1(index_1);
@@ -761,9 +762,8 @@ output.U_eff = U_eff;
         
     end
 
-    function [x] = noise(x,Fs)
+    function [x] = noise(x,D,Fs)
         vec_length = size(x,2);
-        D = 10;
         tau = 0.01;
         chi = normrnd(0,1,[1,vec_length]);
         x_dot = -x./tau + sqrt(D)*chi;
