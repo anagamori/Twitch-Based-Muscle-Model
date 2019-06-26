@@ -17,7 +17,7 @@ time = 0:1/Fs:5;
 
 [b,a] = butter(4,100/(Fs/2),'low');
 %%
-for n = 1
+for n = 6
     cd(model_parameter_folder )
     load('modelParameter')
     cd(code_folder)

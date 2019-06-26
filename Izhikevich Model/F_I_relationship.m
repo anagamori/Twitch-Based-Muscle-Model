@@ -1,7 +1,7 @@
 %==========================================================================
 % F_I_relationship.m
 % Author: Akira Nagamori
-% Last update: 6/19/19
+% Last update: 6/26/19
 % Descriptions:
 %   Test the frequency-current relationship of Izhikevich model
 %==========================================================================
@@ -26,18 +26,19 @@ testUnit = loc;
 Fs = 10000;
 time = 0:1/Fs:5;
 
-input_vec = [0.1:0.1:0.9 1:100];
+input_vec = 0.1:0.1:50; %[0.1:0.1:0.9 1:100];
 for i = 1:length(input_vec)
 %% Input 
 amp = input_vec(i);
-input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
+input = [zeros(1,2*Fs),amp*ones(1,length(time)-2*Fs)];
+%input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
 
 %% Model parameters
-parameter.a = 0.04; %0.02 %the time scale of the recovery variable. Smaller values result in slower recovery. %0.005 for 2.4573 Hz 
-parameter.b = 0.255; %0.2 %the sensitivity of the recovery variableu to the subthreshold fluctuations of the membrane potential v. 
+parameter.a = 0.02; %0.02 %the time scale of the recovery variable. Smaller values result in slower recovery. %0.005 for 2.4573 Hz 
+parameter.b = 0.2; %0.2 %the sensitivity of the recovery variableu to the subthreshold fluctuations of the membrane potential v. 
 %Greater values couple v and u more strongly resulting in possible subthreshold oscillations and low-threshold spiking dynamics
 parameter.c = -65; % -65 %the after-spike reset value of the membrane potential v caused by the fast high-threshold K+ conductances
-parameter.d = 200; %8 %after-spike reset of the recovery variable u caused by slowhigh-threshold Na+ andK+ conductances
+parameter.d = 6; %8 %after-spike reset of the recovery variable u caused by slowhigh-threshold Na+ andK+ conductances
 parameter.v = -65; %-65
 
 parameter.alpha = 0.04;
