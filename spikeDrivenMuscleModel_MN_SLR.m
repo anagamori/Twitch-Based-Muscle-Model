@@ -156,6 +156,7 @@ noise_RI = 0;
 noise_C = 0;
 noise_ID = zeros(1,N_MU);
 %%
+C_temp = 0;
 U_eff = zeros(1,length(time));
 %%
 h = 1/Fs;
@@ -170,7 +171,7 @@ for t = 1:length(time)
     
     FR_Ia(t) = Output_Primary;
     Ia_Input(t) = FR_Ia(t)/Ia_gain;
-    [noise_Ia] = noise(noise_Ia,10,Fs);
+    [noise_Ia] = noise(noise_Ia,0.001,Fs);
     Ia_Input(t) = Ia_Input(t) + Ia_Input(t)*noise_Ia;
     %%
     if t > 5
@@ -178,11 +179,11 @@ for t = 1:length(time)
         [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_eff,t);
     end
     Ib_Input(t) = FR_Ib(t)/Ib_gain;
-    [noise_Ib] = noise(noise_Ib,10,Fs);
+    [noise_Ib] = noise(noise_Ib,0.001,Fs);
     Ib_Input(t) = Ib_Input(t) + Ib_Input(t)*noise_Ib;
     
     RI_Input(t) = FR_RI(t)/RI_gain;
-    [noise_RI] = noise(noise_RI,10,Fs);
+    [noise_RI] = noise(noise_RI,0.001,Fs);
     RI_Input(t) = RI_Input(t) + RI_Input(t)*noise_RI;
     
     %%
@@ -193,23 +194,27 @@ for t = 1:length(time)
     if t > 1
         %% Effective activation (Song et al., 2008)
         if t > Ia_delay && t <= Ib_delay
-            U = C_input(t);% + noise_C*C_input(t) ...
-                %+ Ia_Input(t-Ia_delay) ...
-                %- RI_Input(t-RI_delay);
+            U = C_input(t) + noise_C*C_input(t) ...
+                + Ia_Input(t-Ia_delay) ...
+                - RI_Input(t-RI_delay);
         elseif t > Ib_delay && t <= C_delay 
-            U = C_input(t);% + noise_C*C_input(t) ...
-%                 + Ia_Input(t-Ia_delay) ...
-%                 - Ib_Input(t-Ib_delay)...
-%                 - RI_Input(t-RI_delay);
+            U = C_input(t) + noise_C*C_input(t) ...
+                + Ia_Input(t-Ia_delay) ...
+                - Ib_Input(t-Ib_delay)...
+                - RI_Input(t-RI_delay);
         elseif t > C_delay 
-            U = K_C*(C_input(t) - F_se(t-C_delay)/F0) + U;
+            C_temp = K_C*(C_input(t) - F_se(t-C_delay)/F0) + C_temp; 
+            U = C_temp + noise_C*C_temp...
+                + Ia_Input(t-Ia_delay) ...
+                - Ib_Input(t-Ib_delay)...
+                - RI_Input(t-RI_delay);;
         else
-            U = C_input(t);% + noise_C*C_input(t);
+            U = C_input(t) + noise_C*C_input(t);
         end
         if U < 0 
             U = 0;
         end
-        U = U+noise_C*U;
+        %U = U+noise_C*U;
         %U_eff_dot = (U - U_eff)/T_U;
         U_eff(t) = U; %U_eff_dot*1/Fs + U_eff;
         
