@@ -1,10 +1,11 @@
 %==========================================================================
 % dischargeRate2excitation_nonLinear.m
 % Author: Akira Nagamori
-% Last update: 5/21/19
+% Last update: 6/27/19
 % Descriptions:
 %   Plot the relationship between excitation and discharge rate of
 %   individual motor units
+%   Used for c of Summary_Recruitment.pdf
 %==========================================================================
 
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50');

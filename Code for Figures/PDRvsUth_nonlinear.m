@@ -1,15 +1,17 @@
 %==========================================================================
-% excitation2dischargeRate.m
+%PDRvsUth_nonlinear.m
 % Author: Akira Nagamori
-% Last update: 3/5/19
+% Last update: 6/27/19
 % Descriptions:
 %   Plot the relationship between excitation and discharge rate of
 %   individual motor units
 %   Used to generate figure (onion_skinVsAHP)
 %==========================================================================
 close all
+clear all
+clc
 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_3_Ur_50');
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50');
 %% Peak tension of muscle
 density = 1.06; %
 L0 = 6.8; % optimal muscle length [cm]
@@ -74,19 +76,20 @@ PDR = FR_half*2;
 % linear gain
 g_e = (PDR-MDR)./(1-U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
-Ur_t = 0.2;
-index_saturation = find(U_th_new<Ur_t);
-f_k_e = fit([Ur_1 Ur_t]',[50 1]','poly1');
-coeffs_f_k_e = coeffvalues(f_k_e);
+f_t = 1.2;
 
+Ur_t = 0.1;
+index_saturation = find(U_th_new<Ur_t);
+f_k_e = fit([Ur_1 Ur_t]',[20 1]','poly1');
+coeffs_f_k_e = coeffvalues(f_k_e);
 lamda = coeffs_f_k_e(1)*U_th_new+coeffs_f_k_e(2);
 
-k_e = (2*MDR+lamda.*MDR)./(lamda.*(1-U_th_new));
-U_th_t = (k_e-MDR)./k_e;
+k_e = (f_t*FR_half-MDR+lamda.*(PDR-f_t*FR_half))./(lamda.*(1-U_th_new));
+U_th_t = (k_e-(PDR-1.2*FR_half))./k_e;
 
 % Non-linear gain
 %%
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
 comb = nchoosek(1:300,2);

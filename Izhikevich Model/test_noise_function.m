@@ -17,7 +17,7 @@ time = 0:1/Fs:5;
 
 [b,a] = butter(4,100/(Fs/2),'low');
 %%
-for n = 6
+for n = 1
     cd(model_parameter_folder )
     load('modelParameter')
     cd(code_folder)
@@ -43,7 +43,7 @@ for n = 6
     v = (-5+0.2-sqrt((5-0.2)^2-4*0.04*(140+I_initial)))/(2*0.04);
     u = 0.2*v; 
     
-    x_noise = 0;
+    x_noise = zeros(1,10000);
      %length(time));
     v_vec = zeros(1,length(time));
     spike_train = zeros(1,length(time));
@@ -51,14 +51,14 @@ for n = 6
     x_noise_vec = zeros(1,length(time));
     for t = 1:length(time)
         [x_noise] = noise(x_noise,Fs);
-        U = input(t)+x_noise; %*(input(t)*100);
+        U = input(t)+sum(x_noise); %*(input(t));
         I = (parameter.I_max-parameter.I_th)/(1-U_th(testUnit))*(U-U_th(testUnit)) + parameter.I_th;
         spike_vec = zeros(1,1);
         [u,v,spike_vec] = motoneuron(I,u,v,spike_vec,parameter.a,Fs);
         spike_train(t) = spike_vec;
         v_vec(t) = v;
         I_vec(t) = I; 
-        x_noise_vec(t) = x_noise;
+        x_noise_vec(t) = x_noise(1);
     end
     
     spike_time = find(spike_train(3*Fs+1:end));
@@ -103,9 +103,9 @@ u = u_dot*1000/Fs + u;
 end
 
 function [x] = noise(x,Fs)
-    D = 10;
-    tau = 0.05; 
-    chi = normrnd(0,1,[1,1]);
+    D = 0.01;
+    tau = 0.01; 
+    chi = normrnd(0,1,[1,size(x,2)]);
     x_dot = -x/tau + sqrt(D)*chi;
     x = x_dot*1/Fs + x;
 end

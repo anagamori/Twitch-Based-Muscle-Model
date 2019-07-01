@@ -1,33 +1,35 @@
 %==========================================================================
 % analysis_comparison.m
 % Author: Akira Nagamori
-% Last update: 4/11/19
+% Last update: 6/27/19
 % Descriptions:
-%   This code is used to generate fig XX in the paper
+%   This code is used to generate fig. d-f (Summary_Recruitment.pdf)
 %==========================================================================
 close all
 clear all
 clc
 
 %%
-condition = 'Model_4_10_CoV_50_Ur_Rec_3';
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
+
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 f = 0:0.5:100;
 
 for i = 1:3
     if i == 1
-        amp_vec = 0.1:0.1:1;
-        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_1';
+        condition = '10_CoV_50_Ur_Rec_2';
+        amp_vec = [0.05 0.1:0.1:1];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [100 100 100]/255;
+        color_code = [37  65 178]/255;
     elseif i == 2
+        condition = 'Model_4_10_CoV_50_Ur_Rec_3';
         amp_vec = [0.05 0.1:0.1:1];
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
@@ -38,15 +40,16 @@ for i = 1:3
         cd(code_folder)
         color_code = [230 57 70]/255;
     elseif i == 3
+        condition = '10_CoV_50_Ur_Rec_1';
         amp_vec = [0.05 0.1:0.1:1];
-        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
         load('cov_Force')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [37  65 178]/255;
+        color_code = [100 100 100]/255; 
     end
     mean_mean_Force = mean(mean_Force);
     mean_Force_norm = mean_Force./mean_mean_Force(end)*100;
@@ -121,12 +124,12 @@ end
 
 %%
 figure(1)
-xlabel('Activation (%)','FontSize',14)
+xlabel('Activation (%Maxmum)','FontSize',14)
 ylabel('Force (%Maximum)','FontSize',14)
 ylim([0 105])
 set(gca,'TickDir','out');
 set(gca,'box','off')
-legend('Fuglevand model','New model without tendon','New model with tendon','location','northwest')
+legend('Constant','Combined','Variable','location','northwest')
 % cd (figure_folder)
 % saveas(gcf,'activation2meanForce_FV_comparison','pdf')
 % cd (code_folder)
@@ -135,7 +138,7 @@ figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('SD (%Maximum Force)','FontSize',14)
-legend('Fuglevand model','New model without tendon','New model with tendon','location','northwest')
+legend('Constant','Combined','Variable','location','northwest')
 %yticks([0.05 0.1 0.15 0.2 0.25])
 xlim([0 100])
 set(gca,'TickDir','out');
@@ -149,7 +152,7 @@ figure(3)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])
-legend('Fuglevand model','New model without tendon','New model without tendon','location','northwest')
+legend('Constant','Combined','Variable','location','northeast')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 % cd (figure_folder)
