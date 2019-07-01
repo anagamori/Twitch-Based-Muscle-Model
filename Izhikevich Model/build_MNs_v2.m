@@ -16,7 +16,8 @@ Fs = 10000;
 time = 0:1/Fs:5;
 
 %%
-for n = 1
+for n = 7:300
+    n
     cd(model_parameter_folder )
     load('modelParameter')
     cd(code_folder)
