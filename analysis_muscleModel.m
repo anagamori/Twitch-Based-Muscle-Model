@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/noTendon/Model_4_10_CoV_50_Ur_Rec_3';
+data_folder = '/Volumes/DATA2/New_Model/noTendon/Model_4_20_CoV_50_Ur_Rec_3';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -25,7 +25,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 %% 
-for j = 0:10 %length(amp_vec)
+for j = 0:2 %length(amp_vec)
     
     for i = 1:10
         cd(data_folder)

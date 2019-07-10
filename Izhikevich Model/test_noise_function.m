@@ -8,8 +8,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50_constantT2T';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50_constantT2T';
 
 %%
 Fs = 10000;
@@ -43,7 +43,7 @@ for n = 1
     v = (-5+0.2-sqrt((5-0.2)^2-4*0.04*(140+I_initial)))/(2*0.04);
     u = 0.2*v; 
     
-    x_noise = zeros(1,10000);
+    x_noise = zeros(100,1);
      %length(time));
     v_vec = zeros(1,length(time));
     spike_train = zeros(1,length(time));
@@ -104,7 +104,7 @@ end
 
 function [x] = noise(x,Fs)
     D = 0.01;
-    tau = 0.01; 
+    tau = 0.005; 
     chi = normrnd(0,1,[1,size(x,2)]);
     x_dot = -x/tau + sqrt(D)*chi;
     x = x_dot*1/Fs + x;

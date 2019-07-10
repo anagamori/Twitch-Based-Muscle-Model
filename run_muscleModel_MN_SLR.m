@@ -89,21 +89,39 @@ ylabel('Power (N^2)','FontSize',14)
 Force_CoV = std(temp)/mean(temp)*100
 
 %%
+ISI_vec = [];
+ISI_sd_vec = [];
 ISI_CoV_vec = [];
+r_vec = [];
+p_vec = [];
 for n = 1:300
     index = 0;
     spike_time = find(output.spike_train(n,5*Fs+1:end));
-    if ~isempty(spike_time)
-
+    if ~isempty(spike_time)       
         ISI = diff(spike_time)/(Fs/1000);
-        FR_vec = mean(1./ISI*1000);
-        FR_sd = std(1./ISI*1000);
-        ISI_CoV_vec = [ISI_CoV_vec FR_sd/FR_vec*100];
-        
+        if length(ISI) >= 10
+            
+            FR_vec = nanmean(1./ISI*1000);
+            FR_sd = nanstd(1./ISI*1000);
+            ISI_CoV_vec = [ISI_CoV_vec FR_sd/FR_vec*100];
+            ISI_sd_vec = [ISI_sd_vec nanstd(ISI)];
+            ISI_vec = [ISI_vec nanmean(ISI)];
+            temp1 = ISI(1:end-1);
+            temp2 = ISI(2:end);
+            [r,p] = corrcoef(temp1,temp2);
+            r_vec = [r_vec r(1,2)];
+            p_vec = [p_vec p(1,2)];
+        end
     end
 end
 figure(5)
 histogram(ISI_CoV_vec)
+
+%%
+figure()
+histogram(r_vec(p_vec<0.05),-0.5:0.05:0.5)
+hold on 
+histogram(r_vec(p_vec>=0.05),-0.5:0.05:0.5)
 %%
 spike_time = find(output.spike_train(6,:));
 FR_vec = zeros(1,length(time));
