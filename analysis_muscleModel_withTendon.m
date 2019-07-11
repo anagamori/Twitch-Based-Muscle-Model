@@ -26,7 +26,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 % %%
-for j = 3:4 %:length(amp_vec)
+for j = 5:6 %:length(amp_vec)
     if j < 2
         Fs = 10000;
         time = 0:1/Fs:15;
