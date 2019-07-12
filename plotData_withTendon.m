@@ -9,10 +9,10 @@ clear all
 clc
 
 %%
-condition = 'Model_4_10_CoV_80_Ur_Rec_3';
-data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+condition = 'Model_4_20_CoV_50_Ur_Rec_3';
+data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
+figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 Fs = 10000;
 amp_vec = [0.05 0.1:0.1:1];
@@ -23,7 +23,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-trial_vec = 0:10; %[0:6 8:10];
+trial_vec = 0:6; %[0:6 8:10];
 for k = 1:length(trial_vec)
     j = trial_vec(k);
     cd(data_folder)

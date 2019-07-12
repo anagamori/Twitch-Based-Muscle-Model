@@ -71,11 +71,13 @@ for i = 1:3
     %%
     figure(4)
     subplot(2,2,1);
-    plot(f,mean_pxx(1,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(1,:)./sum(mean_pxx(1,:))*100,'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
+    ylim([0 20])
+    yticks(0:5:25)
     xlabel('Frequency (Hz)','FontSize',10)
-    ylabel('Power (N^2)','FontSize',10)
+    ylabel('Proportion of Total Power (%)','FontSize',10)
     set(gca,'TickDir','out');
     set(gca,'box','off')
     ax = gca;
@@ -83,11 +85,13 @@ for i = 1:3
     
     
     subplot(2,2,2);
-    plot(f,mean_pxx(3,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(3,:)./sum(mean_pxx(3,:))*100,'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
+    ylim([0 20])
+    yticks(0:5:25)
     xlabel('Frequency (Hz)','FontSize',10)
-    ylabel('Power (N^2)','FontSize',10)
+    ylabel('Proportion of Total Power (%)','FontSize',10)
     set(gca,'TickDir','out');
     set(gca,'box','off')
     ax = gca;
@@ -95,11 +99,13 @@ for i = 1:3
     hold on
     
     subplot(2,2,3);
-    plot(f,mean_pxx(5,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(5,:)./sum(mean_pxx(5,:))*100,'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
+    ylim([0 20])
+    yticks(0:5:25)
     xlabel('Frequency (Hz)','FontSize',10)
-    ylabel('Power (N^2)','FontSize',10)
+    ylabel('Proportion of Total Power (%)','FontSize',10)
     set(gca,'TickDir','out');
     set(gca,'box','off')
     ax = gca;
@@ -107,11 +113,13 @@ for i = 1:3
     
     
     subplot(2,2,4);
-    plot(f,mean_pxx(8,:),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(8,:)./sum(mean_pxx(8,:))*100,'LineWidth',2,'color',color_code)
     xlim([0 50])
+    ylim([0 20])
+    yticks(0:5:25)
     hold on
     xlabel('Frequency (Hz)','FontSize',10)
-    ylabel('Power (N^2)','FontSize',10)
+    ylabel('Proportion of Total Power (%)','FontSize',10)
     set(gca,'TickDir','out');
     set(gca,'box','off')
     ax = gca;

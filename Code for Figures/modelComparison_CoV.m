@@ -13,7 +13,7 @@ clc
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
-amp_vec = 0.1:0.1:1;
+amp_vec = [0.05 0.1:0.1:1];
 mean_Force = zeros(10,length(amp_vec));
 std_Force = zeros(10,length(amp_vec));
 cov_Force = zeros(10,length(amp_vec));
@@ -23,7 +23,7 @@ f = 0:0.5:100;
 
 for i = 1:2
     if i == 1
-        condition = '10_CoV_50_Ur_Rec_2_CTvsPTi';
+        condition = 'Model_4_10_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
@@ -35,7 +35,7 @@ for i = 1:2
         cd(code_folder)
         color_code = [43 45 66]/255;
     elseif i == 2
-        condition = '30_CoV_50_Ur_Rec_2_CTvsPTi';
+        condition = 'Model_4_20_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
