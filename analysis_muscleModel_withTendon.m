@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_4_20_CoV_50_Ur_Rec_3';
+condition = 'Model_6_10_CoV_50_Ur_Rec_3';
 data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
 data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -25,6 +25,7 @@ std_Force = zeros(10,length(amp_vec));
 cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
+mean_pxx_2 = zeros(length(amp_vec),1001);
 % %%
 for j = 7 %:length(amp_vec)
     if j < 2
@@ -68,7 +69,7 @@ for j = 7 %:length(amp_vec)
         std_Force(i,j+1) = std(Force(5*Fs+1:end));
         cov_Force(i,j+1) =  std_Force(i,j+1)/mean_Force(i,j+1)*100;
         [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),gausswin(5*Fs),0.9*5*Fs,0:0.1:100,Fs,'power');
-        
+        [pxx_2(i,:),~] = periodogram(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),gausswin(5*Fs),0.9*5*Fs,0:0.1:100,Fs,'power');
         figure(11)
         plot(time,Force)
         hold on

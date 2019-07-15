@@ -30,7 +30,7 @@ modelParameter.recruitment = 3; % 1: Loeb's formulation, 2: Fuglevand's formulat
 
 amp_vec = [0.05 0.1:0.1:1];
 trial_vec = [7 10];
-for j = 7:10
+for j = 8:10
     j
         if j < 2
             Fs = 10000;

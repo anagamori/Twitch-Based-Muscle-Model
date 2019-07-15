@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_4_10_CoV_50_Ur_Rec_3';
+condition = 'Model_4_20_CoV_50_Ur_Rec_3';
 data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
@@ -33,7 +33,7 @@ for j = 0:10
         std_Force(i,j+1) = std(Force(5*Fs+1:end));
         cov_Force(i,j+1) =  std_Force(i,j+1)/mean_Force(i,j+1)*100;
               
-        [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),gausswin(5*Fs),0.9*5*Fs,0:0.5:100,Fs,'power');
+        [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),[],[],0:0.5:100,Fs,'power');
     end
     
     figure(11)

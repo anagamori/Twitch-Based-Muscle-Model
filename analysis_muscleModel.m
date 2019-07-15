@@ -35,7 +35,7 @@ for j = 0:10 %length(amp_vec)
         mean_Force(i,j+1) = mean(Force(5*Fs+1:end));
         std_Force(i,j+1) = std(Force(5*Fs+1:end));
         cov_Force(i,j+1) =  std_Force(i,j+1)/mean_Force(i,j+1)*100;
-        [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),gausswin(5*Fs),0.9*5*Fs,0:0.5:100,Fs,'power');
+        [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),[],[],0:0.5:100,Fs,'power');
         
         figure(11)
         plot(Force)
