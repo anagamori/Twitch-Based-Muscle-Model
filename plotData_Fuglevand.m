@@ -9,10 +9,10 @@ clear all
 clc
 
 %%
-condition = 'Model_2_N_100';
-data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/' condition];
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+condition = 'Model_1_CoV_20';
+data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/' condition];
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 Fs = 1000;
 amp_vec = 0.1:0.1:1;
