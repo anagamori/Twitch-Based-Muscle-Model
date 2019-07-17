@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_4_20_CoV_50_Ur_Rec_3';
+condition = 'Model_6_20_CoV_50_Ur_Rec_3';
 data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
@@ -23,7 +23,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-trial_vec = 0; %0:10; %[0:6 8:10];
+trial_vec = 0:6; %0:10; %[0:6 8:10];
 for k = 1:length(trial_vec)
     j = trial_vec(k);
     cd(data_folder)
@@ -46,12 +46,12 @@ for k = 1:length(trial_vec)
     %clear Force_mat
 end
 
-% cd(data_folder)
-% save('mean_Force','mean_Force')
-% save('std_Force','std_Force')
-% save('cov_Force','cov_Force')
-% save('mean_pxx','mean_pxx')
-% cd(code_folder)
+cd(data_folder)
+save('mean_Force','mean_Force')
+save('std_Force','std_Force')
+save('cov_Force','cov_Force')
+save('mean_pxx','mean_pxx')
+cd(code_folder)
 %%
 %close all
 mean_mean_Force = mean(mean_Force);

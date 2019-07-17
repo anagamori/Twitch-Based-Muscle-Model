@@ -21,9 +21,9 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:3
+for i = 2:3
     if i == 1
-        condition = 'Model_4_20_CoV_50_Ur_Rec_3';
+        condition = 'Model_6_20_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
@@ -35,7 +35,7 @@ for i = 1:3
         cd(code_folder)
         color_code = [100 100 100]/255;
     elseif i == 2
-        condition = 'Model_4_10_CoV_50_Ur_Rec_3';
+        condition = 'Model_6_10_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
@@ -47,7 +47,7 @@ for i = 1:3
         cd(code_folder)
         color_code = [230 57 70]/255;
     elseif i == 3
-        condition = 'Model_4_20_CoV_50_Ur_Rec_3';
+        condition = 'Model_6_20_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
