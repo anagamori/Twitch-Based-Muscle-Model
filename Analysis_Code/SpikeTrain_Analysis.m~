@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-for k = 1:2
+for k = 1
     if k == 1
         condition = 'Model_4_10_CoV_50_Ur_Rec_3';
     else
@@ -75,8 +75,7 @@ for k = 1:2
             
             Data.spike_train = temp;
             Data.unit_force = temp_force;
-            Data.force = temp_force_2;
-            
+            Data.force = 
             cd(data_folder_git)
             save([condition '_Data'],'Data')
             cd(code_folder)
