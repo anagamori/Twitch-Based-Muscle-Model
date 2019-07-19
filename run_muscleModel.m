@@ -64,8 +64,8 @@ for j = 8:10
     amp = amp_vec(j+1);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
-    if j == 6
-        for i = 4:10
+    if j == 8
+        for i = 5:10
             i
             tic
             output = spikeDrivenMuscleModel(Fs,time,input,modelParameter,1);
