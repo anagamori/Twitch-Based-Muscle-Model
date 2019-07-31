@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_6_10_CoV_50_Ur_Rec_3_noFV';
+condition = 'Model_6_10_CoV_50_Ur_Rec_3_shortTendon';
 data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
@@ -23,7 +23,7 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-trial_vec = 0:5; %0:10; %[0:6 8:10];
+trial_vec = 0:10; %0:10; %[0:6 8:10];
 for k = 1:length(trial_vec)
     j = trial_vec(k);
     cd(data_folder)
@@ -35,7 +35,7 @@ for k = 1:length(trial_vec)
         std_Force(i,j+1) = std(Force(5*Fs+1:end));
         cov_Force(i,j+1) =  std_Force(i,j+1)/mean_Force(i,j+1)*100;
               
-        [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),[],[],0:0.5:100,Fs,'power');
+        [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),rectwin(length(Force(5*Fs+1:end))),0,0:0.5:100,Fs,'power');
     end
     
     figure(11)
