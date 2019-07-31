@@ -10,15 +10,15 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_6';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_6';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 3.1*pi/180; %[radians]
 modelParameter.optimalLength = 5.98; % [cm]
-modelParameter.tendonSlackLength = 23.0; %24.1; % [cm]
+modelParameter.tendonSlackLength = 23; %23.0; %24.1; % [cm]
 modelParameter.mass = 0.0134; % [g]
 modelParameter.muscleInitialLength = 5.98; % [cm]
-modelParameter.tendonInitialLength = 23.0; %24.1; % [cm]
+modelParameter.tendonInitialLength = 23; %23.0; %24.1; % [cm]
 
 density = 1.06; %
 L0 = modelParameter.optimalLength; % optimal muscle length [cm]
@@ -98,9 +98,9 @@ modelParameter.lamda = coeffs_f_k_e(1)*modelParameter.U_th_new+coeffs_f_k_e(2);
 modelParameter.k_e = (f_t*modelParameter.FR_half-modelParameter.MDR+modelParameter.lamda.*(modelParameter.PDR-f_t*modelParameter.FR_half))./(modelParameter.lamda.*(1-modelParameter.U_th_new));
 modelParameter.U_th_t = (modelParameter.k_e-(modelParameter.PDR-f_t*modelParameter.FR_half))./modelParameter.k_e;
 %% Save model parameters
-% cd(model_parameter_folder)
-% save('modelParameter','modelParameter')
-% cd(code_folder)
+cd(model_parameter_folder)
+save('modelParameter','modelParameter')
+cd(code_folder)
 
 %%
 function [Lce_initial,Lse_initial,Lmax] =  InitialLength_function(modeParameter)

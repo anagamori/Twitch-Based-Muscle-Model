@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_6_20_CoV_50_Ur_Rec_3';
+condition = 'Model_6_10_CoV_50_Ur_Rec_3_noFV';
 data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
 data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -27,7 +27,7 @@ pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 mean_pxx_2 = zeros(length(amp_vec),1001);
 % %%
-for j = 7:10 %:length(amp_vec)
+for j = 4:5 %:length(amp_vec)
     if j < 2
         Fs = 10000;
         time = 0:1/Fs:15;
@@ -37,27 +37,33 @@ for j = 7:10 %:length(amp_vec)
     elseif j >= 4 && j < 7
         Fs = 20000;
         time = 0:1/Fs:15;
-    elseif j >= 7
+    elseif j >= 7 && j <= 8
         Fs = 25000;
         time = 0:1/Fs:15;
+    elseif j >= 9
+        Fs = 30000;
+        time = 0:1/Fs:15;
     end
-%         if j <= 1
-%             Fs = 10000;
-%             time = 0:1/Fs:15;
-%         elseif j >= 2 && j <= 3
-%             Fs = 15000;
-%             time = 0:1/Fs:15;
-%         elseif j == 4
-%             Fs = 20000;
-%             time = 0:1/Fs:15;
-%         elseif j >= 5 && j < 7
-%             Fs = 25000;
-%             time = 0:1/Fs:15;
-%         elseif j >= 7
-%             Fs = 30000;
-%             time = 0:1/Fs:15;
-%         end
-%     
+    %         if j <= 1
+    %             Fs = 10000;
+    %             time = 0:1/Fs:15;
+    %         elseif j >= 2 && j < 3
+    %             Fs = 15000;
+    %             time = 0:1/Fs:15;
+    %         elseif j >= 3 && j <= 4
+    %             Fs = 20000;
+    %             time = 0:1/Fs:15;
+    %         elseif j >= 5 && j < 6
+    %             Fs = 25000;
+    %             time = 0:1/Fs:15;
+    %         elseif j >= 6 && j<7
+    %             Fs = 30000;
+    %             time = 0:1/Fs:15;
+    %         else
+    %             Fs = 40000;
+    %             time = 0:1/Fs:15;
+    %         end
+    %
     j
     tic
     for i = 1:10

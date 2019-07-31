@@ -10,9 +10,9 @@ clear all
 clc
 
 %%
-condition = 'Model_4_10_CoV_50_Ur_Rec_3';
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
-figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+condition = 'Model_6_10_CoV_50_Ur_Rec_3';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
+figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 amp_vec = [0.05 0.1:0.1:1];
 mean_Force = zeros(10,length(amp_vec));
@@ -26,7 +26,7 @@ for i = 1:4
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
+        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/Model_4_10_CoV_50_Ur_Rec_3'];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -37,7 +37,7 @@ for i = 1:4
     elseif i == 2
         Fs = 10000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -51,7 +51,7 @@ for i = 1:4
     elseif i == 3
         Fs = 10000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition '_noFV'];
+        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition '_noFV'];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -63,7 +63,7 @@ for i = 1:4
     elseif i == 4
         Fs = 10000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition '_shortTendon'];
+        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition '_shortTendon'];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
