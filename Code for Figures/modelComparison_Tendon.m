@@ -26,7 +26,7 @@ for i = 1:4
     if i == 1
         Fs = 1000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/Model_4_10_CoV_50_Ur_Rec_3'];
+        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/Model_6_10_CoV_50_Ur_Rec_3'];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
