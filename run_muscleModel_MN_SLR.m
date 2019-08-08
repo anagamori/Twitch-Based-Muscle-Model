@@ -12,8 +12,8 @@ clc
 
 %%
 data_folder = '/Volumes/DATA2/New_Model/SLR/GD_40_GS_40_Ia_2000_DL_30';
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_5_constantT2T';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_5_constantT2T';
 
 %%
 cd(model_parameter_folder)
@@ -35,7 +35,7 @@ for j = 1
     j
     if j < 2
         Fs = 10000;
-        time = 0:1/Fs:10;
+        time = 0:1/Fs:5;
     elseif j >= 2 && j < 4
         Fs = 15000;
         time = 0:1/Fs:15;
@@ -50,10 +50,10 @@ for j = 1
     SLRParameter.gamma_dynamic = 20;
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 20*Fs/1000;
-    SLRParameter.Ia_gain = 5000;
-    SLRParameter.Ib_gain = 5000;
+    SLRParameter.Ia_gain = 10000;
+    SLRParameter.Ib_gain = 10000;
     SLRParameter.Ib_delay = 40*Fs/1000;
-    SLRParameter.RI_gain = 3;
+    SLRParameter.RI_gain = 10;
     SLRParameter.RI_delay = 5*Fs/1000;
     SLRParameter.C_delay = 200*Fs/1000;
     SLRParameter.K_C = 0.0001;

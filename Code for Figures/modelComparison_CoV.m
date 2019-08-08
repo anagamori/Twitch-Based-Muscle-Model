@@ -10,8 +10,8 @@ clear all
 clc
 
 %%
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
-figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
+figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 amp_vec = [0.05 0.1:0.1:1];
 mean_Force = zeros(10,length(amp_vec));
@@ -26,7 +26,7 @@ for i = 2:3
         condition = 'Model_6_20_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -38,7 +38,7 @@ for i = 2:3
         condition = 'Model_6_10_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -50,7 +50,7 @@ for i = 2:3
         condition = 'Model_6_20_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -82,7 +82,7 @@ for i = 2:3
     %%
     figure(4)
     subplot(2,2,1);
-    plot(f,mean_pxx(1,:)./sum(mean_pxx(1,:)),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(2,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -94,7 +94,7 @@ for i = 2:3
     
     
     subplot(2,2,2);
-    plot(f,mean_pxx(3,:)./sum(mean_pxx(3,:)),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(3,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -106,7 +106,7 @@ for i = 2:3
     hold on
     
     subplot(2,2,3);
-    plot(f,mean_pxx(5,:)./sum(mean_pxx(5,:)),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(5,:),'LineWidth',2,'color',color_code)
     hold on
     xlim([0 50])
     xlabel('Frequency (Hz)','FontSize',10)
@@ -118,11 +118,59 @@ for i = 2:3
     
     
     subplot(2,2,4);
-    plot(f,mean_pxx(8,:)./sum(mean_pxx(8,:)),'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(8,:),'LineWidth',2,'color',color_code)
     xlim([0 50])
     hold on
     xlabel('Frequency (Hz)','FontSize',10)
     ylabel('Power (N^2)','FontSize',10)
+    set(gca,'TickDir','out');
+    set(gca,'box','off')
+    ax = gca;
+    ax.FontSize = 6;
+    
+    figure(5)
+    subplot(2,2,1);
+    plot(f,mean_pxx(1,:)./sum(mean_pxx(1,:))*100,'LineWidth',2,'color',color_code)
+    hold on
+    xlim([0 50])
+    xlabel('Frequency (Hz)','FontSize',10)
+    ylabel('Proportional Power (%)','FontSize',10)
+    set(gca,'TickDir','out');
+    set(gca,'box','off')
+    ax = gca;
+    ax.FontSize = 6;
+    
+    
+    subplot(2,2,2);
+    plot(f,mean_pxx(3,:)./sum(mean_pxx(3,:))*100,'LineWidth',2,'color',color_code)
+    hold on
+    xlim([0 50])
+    xlabel('Frequency (Hz)','FontSize',10)
+    ylabel('Proportional Power (%)','FontSize',10)
+    set(gca,'TickDir','out');
+    set(gca,'box','off')
+    ax = gca;
+    ax.FontSize = 6;
+    hold on
+    
+    subplot(2,2,3);
+    plot(f,mean_pxx(5,:)./sum(mean_pxx(5,:))*100,'LineWidth',2,'color',color_code)
+    hold on
+    xlim([0 50])
+    xlabel('Frequency (Hz)','FontSize',10)
+    ylabel('Proportional Power (%)','FontSize',10)
+    set(gca,'TickDir','out');
+    set(gca,'box','off')
+    ax = gca;
+    ax.FontSize = 6;
+    
+    
+    subplot(2,2,4);
+    plot(f,mean_pxx(8,:)./sum(mean_pxx(8,:))*100,'LineWidth',2,'color',color_code)
+    xlim([0 50])
+    hold on
+    xlabel('Frequency (Hz)','FontSize',10)
+    ylabel('Proportional Power (%)','FontSize',10)
     set(gca,'TickDir','out');
     set(gca,'box','off')
     ax = gca;
@@ -166,13 +214,3 @@ set(gca,'box','off')
 % cd (figure_folder)
 % saveas(gcf,'activation2CoV_FV_comparison','pdf')
 % cd (code_folder)
-
-figure(4)
-fig = gcf;
-%linkaxes([ax1,ax2,ax3,ax4],'y')
-fig.PaperUnits = 'inches';
-fig.PaperPosition = [0 0 4.56 4.56];
-cd (figure_folder)
-saveas(gcf,'pxx_FV_comparison','pdf')
-cd (code_folder)
-
