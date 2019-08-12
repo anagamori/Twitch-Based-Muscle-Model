@@ -12,8 +12,8 @@ clc
 
 %%
 data_folder = '/Volumes/DATA2/New_Model/withTendon/Model_6_10_CoV_50_Ur_Rec_3_PT';
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_6_PT';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_6_PT';
 
 %%
 cd(model_parameter_folder)
@@ -30,23 +30,23 @@ modelParameter.recruitment = 3; % 1: Loeb's formulation, 2: Fuglevand's formulat
 
 amp_vec = [0.05 0.1:0.1:1];
 trial_vec = [7 10];
-for j = 0
+for j = 2
     j
-        if j < 2
-            Fs = 2000;
+        if j <= 2
+            Fs = 10000;
             time = 0:1/Fs:5;
-        elseif j >= 2 && j < 4
+        elseif j >= 3 && j < 4
             Fs = 15000;
-            time = 0:1/Fs:15;
-        elseif j >= 4 && j < 7
+            time = 0:1/Fs:5;
+        elseif j > 4 && j < 7
             Fs = 20000;
-            time = 0:1/Fs:15;
+            time = 0:1/Fs:5;
         elseif j >= 7 && j <= 8
             Fs = 25000;
-            time = 0:1/Fs:15;
+            time = 0:1/Fs:5;
         elseif j >= 9
-            Fs = 10000;
-            time = 0:1/Fs:10;
+            Fs = 30000;
+            time = 0:1/Fs:5;
         end
 
     amp = amp_vec(j+1);

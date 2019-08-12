@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_6_10_CoV_50_Ur_Rec_3_PT';
+condition = 'Model_6_10_CoV_50_Ur_Rec_3_N_100';
 data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
 data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -27,14 +27,14 @@ pxx = zeros(10,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 mean_pxx_2 = zeros(length(amp_vec),1001);
 % %%
-for j = 8:10 %:length(amp_vec)
-    if j < 2
+for j = 9:10 %:length(amp_vec)
+    if j <= 2
         Fs = 10000;
         time = 0:1/Fs:15;
-    elseif j >= 2 && j <= 3
+    elseif j >= 3 && j <= 4
         Fs = 15000;
         time = 0:1/Fs:15;
-    elseif j >= 4 && j < 7
+    elseif j > 4 && j < 7
         Fs = 20000;
         time = 0:1/Fs:15;
     elseif j >= 7 && j <= 8
@@ -43,8 +43,7 @@ for j = 8:10 %:length(amp_vec)
     elseif j >= 9
         Fs = 30000;
         time = 0:1/Fs:15;
-    end
-    %         if j <= 1
+    end    %         if j <= 1
     %             Fs = 10000;
     %             time = 0:1/Fs:15;
     %         elseif j >= 2 && j < 3
