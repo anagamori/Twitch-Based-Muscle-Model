@@ -241,7 +241,6 @@ if figOpt == 1
     hold on
 end
 
-
 output.spike_train = spike_train;
 output.Force = F_ce;
 output.ForceTendon = F_se;

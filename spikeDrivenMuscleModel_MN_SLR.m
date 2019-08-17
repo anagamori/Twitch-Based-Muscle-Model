@@ -3,7 +3,7 @@
 % Author: Akira Nagamori
 % Last update: 3/5/19
 %==========================================================================
-function [output] = spikeDrivenMuscleModel_MN_SLR(Fs,time,input,modelParameter,parameterMN,SLRParameter,figOpt)
+function [output] = spikeDrivenMuscleModel_MN_SLR(Fs,time,input,modelParameter,parameterMN,SLRParameter,controlOpt,figOpt)
 %% Simulation parameters
 C_input = input;
 
@@ -194,27 +194,31 @@ for t = 1:length(time)
     [noise_CM] = noise(noise_CM,1000,Fs);
     %%
     if t > 1
-        %% Effective activation (Song et al., 2008)
-        if t > Ia_delay && t <= Ib_delay
-            U = C_input(t) + noise_C*C_input(t) ...
-                + Ia_Input(t-Ia_delay) ...
-                - RI_Input(t-RI_delay);
-        elseif t > Ib_delay && t <= C_delay 
-            U = C_input(t) + noise_C*C_input(t) ...
-                + Ia_Input(t-Ia_delay) ...
-                - Ib_Input(t-Ib_delay)...
-                - RI_Input(t-RI_delay);
-        elseif t > C_delay 
-            C_temp = K_C*(C_input(t) - F_se(t-C_delay)/F0) + C_temp; 
-            U = C_temp + noise_C*C_temp...
-                + Ia_Input(t-Ia_delay) ...
-                - Ib_Input(t-Ib_delay)...
-                - RI_Input(t-RI_delay);
-        else
-            U = C_input(t) + noise_C*C_input(t);
-        end
-        if U < 0 
-            U = 0;
+        if controlOpt == 1
+           U = C_input(t);
+        elseif controlOpt == 2
+            %% Effective activation (Song et al., 2008)
+            if t > Ia_delay && t <= Ib_delay
+                U = C_input(t) + noise_C*C_input(t) ...
+                    + Ia_Input(t-Ia_delay) ...
+                    - RI_Input(t-RI_delay);
+            elseif t > Ib_delay && t <= C_delay 
+                U = C_input(t) + noise_C*C_input(t) ...
+                    + Ia_Input(t-Ia_delay) ...
+                    - Ib_Input(t-Ib_delay)...
+                    - RI_Input(t-RI_delay);
+            elseif t > C_delay 
+                C_temp = K_C*(C_input(t) - F_se(t-C_delay)/F0) + C_temp; 
+                U = C_temp + noise_C*C_temp...
+                    + Ia_Input(t-Ia_delay) ...
+                    - Ib_Input(t-Ib_delay)...
+                    - RI_Input(t-RI_delay);
+            else
+                U = C_input(t) + noise_C*C_input(t);
+            end
+            if U < 0 
+                U = 0;
+            end
         end
         %U = U+noise_C*U;
         %U_eff_dot = (U - U_eff)/T_U;

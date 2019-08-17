@@ -46,6 +46,10 @@ for j = 1
         Fs = 25000;
         time = 0:1/Fs:15;
     end
+    %% 
+    controlOpt = 1;
+    % 1: feedfoward input
+    % 2: feedback 
     %%
     SLRParameter.gamma_dynamic = 20;
     SLRParameter.gamma_static = 20;
@@ -67,7 +71,7 @@ for j = 1
     for i = 1
         i
         tic
-        output = spikeDrivenMuscleModel_MN_SLR(Fs,time,input,modelParameter,parameterMN,SLRParameter,1);
+        output = spikeDrivenMuscleModel_MN_SLR(Fs,time,input,modelParameter,parameterMN,SLRParameter,controlOpt,1);
         toc
 %         cd(data_folder)
 %         save(['Data_' num2str(j) '_' num2str(i)],'output','-v7.3')
