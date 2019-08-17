@@ -12,8 +12,8 @@ clc
 
 %%
 data_folder = '/Volumes/DATA2/New_Model/SLR/GD_40_GS_40_Ia_2000_DL_30';
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_5_constantT2T';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_5_constantT2T';
 
 %%
 cd(model_parameter_folder)
@@ -35,7 +35,7 @@ for j = 1
     j
     if j < 2
         Fs = 10000;
-        time = 0:1/Fs:5;
+        time = 0:1/Fs:10;
     elseif j >= 2 && j < 4
         Fs = 15000;
         time = 0:1/Fs:15;
@@ -78,7 +78,7 @@ for j = 1
     
 end
 %%
-temp = output.ForceTendon(5*Fs+1:end);
+temp_1 = output.ForceTendon(5*Fs+1:end);
 [pxx,f] = pwelch(temp-mean(temp),gausswin(5*Fs),5*Fs*0.9,0:0.1:100,Fs,'power');
 figure(2)
 plot(f,pxx,'LineWidth',2)
@@ -115,7 +115,7 @@ for n = 1:300
     end
 end
 figure(5)
-histogram(ISI_CoV_vec)
+histogram(ISI_CoV_vec,[0:5:100])
 
 %%
 figure()
@@ -135,7 +135,7 @@ for i = 2:length(spike_time)
         FR_vec(spike_time(i):end) = FR;
     end
 end
-figure(3)
+figure()
 plot(time,FR_vec)
 xlabel('Time (s)','FontSize',14)
 ylabel('Discharge Rate (Hz)','FontSize',14)
@@ -146,7 +146,7 @@ temp1 = temp1(5*Fs+1:end);
 temp2 = zeros(1,length(time));
 temp2(find(output.spike_train(10,:))) = 1;
 temp2 = temp2(5*Fs+1:end);
-[C,f] = mscohere(temp1-mean(temp1),temp2-mean(temp2),gausswin(5*Fs),5*Fs*0.9,0:0.5:100,Fs);
+[C,f] = mscohere(temp1-mean(temp1),temp2-mean(temp2),gausswin(2*Fs),2*Fs*0.9,0:0.5:100,Fs);
 figure(4)
 plot(f,C)
 xlabel('Frequency (Hz)','FontSize',14)

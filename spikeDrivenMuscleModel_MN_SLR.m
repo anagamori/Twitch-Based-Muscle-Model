@@ -155,6 +155,7 @@ noise_Ib = 0;
 noise_RI = 0;
 noise_C = 0;
 noise_ID = zeros(1,N_MU);
+noise_CM = zeros(1,1);
 %%
 C_temp = 0;
 U_eff = zeros(1,length(time));
@@ -171,7 +172,7 @@ for t = 1:length(time)
     
     FR_Ia(t) = Output_Primary;
     Ia_Input(t) = FR_Ia(t)/Ia_gain;
-    [noise_Ia] = noise(noise_Ia,0.001,Fs);
+    [noise_Ia] = noise(noise_Ia,0,Fs);
     Ia_Input(t) = Ia_Input(t) + Ia_Input(t)*noise_Ia;
     %%
     if t > 5
@@ -179,17 +180,18 @@ for t = 1:length(time)
         [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_eff,t);
     end
     Ib_Input(t) = FR_Ib(t)/Ib_gain;
-    [noise_Ib] = noise(noise_Ib,0.001,Fs);
+    [noise_Ib] = noise(noise_Ib,0,Fs);
     Ib_Input(t) = Ib_Input(t) + Ib_Input(t)*noise_Ib;
     
     RI_Input(t) = FR_RI(t)/RI_gain;
-    [noise_RI] = noise(noise_RI,0.001,Fs);
+    [noise_RI] = noise(noise_RI,0,Fs);
     RI_Input(t) = RI_Input(t) + RI_Input(t)*noise_RI;
     
     %%
-    [noise_C] = noise(noise_C,0.001,Fs);
+    [noise_C] = noise(noise_C,0,Fs);
     
-    [noise_ID] = noise(noise_ID,10,Fs);
+    [noise_ID] = noise(noise_ID,10000,Fs);
+    [noise_CM] = noise(noise_CM,1000,Fs);
     %%
     if t > 1
         %% Effective activation (Song et al., 2008)
@@ -207,7 +209,7 @@ for t = 1:length(time)
             U = C_temp + noise_C*C_temp...
                 + Ia_Input(t-Ia_delay) ...
                 - Ib_Input(t-Ib_delay)...
-                - RI_Input(t-RI_delay);;
+                - RI_Input(t-RI_delay);
         else
             U = C_input(t) + noise_C*C_input(t);
         end
@@ -224,7 +226,7 @@ for t = 1:length(time)
             I = g_e.*(U+noise_ID*U-U_th_new) + I_th;
         elseif recruitmentType == 3
             I = zeros(N_MU,1);
-            U_temp = U + noise_ID*U*100;
+            U_temp = U; % + noise_ID*U*100;
             I_temp_1 = I_th + lamda.*k_e.*(U_temp-U_th_new);
             index_1 = find(U_temp <= U_th_t);
             I(index_1) = I_temp_1(index_1);
@@ -233,7 +235,7 @@ for t = 1:length(time)
             I(index_2) = I_temp_2(index_2);
             I_temp_3 = g_e.*(U_temp-U_th_new)+I_th;
             I(index_t) = I_temp_3(index_t);
-            I = I';
+            I = (I+I.*noise_ID'+I*noise_CM)';
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
