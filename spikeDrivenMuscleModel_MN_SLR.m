@@ -188,7 +188,7 @@ for t = 1:length(time)
     RI_Input(t) = RI_Input(t) + RI_Input(t)*noise_RI;
     
     %%
-    [noise_C] = noise(noise_C,0,Fs);
+    [noise_C] = noise(noise_C,10000,Fs);
     
     [noise_ID] = noise(noise_ID,10000,Fs);
     [noise_CM] = noise(noise_CM,1000,Fs);
@@ -220,7 +220,7 @@ for t = 1:length(time)
                 U = 0;
             end
         end
-        %U = U+noise_C*U;
+        U = U+noise_C*U;
         %U_eff_dot = (U - U_eff)/T_U;
         U_eff(t) = U; %U_eff_dot*1/Fs + U_eff;
         
@@ -239,7 +239,8 @@ for t = 1:length(time)
             I(index_2) = I_temp_2(index_2);
             I_temp_3 = g_e.*(U_temp-U_th_new)+I_th;
             I(index_t) = I_temp_3(index_t);
-            I = (I+I.*noise_ID'+I*noise_CM)';
+            I = I';
+            %I = (I+I.*noise_ID'+I*noise_CM)';
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate

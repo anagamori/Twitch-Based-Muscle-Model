@@ -82,7 +82,7 @@ for j = 1
     
 end
 %%
-temp_1 = output.ForceTendon(5*Fs+1:end);
+temp = output.ForceTendon(5*Fs+1:end);
 [pxx,f] = pwelch(temp-mean(temp),gausswin(5*Fs),5*Fs*0.9,0:0.1:100,Fs,'power');
 figure(2)
 plot(f,pxx,'LineWidth',2)
