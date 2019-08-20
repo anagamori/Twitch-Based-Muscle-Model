@@ -145,6 +145,12 @@ RI_Input = zeros(1,length(time));
 C_delay = SLRParameter.C_delay;
 K_C = SLRParameter.K_C;
 %%
+noise_amp_Ia = SLRParameter.noise_amp_Ia;
+noise_amp_Ib = SLRParameter.noise_amp_Ib;
+noise_amp_RI = SLRParameter.noise_amp_RI;
+noise_amp_C = SLRParameter.noise_amp_C;
+noise_amp_ID = SLRParameter.noise_amp_ID;
+noise_amp_CD = SLRParameter.noise_amp_CD;
 noise_Ia = 0;
 noise_Ib = 0;
 noise_RI = 0;
@@ -167,7 +173,7 @@ for t = 1:length(time)
     
     FR_Ia(t) = Output_Primary;
     Ia_Input(t) = FR_Ia(t)/Ia_gain;
-    [noise_Ia] = noise(noise_Ia,0,Fs);
+    [noise_Ia] = noise(noise_Ia,noise_amp_Ia,Fs);
     Ia_Input(t) = Ia_Input(t) + Ia_Input(t)*noise_Ia;
     %%
     if t > 5
@@ -175,18 +181,18 @@ for t = 1:length(time)
         [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_vec,t);
     end
     Ib_Input(t) = FR_Ib(t)/Ib_gain;
-    [noise_Ib] = noise(noise_Ib,0,Fs);
+    [noise_Ib] = noise(noise_Ib,noise_amp_Ib,Fs);
     Ib_Input(t) = Ib_Input(t) + Ib_Input(t)*noise_Ib;
     
     RI_Input(t) = FR_RI(t)/RI_gain;
-    [noise_RI] = noise(noise_RI,0,Fs);
+    [noise_RI] = noise(noise_RI,noise_amp_RI,Fs);
     RI_Input(t) = RI_Input(t) + RI_Input(t)*noise_RI;
     
     %%
-    [noise_C] = noise(noise_C,10000,Fs);
+    [noise_C] = noise(noise_C,noise_amp_C,Fs);
     
-    [noise_ID] = noise(noise_ID,10000,Fs);
-    [noise_CM] = noise(noise_CM,0,Fs);
+    [noise_ID] = noise(noise_ID,noise_amp_ID,Fs);
+    [noise_CM] = noise(noise_CM,noise_amp_CD,Fs);
     %%
     if t > 1
         %% Control input, U, to the entire pool

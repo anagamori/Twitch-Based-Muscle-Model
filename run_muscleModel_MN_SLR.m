@@ -62,6 +62,13 @@ for j = 1
     SLRParameter.C_delay = 200*Fs/1000;
     SLRParameter.K_C = 0.0001;
     
+    SLRParameter.noise_amp_Ia = 0;
+    SLRParameter.noise_amp_Ib = 0;
+    SLRParameter.noise_amp_RI = 0;
+    SLRParameter.noise_amp_C = 0;
+    SLRParameter.noise_amp_ID = 10000;
+    SLRParameter.noise_amp_CD = 100;
+    
     amp = amp_vec(j+1);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %input_e =0.01*sin(2*pi*10*time);
