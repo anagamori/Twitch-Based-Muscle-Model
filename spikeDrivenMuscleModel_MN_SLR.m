@@ -297,6 +297,7 @@ for t = 1:length(time)
     
     f_i = A.*PTi'.*(FL.*FV+F_pe2);
     %f_i = A.*PTi_new'.*(FL+F_pe2);
+    size(f_i)
     force(:,t) = f_i;
     
     F_ce(t) = sum(f_i);
