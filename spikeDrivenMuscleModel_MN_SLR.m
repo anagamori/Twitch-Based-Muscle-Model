@@ -172,7 +172,7 @@ for t = 1:length(time)
     %%
     if t > 5
         [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,F_se(t-1),t);
-        [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_eff,t);
+        [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_vec,t);
     end
     Ib_Input(t) = FR_Ib(t)/Ib_gain;
     [noise_Ib] = noise(noise_Ib,0,Fs);
