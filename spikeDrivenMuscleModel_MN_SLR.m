@@ -78,12 +78,12 @@ spike_train = zeros(N_MU,length(time));
 
 I_initial = (I_max-I_th)./(1-U_th).*(0-U_th) + I_th;
 v_MN = (-5+0.2-sqrt((5-0.2)^2-4*0.04*(140+I_initial)))/(2*0.04);
-u_MN = 0.2*v_MN; 
-%v_MN = ones(N_MU,1)*-65; 
+u_MN = 0.2*v_MN;
+%v_MN = ones(N_MU,1)*-65;
 v_mat = zeros(N_MU,length(time));
 I_mat = zeros(N_MU,length(time));
 
-% activation-frequency 
+% activation-frequency
 R = zeros(N_MU,length(time));
 c = zeros(N_MU,1);
 cf = zeros(N_MU,1);
@@ -141,10 +141,10 @@ FR_RI_temp = zeros(1,length(time));
 FR_RI = zeros(1,length(time));
 RI_Input = zeros(1,length(time));
 
-%% 
+%%
 C_delay = SLRParameter.C_delay;
 K_C = SLRParameter.K_C;
-%% 
+%%
 noise_Ia = 0;
 noise_Ib = 0;
 noise_RI = 0;
@@ -189,21 +189,23 @@ for t = 1:length(time)
     [noise_CM] = noise(noise_CM,0,Fs);
     %%
     if t > 1
+        %% Control input, U, to the entire pool
         if controlOpt == 1
-           U = C_input(t);
+            % Feedfoward input
+            U = C_input(t);
         elseif controlOpt == 2
-            %% Effective activation (Song et al., 2008)
+            % Feedback input
             if t > Ia_delay && t <= Ib_delay
                 U = C_input(t) + noise_C*C_input(t) ...
                     + Ia_Input(t-Ia_delay) ...
                     - RI_Input(t-RI_delay);
-            elseif t > Ib_delay && t <= C_delay 
+            elseif t > Ib_delay && t <= C_delay
                 U = C_input(t) + noise_C*C_input(t) ...
                     + Ia_Input(t-Ia_delay) ...
                     - Ib_Input(t-Ib_delay)...
                     - RI_Input(t-RI_delay);
-            elseif t > C_delay 
-                C_temp = K_C*(C_input(t) - F_se(t-C_delay)/F0) + C_temp; 
+            elseif t > C_delay
+                C_temp = K_C*(C_input(t) - F_se(t-C_delay)/F0) + C_temp;
                 U = C_temp + noise_C*C_temp...
                     + Ia_Input(t-Ia_delay) ...
                     - Ib_Input(t-Ib_delay)...
@@ -211,12 +213,12 @@ for t = 1:length(time)
             else
                 U = C_input(t) + noise_C*C_input(t);
             end
-            if U < 0 
+            if U < 0
                 U = 0;
             end
         end
-        U = U+noise_CM*U;      
-        U_vec(t) = U; 
+        U = U+noise_CM*U;
+        U_vec(t) = U;
         
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
@@ -259,7 +261,7 @@ for t = 1:length(time)
             n = index(j);
             spike_train_temp = zeros(1,length(t));
             spike_train_temp(t) = 1;
-           
+            
             temp = conv(spike_train_temp,R_temp(n,:)*(1+2*A(n)^gamma(n)));
             R(n,:) = R(n,:) + temp(1:length(time));
         end
@@ -351,12 +353,12 @@ output.FR_RI = FR_RI;
 output.U = U_vec;
 
 
-    %% Motoneuron 
+%% Motoneuron
     function [u,v,spike_vec] = motoneuron(I,u,v,spike_vec,a,Fs)
-        b_MN = 0.2; 
+        b_MN = 0.2;
         c_MN = -65;
         d_MN = 6;
-
+        
         alpha_MN = 0.04;
         beta_MN  = 5;
         gamma_MN = 140;
@@ -365,25 +367,25 @@ output.U = U_vec;
         spike_vec(index_MN) = 1;
         v(index_MN) = c_MN;
         u(index_MN) = u(index_MN) + d_MN;
-
+        
         v_dot = (alpha_MN*v.^2+beta_MN.*v+gamma_MN-u+I);
         v = v_dot*1000/Fs + v;
         
         u_dot = a.*(b_MN.*v-u);
         u = u_dot*1000/Fs + u;
-
-     end
-    %% Convert spike trian into activation
+        
+    end
+%% Convert spike trian into activation
     function [c,cf,A_tilde,A] = spike2activation(R,c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs)
-        S = parameter_Matrix(:,1); 
-        C = parameter_Matrix(:,2); 
-        k_1 = parameter_Matrix(:,3); 
-        k_2 = parameter_Matrix(:,4); 
-        k_3 = parameter_Matrix(:,5)*Lce + parameter_Matrix(:,6); 
-        k_4 = parameter_Matrix(:,7)*Lce + parameter_Matrix(:,8); 
-        tau_2 = parameter_Matrix(:,10); 
-        N = parameter_Matrix(:,11)*Lce + parameter_Matrix(:,12); 
-        K = parameter_Matrix(:,13)*Lce + parameter_Matrix(:,14); 
+        S = parameter_Matrix(:,1);
+        C = parameter_Matrix(:,2);
+        k_1 = parameter_Matrix(:,3);
+        k_2 = parameter_Matrix(:,4);
+        k_3 = parameter_Matrix(:,5)*Lce + parameter_Matrix(:,6);
+        k_4 = parameter_Matrix(:,7)*Lce + parameter_Matrix(:,8);
+        tau_2 = parameter_Matrix(:,10);
+        N = parameter_Matrix(:,11)*Lce + parameter_Matrix(:,12);
+        K = parameter_Matrix(:,13)*Lce + parameter_Matrix(:,14);
         %4.475;
         
         %%
@@ -560,8 +562,8 @@ output.U = U_vec;
         
     end
 
-    %% Muscle Spindle
-    % Bag 1
+%% Muscle Spindle
+% Bag 1
     function [AP_bag1,f_dynamic,T,T_dot] = bag1_model(f_dynamic,gamma_dynamic,T,T_dot,L,V,A,Fs)
         p_bag_1 = 2;
         R_bag_1 = 0.46;
@@ -596,8 +598,8 @@ output.U = U_vec;
         
         AP_bag1 = G*(T/K_SR_bag_1-(LN_SR_bag_1-L0_SR_bag_1));
     end
-    
-    %  Bag 2
+
+%  Bag 2
     function [AP_primary_bag2,AP_secondary_bag2,f_static,T,T_dot] = bag2_model(f_static,gamma_static,T,T_dot,L,V,A,Fs)
         p = 2;
         R_bag_2 = 0.46;
@@ -636,8 +638,8 @@ output.U = U_vec;
         AP_secondary_bag2 = G*(X*L_secondary/L0_SR_bag_2*(T/K_SR_bag_2-(LN_SR_bag_2-L0_SR_bag_2))+(1-X)*L_secondary/L0_PR_bag_2*(L-T/K_SR_bag_2-L0_SR_bag_2-LN_PR_bag_2));
         
     end
-    
-    % Chain
+
+% Chain
     function [AP_primary_chain,AP_secondary_chain,T,T_dot] = chain_model(gamma_static,T,T_dot,L,V,A,Fs)
         p = 2;
         R_sp = 0.46;
@@ -675,8 +677,8 @@ output.U = U_vec;
         AP_secondary_chain = G_chain*(X*L_secondary/L0_SR*(T/K_SR-(LN_SR-L0_SR))+(1-X)*L_secondary/L0_PR*(L-T/K_SR-L0_SR-LN_PR));
         
     end
-    
-    % Generate primary and secondary output
+
+% Generate primary and secondary output
     function [Output_Primary,Output_Secondary] = SpindleOutput(AP_bag1,AP_primary_bag2,AP_secondary_bag2,AP_primary_chain,AP_secondary_chain)
         S = 0.156;
         
@@ -729,7 +731,7 @@ output.U = U_vec;
         
     end
 
-    %%  GTO
+%%  GTO
     function [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,Force,index)
         G1 = 60;
         G2 = 4;
@@ -739,18 +741,18 @@ output.U = U_vec;
         den1 = 1.0;
         den2 = -1.999780020198665;
         den3 = 0.999780024198225;
-                
+        
         x_GTO(index) = G1*log(Force/G2+1);
-              
+        
         FR_Ib_temp(index) = (num3*x_GTO(index-2) + num2*x_GTO(index-1) + num1*x_GTO(index) - ...
-                  den3*FR_Ib_temp(index-2) - den2*FR_Ib_temp(index-1))/den1;
+            den3*FR_Ib_temp(index-2) - den2*FR_Ib_temp(index-1))/den1;
         FR_Ib(index) = FR_Ib_temp(index);
         if FR_Ib(index)<0
             FR_Ib(index) = 0;
         end
     end
-    
-    %% Renshaw cell
+
+%% Renshaw cell
     function [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,ND,index)
         num1 = 0.238563173450928;
         num2 = -0.035326319453965;
@@ -760,7 +762,7 @@ output.U = U_vec;
         den3 = 0.708613918533233;
         
         FR_RI_temp(index) = (num3*ND(index-2)+num2*ND(index-1)+num1*ND(index)-den3*FR_RI_temp(index-2)-den2*FR_RI_temp(index-1))/den1;
-        FR_RI(index) = FR_RI_temp(index); 
+        FR_RI(index) = FR_RI_temp(index);
         if FR_RI(index) < 0
             FR_RI(index) = 0;
         end
