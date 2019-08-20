@@ -1,7 +1,7 @@
 %==========================================================================
-% spikeDrivenMuscleModel.m
+% spikeDrivenMuscleModel_MN_SLR.m
 % Author: Akira Nagamori
-% Last update: 3/5/19
+% Last update: 8/19/2019
 %==========================================================================
 function [output] = spikeDrivenMuscleModel_MN_SLR(Fs,time,input,modelParameter,parameterMN,SLRParameter,controlOpt,figOpt)
 %% Simulation parameters
@@ -23,10 +23,9 @@ L_se = modelParameter.L_se;
 Lmax = modelParameter.Lmax;
 %% Motor unit architecture
 N_MU = modelParameter.N_MU; % number of motor units
-i_MU = modelParameter.i_MU; % index for motor units
 
 %% Peak tetanic force
-PTi_new = modelParameter.PTi_new;
+PTi = modelParameter.PTi;
 
 %% Fractional PSCA
 %F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
@@ -37,19 +36,18 @@ index_slow = modelParameter.index_slow;
 parameter_Matrix = modelParameter.parameterMatrix;
 
 %% Recruitment threshold
-U_th_new = modelParameter.U_th_new;
+U_th = modelParameter.U_th;
 
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
-MDR = modelParameter.MDR;
-PDR = modelParameter.PDR;
 
 g_e = modelParameter.g_e;
+
 if recruitmentType == 3
-    index_t  = modelParameter.index_t;
-    lamda = modelParameter.lamda;
-    k_e = modelParameter.k_e;
-    U_th_t = modelParameter.U_th_t;
+    index_t  = modelParameter.index_t; % row vector
+    lamda = modelParameter.lamda; % row vector
+    k_e = modelParameter.k_e; % row vector
+    U_th_t = modelParameter.U_th_t; % row vector
 end
 %% Activation dynamics (Song et al., 2008)
 tau_1 = parameter_Matrix(:,9);
@@ -58,8 +56,6 @@ gamma = parameter_Matrix(:,15);
 
 %% Sag parameter
 a_s = ones(N_MU,1)*0.96;
-%% Discharge rate parameters
-cv_MU = modelParameter.CV_MU; % coefficient of variation for interspike intervals
 
 %% Motoneuron parameters
 a_MN = parameterMN.a;
@@ -77,12 +73,11 @@ F_se = zeros(1,length(time));
 F_total = zeros(1,length(time));
 
 % motoneuron related parameters
-DR_MU = zeros(1,N_MU);
+DR_MU = zeros(N_MU,1);
 spike_train = zeros(N_MU,length(time));
 
-I_initial = (I_max-I_th)./(1-U_th_new).*(0-U_th_new) + I_th;
+I_initial = (I_max-I_th)./(1-U_th).*(0-U_th) + I_th;
 v_MN = (-5+0.2-sqrt((5-0.2)^2-4*0.04*(140+I_initial)))/(2*0.04);
-v_MN = v_MN';
 u_MN = 0.2*v_MN; 
 %v_MN = ones(N_MU,1)*-65; 
 v_mat = zeros(N_MU,length(time));
@@ -154,11 +149,11 @@ noise_Ia = 0;
 noise_Ib = 0;
 noise_RI = 0;
 noise_C = 0;
-noise_ID = zeros(1,N_MU);
+noise_ID = zeros(N_MU,1);
 noise_CM = zeros(1,1);
 %%
 C_temp = 0;
-U_eff = zeros(1,length(time));
+U_vec = zeros(1,length(time));
 %%
 h = 1/Fs;
 %% Simulation
@@ -191,7 +186,7 @@ for t = 1:length(time)
     [noise_C] = noise(noise_C,10000,Fs);
     
     [noise_ID] = noise(noise_ID,10000,Fs);
-    [noise_CM] = noise(noise_CM,1000,Fs);
+    [noise_CM] = noise(noise_CM,0,Fs);
     %%
     if t > 1
         if controlOpt == 1
@@ -220,32 +215,30 @@ for t = 1:length(time)
                 U = 0;
             end
         end
-        U = U+noise_C*U;
-        %U_eff_dot = (U - U_eff)/T_U;
-        U_eff(t) = U; %U_eff_dot*1/Fs + U_eff;
+        U = U+noise_CM*U;      
+        U_vec(t) = U; 
         
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            I = g_e.*(U+noise_ID*U-U_th_new) + I_th;
+            I = g_e.*(U+noise_ID*U-U_th) + I_th;
         elseif recruitmentType == 3
             I = zeros(N_MU,1);
-            U_temp = U; % + noise_ID*U*100;
-            I_temp_1 = I_th + lamda.*k_e.*(U_temp-U_th_new);
+            U_temp = U + noise_ID*U;
+            I_temp_1 = I_th + lamda.*k_e.*(U_temp-U_th);
             index_1 = find(U_temp <= U_th_t);
             I(index_1) = I_temp_1(index_1);
             I_temp_2 = I_max-k_e.*(1-U_temp);
             index_2 = find(U_temp > U_th_t);
             I(index_2) = I_temp_2(index_2);
-            I_temp_3 = g_e.*(U_temp-U_th_new)+I_th;
+            I_temp_3 = g_e.*(U_temp-U_th)+I_th;
             I(index_t) = I_temp_3(index_t);
-            I = I';
             %I = (I+I.*noise_ID'+I*noise_CM)';
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
         spike_vec = zeros(N_MU,1);
-        [u_MN,v_MN,spike_vec] = motoneuron(I',u_MN,v_MN,spike_vec,a_MN,Fs);
+        [u_MN,v_MN,spike_vec] = motoneuron(I,u_MN,v_MN,spike_vec,a_MN,Fs);
         spike_train(:,t) = spike_vec;
         v_mat(:,t) = v_MN;
         I_mat(:,t) = I;
@@ -300,7 +293,7 @@ for t = 1:length(time)
         F_pe2 = 0;
     end
     
-    f_i = A.*PTi_new'.*(FL.*FV+F_pe2);
+    f_i = A.*PTi'.*(FL.*FV+F_pe2);
     %f_i = A.*PTi_new'.*(FL+F_pe2);
     force(:,t) = f_i;
     
@@ -355,7 +348,7 @@ output.Ace = MuscleAcceleration./(L0/100);
 output.FR_Ia = FR_Ia;
 output.FR_Ib = FR_Ib;
 output.FR_RI = FR_RI;
-output.U_eff = U_eff;
+output.U = U_vec;
 
 
     %% Motoneuron 
@@ -376,21 +369,21 @@ output.U_eff = U_eff;
         v_dot = (alpha_MN*v.^2+beta_MN.*v+gamma_MN-u+I);
         v = v_dot*1000/Fs + v;
         
-        u_dot = a'.*(b_MN.*v-u);
+        u_dot = a.*(b_MN.*v-u);
         u = u_dot*1000/Fs + u;
 
      end
     %% Convert spike trian into activation
     function [c,cf,A_tilde,A] = spike2activation(R,c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs)
-        S = parameter_Matrix(:,1); %7;
-        C = parameter_Matrix(:,2); %1.025;
-        k_1 = parameter_Matrix(:,3); %14.625;
-        k_2 = parameter_Matrix(:,4); %4.9375;
-        k_3 = parameter_Matrix(:,5)*Lce + parameter_Matrix(:,6); %17.41*Lce - 2.85;
-        k_4 = parameter_Matrix(:,7)*Lce + parameter_Matrix(:,8); %-7.67*Lce + 14.92;
-        tau_2 = parameter_Matrix(:,10); % 0.04;
-        N = parameter_Matrix(:,11)*Lce + parameter_Matrix(:,12); %-2.26*Lce + 4.20;
-        K = parameter_Matrix(:,13)*Lce + parameter_Matrix(:,14); %-0.044*Lce + 0.080;
+        S = parameter_Matrix(:,1); 
+        C = parameter_Matrix(:,2); 
+        k_1 = parameter_Matrix(:,3); 
+        k_2 = parameter_Matrix(:,4); 
+        k_3 = parameter_Matrix(:,5)*Lce + parameter_Matrix(:,6); 
+        k_4 = parameter_Matrix(:,7)*Lce + parameter_Matrix(:,8); 
+        tau_2 = parameter_Matrix(:,10); 
+        N = parameter_Matrix(:,11)*Lce + parameter_Matrix(:,12); 
+        K = parameter_Matrix(:,13)*Lce + parameter_Matrix(:,14); 
         %4.475;
         
         %%
@@ -775,9 +768,9 @@ output.U_eff = U_eff;
     end
 
     function [x] = noise(x,D,Fs)
-        vec_length = size(x,2);
+        vec_length = size(x,1);
         tau = 0.01;
-        chi = normrnd(0,1,[1,vec_length]);
+        chi = normrnd(0,1,[vec_length,1]);
         x_dot = -x./tau + sqrt(D)*chi;
         x = x_dot.*1/Fs + x;
     end

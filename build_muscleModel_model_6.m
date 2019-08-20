@@ -10,8 +10,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_6_PT';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_6';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 3.1*pi/180; %[radians]
 modelParameter.optimalLength = 5.98; % [cm]
@@ -38,7 +38,7 @@ modelParameter.Lmt = Lm_initial*cos(alpha)+Lt_initial; % intial musculotendon le
 %% Motor unit parameters
 modelParameter.N_MU = 300; % number of motor units
 modelParameter.i_MU = 1:modelParameter.N_MU; % index for motor units
-
+modelParameter.i_MU = modelParameter.i_MU';
 %% Peak tetanic force
 RP_MU = 25; %range of peak tension across motor untis in unit of fold
 b_MU = log(RP_MU)/modelParameter.N_MU; %coefficient to establish a range of twich force values
@@ -65,7 +65,7 @@ index_fast = modelParameter.index_slow+1:modelParameter.N_MU;
 R_fast_temp = randperm(length(index_fast));
 R_fast = index_fast(R_fast_temp);
 index_MU_PTi = [R_slow R_fast]; % vector of indexes to match peak tetanic tension to appropriate contraction time
-modelParameter.PTi_new = PTi(index_MU_PTi);
+modelParameter.PTi = PTi(index_MU_PTi);
 
 %% Recruitment threshold
 % Find recruitment threshold for individual units using exponential fit
@@ -76,31 +76,39 @@ Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 modelParameter.N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
 U_th = coeffs_f_RT(1)*exp(coeffs_f_RT(2)*modelParameter.i_MU); % the resulting recruitment threshold for individual units
-modelParameter.U_th_new = U_th(index_MU_PTi);
+modelParameter.U_th = U_th(index_MU_PTi);
 
 %% Minimum and maximum firing rate
 cd(model_parameter_folder )
 load('FR_half')
 cd(code_folder)
-modelParameter.FR_half = FR_half; %(1:300/modelParameter.N_MU:300);
+modelParameter.FR_half = FR_half'; %(1:300/modelParameter.N_MU:300);
 modelParameter.MDR = modelParameter.FR_half/2;
 modelParameter.PDR = modelParameter.FR_half*2;
 
 %% Gain for frequency-activation relationship
-modelParameter.g_e = (modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th_new); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
+modelParameter.g_e = (modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
 Ur_t = 0.2;
 f_t = 1.2;
-modelParameter.index_saturation = find(modelParameter.U_th_new<Ur_t);
+modelParameter.index_saturation = find(modelParameter.U_th<Ur_t);
 f_k_e = fit([Ur_1 Ur_t]',[30 1]','poly1');
 coeffs_f_k_e = coeffvalues(f_k_e);
-modelParameter.lamda = coeffs_f_k_e(1)*modelParameter.U_th_new+coeffs_f_k_e(2);
-modelParameter.k_e = (f_t*modelParameter.FR_half-modelParameter.MDR+modelParameter.lamda.*(modelParameter.PDR-f_t*modelParameter.FR_half))./(modelParameter.lamda.*(1-modelParameter.U_th_new));
+modelParameter.lamda = coeffs_f_k_e(1)*modelParameter.U_th+coeffs_f_k_e(2);
+modelParameter.k_e = (f_t*modelParameter.FR_half-modelParameter.MDR+modelParameter.lamda.*(modelParameter.PDR-f_t*modelParameter.FR_half))./(modelParameter.lamda.*(1-modelParameter.U_th));
 modelParameter.U_th_t = (modelParameter.k_e-(modelParameter.PDR-f_t*modelParameter.FR_half))./modelParameter.k_e;
+
+%%
+cd(model_parameter_folder)
+load('parameterMN')
+modelParameter.parameterMatrix = parameter_Matrix; %(1:300/modelParameter.N_MU:300,:);
+cd(code_folder)
+
 %% Save model parameters
 cd(model_parameter_folder)
 save('modelParameter','modelParameter')
 cd(code_folder)
+
 
 %%
 function [Lce_initial,Lse_initial,Lmax] =  InitialLength_function(modeParameter)

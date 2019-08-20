@@ -8,8 +8,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_4_Ur_50_constantT2T';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_6';
 
 %%
 Fs = 10000;
@@ -24,10 +24,10 @@ for n = 1:300
     cd(model_parameter_folder )
     load('modelParameter')
     cd(code_folder)
-    FR_half = modelParameter.FR_half;
+    FR_half = modelParameter.FR_half';
     MDR = modelParameter.FR_half/2;
     PDR = modelParameter.FR_half*2;
-    U_th = modelParameter.U_th_new;
+    U_th = modelParameter.U_th;
     testUnit = n;
     
     U_th_target = U_th(testUnit);
@@ -46,9 +46,9 @@ for n = 1:300
     
 end
 
-parameterMN.a = a;
-parameterMN.I_th = I_th;
-parameterMN.I_max = I_max;
+parameterMN.a = a';
+parameterMN.I_th = I_th';
+parameterMN.I_max = I_max';
 
 cd(model_parameter_folder)
 save('parameterMN','parameterMN')
