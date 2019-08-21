@@ -137,8 +137,8 @@ Ib_Input = zeros(N_MU,length(time));
 RI_gain = SLRParameter.Ib_gain;
 RI_delay = SLRParameter.RI_delay;
 
-FR_RI_temp = zeros(N_MU,length(time));
-FR_RI = zeros(N_MU,length(time));
+FR_RI_temp = zeros(1,length(time));
+FR_RI = zeros(1,length(time));
 RI_Input = zeros(N_MU,length(time));
 
 %%
@@ -178,7 +178,7 @@ for t = 1:length(time)
     %%
     if t > 5
         [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,F_se(t-1),t);
-        [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_mat,t);
+        [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_mat(1,:),t);
     end
     Ib_Input(:,t) = FR_Ib(t)/Ib_gain;
     [noise_Ib] = noise(noise_Ib,noise_amp_Ib,Fs);
@@ -766,10 +766,10 @@ output.U = U_mat;
         den2 = -1.705481699867712;
         den3 = 0.708613918533233;
         
-        FR_RI_temp(:,index) = (num3*ND(:,index-2)+num2*ND(:,index-1)+num1*ND(:,index)-den3*FR_RI_temp(:,index-2)-den2*FR_RI_temp(:,index-1))/den1;
-        FR_RI(:,index) = FR_RI_temp(:,index);
-        if FR_RI(:,index) < 0
-            FR_RI(:,index) = 0;
+        FR_RI_temp(:,index) = (num3*ND(index-2)+num2*ND(index-1)+num1*ND(index)-den3*FR_RI_temp(index-2)-den2*FR_RI_temp(index-1))/den1;
+        FR_RI(index) = FR_RI_temp(index);
+        if FR_RI(index) < 0
+            FR_RI(index) = 0;
         end
         
     end
