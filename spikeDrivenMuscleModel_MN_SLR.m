@@ -127,14 +127,14 @@ Ia_Input = zeros(N_MU,length(time));
 %%
 Ib_gain = SLRParameter.Ib_gain;
 Ib_delay = SLRParameter.Ib_delay;
-G1 = SLRParameter.G1; 
-G2 = SLRParameter.G2; 
-num1_GTO = SLRParameter.num_GTO(1); 
-num2_GTO = SLRParameter.num_GTO(2); 
+G1 = SLRParameter.G1;
+G2 = SLRParameter.G2;
+num1_GTO = SLRParameter.num_GTO(1);
+num2_GTO = SLRParameter.num_GTO(2);
 num3_GTO = SLRParameter.num_GTO(3);
-den1_GTO = SLRParameter.den_GTO(1); 
-den2_GTO = SLRParameter.den_GTO(2); 
-den3_GTO = SLRParameter.den_GTO(3); 
+den1_GTO = SLRParameter.den_GTO(1);
+den2_GTO = SLRParameter.den_GTO(2);
+den3_GTO = SLRParameter.den_GTO(3);
 
 x_GTO = zeros(1,length(time));
 FR_Ib_temp = zeros(1,length(time));
@@ -144,12 +144,12 @@ Ib_Input = zeros(N_MU,length(time));
 %%
 RI_gain = SLRParameter.Ib_gain;
 RI_delay = SLRParameter.RI_delay;
-num1_RI = SLRParameter.num_RI(1); 
-num2_RI = SLRParameter.num_RI(2); 
+num1_RI = SLRParameter.num_RI(1);
+num2_RI = SLRParameter.num_RI(2);
 num3_RI = SLRParameter.num_RI(3);
-den1_RI = SLRParameter.den_RI(1); 
-den2_RI = SLRParameter.den_RI(2); 
-den3_RI = SLRParameter.den_RI(3); 
+den1_RI = SLRParameter.den_RI(1);
+den2_RI = SLRParameter.den_RI(2);
+den3_RI = SLRParameter.den_RI(3);
 
 FR_RI_temp = zeros(N_MU,length(time));
 FR_RI = zeros(N_MU,length(time));
@@ -192,7 +192,7 @@ for t = 1:length(time)
     %%
     if t > 5
         %% GTO activity
-        x_GTO(t) = G1*log(F_se(t-1)/G2+1);       
+        x_GTO(t) = G1*log(F_se(t-1)/G2+1);
         FR_Ib_temp(t) = (num3_GTO*x_GTO(t-2) + num2_GTO*x_GTO(t-1) + num1_GTO*x_GTO(t) - ...
             den3_GTO*FR_Ib_temp(t-2) - den2_GTO*FR_Ib_temp(t-1))/den1_GTO;
         FR_Ib(t) = FR_Ib_temp(t);
@@ -215,7 +215,7 @@ for t = 1:length(time)
     RI_Input(:,t) = RI_Input(:,t) + RI_Input(:,t).*noise_RI;
     
     %%
-    [noise_C] = noise(noise_C,noise_amp_C,Fs);    
+    [noise_C] = noise(noise_C,noise_amp_C,Fs);
     [noise_ID] = noise(noise_ID,noise_amp_ID,Fs);
     [noise_CM] = noise(noise_CM,noise_amp_CD,Fs);
     %%
@@ -305,55 +305,20 @@ for t = 1:length(time)
     A_tilde_mat(:,t) = A_tilde;
     A_mat(:,t) = A;
     
-    %% Force-length and force-velocity
-    FL(1:index_slow) = FL_slow_function(L_ce);
-    FL(index_slow+1:end) = FL_fast_function(L_ce);
+    [F_ce(t),F_se(t)] = contraction_dynamics_v2(A,L_se,L_ce,V_ce,FL,FV,index_slow,Lmax,PTi,F0);
     
-    if V_ce > 0
-        FV(1:index_slow) = FVecc_slow_function(L_ce,V_ce);
-        FV(index_slow+1:end) = FVecc_fast_function(L_ce,V_ce);
-    else
-        FV(1:index_slow) = FVcon_slow_function(L_ce,V_ce);
-        FV(index_slow+1:end) = FVcon_fast_function(L_ce,V_ce);
-    end
-    
-    %% Passive element 1
-    F_pe1 = Fpe1_function(L_ce/Lmax,V_ce);
-    
-    %% Passive element 2
-    F_pe2 = Fpe2_function(L_ce);
-    if F_pe2 > 0
-        F_pe2 = 0;
-    end
-    
-    f_i = A.*PTi.*(FL.*FV+F_pe2);
-    %f_i = A.*PTi_new'.*(FL+F_pe2);
-    force(:,t) = f_i;
-    
-    F_ce(t) = sum(f_i);
-    F_total(t) = F_ce(t) + F_pe1*F0;
-    
-    F_se(t) = Fse_function(L_se) * F0;
-    
-    MuscleAcceleration(t+1) =(F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-        + (MuscleVelocity(t)).^2*tan(alpha).^2/(MuscleLength(t));
     k_0_de = h*MuscleVelocity(t);
-    l_0_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-        + (MuscleVelocity(t)).^2*tan(alpha).^2/(MuscleLength(t)));
+    l_0_de = h*contraction_dynamics(A,L_se,L_ce,V_ce,FL,FV,modelParameter,index_slow,Lmax,PTi_new,F0);
     k_1_de = h*(MuscleVelocity(t)+l_0_de/2);
-    l_1_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-        + (MuscleVelocity(t)+l_0_de/2).^2*tan(alpha).^2/(MuscleLength(t)+k_0_de/2));
+    l_1_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_0_de/L0)*L0*cos(alpha))/L0T,L_ce+k_0_de/L0,V_ce+l_0_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     k_2_de = h*(MuscleVelocity(t)+l_1_de/2);
-    l_2_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-        + (MuscleVelocity(t)+l_1_de/2).^2*tan(alpha).^2/(MuscleLength(t)+k_1_de/2));
+    l_2_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_1_de/L0)*L0*cos(alpha))/L0T,L_ce+k_1_de/L0,V_ce+l_1_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     k_3_de = h*(MuscleVelocity(t)+l_2_de);
-    l_3_de = h*((F_se(t)*cos(alpha) - F_total(t)*(cos(alpha)).^2)/(mass) ...
-        + (MuscleVelocity(t)+l_2_de).^2*tan(alpha).^2/(MuscleLength(t)+k_2_de));
+    l_3_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_2_de/L0)*L0*cos(alpha))/L0T,L_ce+k_2_de/L0,V_ce+l_2_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     MuscleLength(t+1) = MuscleLength(t) + 1/6*(k_0_de+2*k_1_de+2*k_2_de+k_3_de);
     MuscleVelocity(t+1) = MuscleVelocity(t) + 1/6*(l_0_de+2*l_1_de+2*l_2_de+l_3_de);
     
     % normalize each variable to optimal muscle length or tendon length
-    A_ce = MuscleAcceleration(t+1)/(L0/100);
     V_ce = MuscleVelocity(t+1)/(L0/100);
     L_ce = MuscleLength(t+1)/(L0/100);
     L_se = (Lmt - L_ce*L0*cos(alpha))/L0T;
@@ -759,6 +724,73 @@ output.U = U_mat;
         elseif Output_Secondary > 100000
             Output_Secondary = 100000;
         end
+        
+    end
+
+    function ddx = contraction_dynamics(A,L_s,L_m,L_m_dot,FL_vec,FV_vec,modelParameter,index_slow,Lmax,PT,F0)
+        %% Force-length and force-velocity
+        FL_vec(1:index_slow) = FL_slow_function(L_m);
+        FL_vec(index_slow+1:end) = FL_fast_function(L_m);
+        
+        if L_m_dot > 0
+            FV_vec(1:index_slow) = FVecc_slow_function(L_m,L_m_dot);
+            FV_vec(index_slow+1:end) = FVecc_fast_function(L_m,L_m_dot);
+        else
+            FV_vec(1:index_slow) = FVcon_slow_function(L_m,L_m_dot);
+            FV_vec(index_slow+1:end) = FVcon_fast_function(L_m,L_m_dot);
+        end
+        
+        %% Passive element 1
+        F_pe1 = Fpe1_function(L_m/Lmax,L_m_dot);
+        
+        %% Passive element 2
+        F_pe2 = Fpe2_function(L_m);
+        if F_pe2 > 0
+            F_pe2 = 0;
+        end
+        
+        f_i = A.*PT'.*(FL_vec.*FV_vec+F_pe2);
+        
+        F_m_temp = sum(f_i);
+        F_m = F_m_temp + F_pe1*F0;
+        
+        F_t = Fse_function(L_s) * F0;
+        
+        M = modelParameter.mass;
+        rho = modelParameter.pennationAngle;
+        
+        ddx = (F_t*cos(rho) - F_m*(cos(rho)).^2)/(M) ...
+            + (L_m_dot).^2*tan(rho).^2/(L_m);
+    end
+
+    function [F_m,F_t] = contraction_dynamics_v2(A,L_s,L_m,L_m_dot,FL_vec,FV_vec,index_slow,Lmax,PT,F0)
+        %% Force-length and force-velocity
+        FL_vec(1:index_slow) = FL_slow_function(L_m);
+        FL_vec(index_slow+1:end) = FL_fast_function(L_m);
+        
+        if L_m_dot > 0
+            FV_vec(1:index_slow) = FVecc_slow_function(L_m,L_m_dot);
+            FV_vec(index_slow+1:end) = FVecc_fast_function(L_m,L_m_dot);
+        else
+            FV_vec(1:index_slow) = FVcon_slow_function(L_m,L_m_dot);
+            FV_vec(index_slow+1:end) = FVcon_fast_function(L_m,L_m_dot);
+        end
+        
+        %% Passive element 1
+        F_pe1 = Fpe1_function(L_m/Lmax,L_m_dot);
+        
+        %% Passive element 2
+        F_pe2 = Fpe2_function(L_m);
+        if F_pe2 > 0
+            F_pe2 = 0;
+        end
+        
+        f_i = A.*PT'.*(FL_vec.*FV_vec+F_pe2);
+        
+        F_m_temp = sum(f_i);
+        F_m = F_m_temp + F_pe1*F0;
+        
+        F_t = Fse_function(L_s) * F0;
         
     end
 
