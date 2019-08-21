@@ -122,7 +122,7 @@ T_chain = 0;
 T_dot_chain = 0;
 
 FR_Ia = zeros(1,length(time));
-Ia_Input = zeros(N_MU,length(time));
+Ia_Input = zeros(1,length(time));
 
 %%
 Ib_gain = SLRParameter.Ib_gain;
@@ -131,15 +131,15 @@ Ib_delay = SLRParameter.Ib_delay;
 x_GTO = zeros(1,length(time));
 FR_Ib_temp = zeros(1,length(time));
 FR_Ib = zeros(1,length(time));
-Ib_Input = zeros(N_MU,length(time));
+Ib_Input = zeros(1,length(time));
 
 %%
 RI_gain = SLRParameter.Ib_gain;
 RI_delay = SLRParameter.RI_delay;
 
-FR_RI_temp = zeros(N_MU,length(time));
-FR_RI = zeros(N_MU,length(time));
-RI_Input = zeros(N_MU,length(time));
+FR_RI_temp = zeros(1,length(time));
+FR_RI = zeros(1,length(time));
+RI_Input = zeros(1,length(time));
 
 %%
 C_delay = SLRParameter.C_delay;
@@ -182,11 +182,11 @@ for t = 1:length(time)
     end
     Ib_Input(:,t) = FR_Ib(t)/Ib_gain;
     [noise_Ib] = noise(noise_Ib,noise_amp_Ib,Fs);
-    Ib_Input(:,t) = Ib_Input(:,t) + Ib_Input(:,t).*noise_Ib;
+    Ib_Input(:,t) = Ib_Input(:,t) + Ib_Input(:,t)*noise_Ib;
     
     RI_Input(:,t) = FR_RI(:,t)/RI_gain;
     [noise_RI] = noise(noise_RI,noise_amp_RI,Fs);
-    RI_Input(:,t) = RI_Input(:,t) + RI_Input(:,t).*noise_RI;
+    RI_Input(:,t) = RI_Input(t) + RI_Input(t)*noise_RI;
     
     %%
     [noise_C] = noise(noise_C,noise_amp_C,Fs);
@@ -203,19 +203,19 @@ for t = 1:length(time)
             % Feedback input
             if t > Ia_delay && t <= Ib_delay
                 U = C_input(t) + noise_C*C_input(t) ...
-                    + Ia_Input(:,t-Ia_delay) ...
-                    - RI_Input(:,t-RI_delay);
+                    + Ia_Input(t-Ia_delay) ...
+                    - RI_Input(t-RI_delay);
             elseif t > Ib_delay && t <= C_delay
                 U = C_input(t) + noise_C*C_input(t) ...
-                    + Ia_Input(:,t-Ia_delay) ...
-                    - Ib_Input(:,t-Ib_delay)...
-                    - RI_Input(:,t-RI_delay);
+                    + Ia_Input(t-Ia_delay) ...
+                    - Ib_Input(t-Ib_delay)...
+                    - RI_Input(t-RI_delay);
             elseif t > C_delay
                 C_temp = K_C*(C_input(t) - F_se(t-C_delay)/F0) + C_temp;
                 U = C_temp + noise_C*C_temp...
-                    + Ia_Input(:,t-Ia_delay) ...
-                    - Ib_Input(:,t-Ib_delay)...
-                    - RI_Input(:,t-RI_delay);
+                    + Ia_Input(t-Ia_delay) ...
+                    - Ib_Input(t-Ib_delay)...
+                    - RI_Input(t-RI_delay);
             else
                 U = C_input(t) + noise_C*C_input(t);
             end
@@ -229,7 +229,7 @@ for t = 1:length(time)
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            I = g_e.*(U+noise_ID.*U-U_th) + I_th;
+            I = g_e.*(U+noise_ID*U-U_th) + I_th;
         elseif recruitmentType == 3
             I = zeros(N_MU,1);
             U_temp = U; % + noise_ID*U;
@@ -767,10 +767,10 @@ output.U = U_mat;
         den2 = -1.705481699867712;
         den3 = 0.708613918533233;
         
-        FR_RI_temp(index) = (num3*ND(index-2)+num2*ND(:,index-1)+num1*ND(:,index)-den3*FR_RI_temp(:,index-2)-den2*FR_RI_temp(:,index-1))/den1;
-        FR_RI(:,index) = FR_RI_temp(:,index);
-        if FR_RI(:,index) < 0
-            FR_RI(:,index) = 0;
+        FR_RI_temp(index) = (num3*ND(index-2)+num2*ND(index-1)+num1*ND(index)-den3*FR_RI_temp(index-2)-den2*FR_RI_temp(index-1))/den1;
+        FR_RI(index) = FR_RI_temp(index);
+        if FR_RI(index) < 0
+            FR_RI(index) = 0;
         end
         
     end
