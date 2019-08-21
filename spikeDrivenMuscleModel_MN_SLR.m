@@ -189,8 +189,7 @@ for t = 1:length(time)
     RI_Input(:,t) = RI_Input(:,t) + RI_Input(:,t).*noise_RI;
     
     %%
-    [noise_C] = noise(noise_C,noise_amp_C,Fs);
-    
+    [noise_C] = noise(noise_C,noise_amp_C,Fs);    
     [noise_ID] = noise(noise_ID,noise_amp_ID,Fs);
     [noise_CM] = noise(noise_CM,noise_amp_CD,Fs);
     %%

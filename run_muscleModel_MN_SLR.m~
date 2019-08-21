@@ -54,13 +54,13 @@ for j = 1
     SLRParameter.gamma_dynamic = 20;
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 20*Fs/1000;
-    SLRParameter.Ia_gain = 10000;
+    SLRParameter.Ia_gain = 5000;
     SLRParameter.Ib_gain = 10000;
     SLRParameter.Ib_delay = 40*Fs/1000;
     SLRParameter.RI_gain = 10;
     SLRParameter.RI_delay = 5*Fs/1000;
     SLRParameter.C_delay = 200*Fs/1000;
-    SLRParameter.K_C = 0.0001;
+    SLRParameter.K_C = 0.0002;
     
     SLRParameter.noise_amp_Ia = 0;
     SLRParameter.noise_amp_Ib = 0;
@@ -151,36 +151,35 @@ figure()
 plot(time,FR_vec)
 xlabel('Time (s)','FontSize',14)
 ylabel('Discharge Rate (Hz)','FontSize',14)
-%% 
-temp1 = zeros(1,length(time));
-temp1(find(output.spike_train(1,:))) = 1;
-temp1 = temp1(5*Fs+1:end);
-temp2 = zeros(1,length(time));
-temp2(find(output.spike_train(10,:))) = 1;
-temp2 = temp2(5*Fs+1:end);
-[C,f] = mscohere(temp1-mean(temp1),temp2-mean(temp2),gausswin(2*Fs),2*Fs*0.9,0:0.5:100,Fs);
-figure(4)
-plot(f,C)
-xlabel('Frequency (Hz)','FontSize',14)
-ylabel('Cohrence','FontSize',14)
 
+%%
+index = [];
 for n = 1:300
-    index = 0;
     spike_time = find(output.spike_train(n,5*Fs+1:end));
     if ~isempty(spike_time)       
         ISI = diff(spike_time)/(Fs/1000);
         if length(ISI) >= 10
-            
-            FR_vec = nanmean(1./ISI*1000);
-            FR_sd = nanstd(1./ISI*1000);
-            ISI_CoV_vec = [ISI_CoV_vec FR_sd/FR_vec*100];
-            ISI_sd_vec = [ISI_sd_vec nanstd(ISI)];
-            ISI_vec = [ISI_vec nanmean(ISI)];
-            temp1 = ISI(1:end-1);
-            temp2 = ISI(2:end);
-            [r,p] = corrcoef(temp1,temp2);
-            r_vec = [r_vec r(1,2)];
-            p_vec = [p_vec p(1,2)];
+            index = [index n];
         end
     end
 end
+
+iteration = 100;
+for m = 1:iteration
+    r_1 = randi([1 length(index)],1,1);
+    index_1 = index(r_1);
+    r_2 = randi([1 length(index)-1],1,1);
+    index_temp = index;
+    index_temp(r_1) = [];
+    index_2 = index_temp(r_2);
+    temp1 = output.spike_train(index_1,:);
+    temp2 = output.spike_train(index_2,:);
+    
+    [C(m,:),f] = mscohere(temp1-mean(temp1),temp2-mean(temp2),[],[],[],Fs);
+end
+
+figure(4)
+plot(f,mean(C))
+xlabel('Frequency (Hz)','FontSize',14)
+ylabel('Cohrence','FontSize',14)
+xlim([0 50])
