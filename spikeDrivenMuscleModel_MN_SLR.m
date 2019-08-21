@@ -127,6 +127,14 @@ Ia_Input = zeros(N_MU,length(time));
 %%
 Ib_gain = SLRParameter.Ib_gain;
 Ib_delay = SLRParameter.Ib_delay;
+G1 = SLRParameter.G1; 
+G2 = SLRParameter.G2; 
+num1_GTO = SLRParameter.num_GTO(1); 
+num2_GTO = SLRParameter.num_GTO(2); 
+num3_GTO = SLRParameter.num_GTO(3);
+den1_GTO = SLRParameter.den_GTO(1); 
+den2_GTO = SLRParameter.den_GTO(2); 
+den3_GTO = SLRParameter.den_GTO(3); 
 
 x_GTO = zeros(1,length(time));
 FR_Ib_temp = zeros(1,length(time));
@@ -184,8 +192,13 @@ for t = 1:length(time)
     %%
     if t > 5
         %% GTO activity
-        [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,F_se(t-1),t,SLRParameter);
- 
+        x_GTO(t) = G1*log(F_se(t-1)/G2+1);       
+        FR_Ib_temp(t) = (num3_GTO*x_GTO(t-2) + num2_GTO*x_GTO(t-1) + num1_GTO*x_GTO(t) - ...
+            den3_GTO*FR_Ib_temp(t-2) - den2_GTO*FR_Ib_temp(t-1))/den1_GTO;
+        FR_Ib(t) = FR_Ib_temp(t);
+        if FR_Ib(t)<0
+            FR_Ib(t) = 0;
+        end
         %% Renshaw cell activity
         FR_RI_temp(:,t) = (num3_RI*U_mat(:,t-2) + num2_RI*U_mat(:,t-1) + num1_RI*U_mat(:,t)...
             - den3_RI*FR_RI_temp(:,t-2) - den2_RI*FR_RI_temp(:,t-1))/den1_RI;
@@ -747,27 +760,6 @@ output.U = U_mat;
             Output_Secondary = 100000;
         end
         
-    end
-
-%%  GTO
-    function [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,Force,index,SLRParameter)
-        G1 = SLRParameter.G1;
-        G2 = SLRParameter.G2;
-        num1 = SLRParameter.num_GTO(1);
-        num2 = SLRParameter.num_GTO(2);
-        num3 = SLRParameter.num_GTO(3);
-        den1 = SLRParameter.den_GTO(1);
-        den2 = SLRParameter.den_GTO(2);
-        den3 = SLRParameter.den_GTO(3);
-        
-        x_GTO(index) = G1*log(Force/G2+1);
-        
-        FR_Ib_temp(index) = (num3*x_GTO(index-2) + num2*x_GTO(index-1) + num1*x_GTO(index) - ...
-            den3*FR_Ib_temp(index-2) - den2*FR_Ib_temp(index-1))/den1;
-        FR_Ib(index) = FR_Ib_temp(index);
-        if FR_Ib(index)<0
-            FR_Ib(index) = 0;
-        end
     end
 
     function [x] = noise(x,D,Fs)
