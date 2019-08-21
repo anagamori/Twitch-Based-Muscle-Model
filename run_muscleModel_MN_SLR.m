@@ -35,7 +35,7 @@ for j = 1
     j
     if j < 2
         Fs = 10000;
-        time = 0:1/Fs:5;
+        time = 0:1/Fs:1;
     elseif j >= 2 && j < 4
         Fs = 15000;
         time = 0:1/Fs:15;
