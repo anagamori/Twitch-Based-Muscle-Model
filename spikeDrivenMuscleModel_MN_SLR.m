@@ -766,7 +766,8 @@ output.U = U_mat;
         den2 = -1.705481699867712;
         den3 = 0.708613918533233;
         
-        FR_RI_temp(:,index) = (num3*ND(index-2)+num2*ND(index-1)+num1*ND(index)-den3*FR_RI_temp(index-2)-den2*FR_RI_temp(index-1))/den1;
+        FR_RI_temp(index) = (num3*ND(index-2) + num2*ND(index-1) + num1*ND(index)...
+            - den3*FR_RI_temp(index-2) - den2*FR_RI_temp(index-1))/den1;
         FR_RI(index) = FR_RI_temp(index);
         if FR_RI(index) < 0
             FR_RI(index) = 0;

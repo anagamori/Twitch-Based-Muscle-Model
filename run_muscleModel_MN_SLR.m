@@ -35,7 +35,7 @@ for j = 1
     j
     if j < 2
         Fs = 10000;
-        time = 0:1/Fs:1;
+        time = 0:1/Fs:5;
     elseif j >= 2 && j < 4
         Fs = 15000;
         time = 0:1/Fs:15;
@@ -47,14 +47,14 @@ for j = 1
         time = 0:1/Fs:15;
     end
     %% 
-    controlOpt = 2;
+    controlOpt = 1;
     % 1: feedfoward input
     % 2: feedback 
     %%
     SLRParameter.gamma_dynamic = 20;
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 20*Fs/1000;
-    SLRParameter.Ia_gain = 5000;
+    SLRParameter.Ia_gain = 10000;
     SLRParameter.Ib_gain = 10000;
     SLRParameter.Ib_delay = 40*Fs/1000;
     SLRParameter.RI_gain = 10;
@@ -66,7 +66,7 @@ for j = 1
     SLRParameter.noise_amp_Ib = 0;
     SLRParameter.noise_amp_RI = 0;
     SLRParameter.noise_amp_C = 0;
-    SLRParameter.noise_amp_ID = 30000;
+    SLRParameter.noise_amp_ID = 10000;
     SLRParameter.noise_amp_CD = 1;
     
     amp = amp_vec(j+1);
