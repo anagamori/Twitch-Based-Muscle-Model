@@ -749,7 +749,7 @@ output.U = U_mat;
             F_pe2 = 0;
         end
         
-        f_i = A.*PT'.*(FL_vec.*FV_vec+F_pe2);
+        f_i = A.*PT.*(FL_vec.*FV_vec+F_pe2);
         
         F_m_temp = sum(f_i);
         F_m = F_m_temp + F_pe1*F0;
@@ -785,7 +785,7 @@ output.U = U_mat;
             F_pe2 = 0;
         end
         
-        f_i = A.*PT'.*(FL_vec.*FV_vec+F_pe2);
+        f_i = A.*PT.*(FL_vec.*FV_vec+F_pe2);
         
         F_m_temp = sum(f_i);
         F_m = F_m_temp + F_pe1*F0;
