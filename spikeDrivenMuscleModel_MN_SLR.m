@@ -223,7 +223,7 @@ for t = 1:length(time)
                 U = 0;
             end
         end
-        U = U+noise_CM*U;
+        U = U; %+noise_CM*U;
         U_vec(t) = U;
         
         %% Calculate firing rate
@@ -232,7 +232,7 @@ for t = 1:length(time)
             I = g_e.*(U+noise_ID*U-U_th) + I_th;
         elseif recruitmentType == 3
             I = zeros(N_MU,1);
-            U_temp = U + noise_ID*U;
+            U_temp = U; % + noise_ID*U;
             I_temp_1 = I_th + lamda.*k_e.*(U_temp-U_th);
             index_1 = find(U_temp <= U_th_t);
             I(index_1) = I_temp_1(index_1);
@@ -241,7 +241,7 @@ for t = 1:length(time)
             I(index_2) = I_temp_2(index_2);
             I_temp_3 = g_e.*(U_temp-U_th)+I_th;
             I(index_t) = I_temp_3(index_t);
-            %I = (I+I.*noise_ID'+I*noise_CM)';
+            I = (I+I.*noise_ID+I*noise_CM);
         end
         % Zero the discharge rate of a MU if it is smaller than its minimum
         % firing rate
