@@ -136,6 +136,12 @@ Ib_Input = zeros(N_MU,length(time));
 %%
 RI_gain = SLRParameter.Ib_gain;
 RI_delay = SLRParameter.RI_delay;
+num1_RI = SLRParameter.num_RI(1); 
+num2_RI = SLRParameter.num_RI(2); 
+num3_RI = SLRParameter.num_RI(3);
+den1_RI = SLRParameter.den_RI(1); 
+den2_RI = SLRParameter.den_RI(2); 
+den3_RI = SLRParameter.den_RI(3); 
 
 FR_RI_temp = zeros(N_MU,length(time));
 FR_RI = zeros(N_MU,length(time));
@@ -177,8 +183,15 @@ for t = 1:length(time)
     Ia_Input(:,t) = Ia_Input(:,t) + Ia_Input(:,t).*noise_Ia;
     %%
     if t > 5
-        [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,F_se(t-1),t);
-        [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,U_mat,t);
+        %% GTO activity
+        [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,F_se(t-1),t,SLRParameter);
+ 
+        %% Renshaw cell activity
+        FR_RI_temp(:,t) = (num3_RI*U_mat(:,t-2) + num2_RI*U_mat(:,t-1) + num1_RI*U_mat(:,t)...
+            - den3_RI*FR_RI_temp(:,t-2) - den2_RI*FR_RI_temp(:,t-1))/den1_RI;
+        FR_RI(:,t) = FR_RI_temp(:,t);
+        index_negative = FR_RI(:,t) < 0;
+        FR_RI(index_negative,t) = 0;
     end
     Ib_Input(:,t) = FR_Ib(t)/Ib_gain;
     [noise_Ib] = noise(noise_Ib,noise_amp_Ib,Fs);
@@ -737,15 +750,15 @@ output.U = U_mat;
     end
 
 %%  GTO
-    function [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,Force,index)
-        G1 = 60;
-        G2 = 4;
-        num1 = 1.7;
-        num2 = -3.399742022978487;
-        num3 = 1.699742026978047;
-        den1 = 1.0;
-        den2 = -1.999780020198665;
-        den3 = 0.999780024198225;
+    function [FR_Ib,FR_Ib_temp,x_GTO] = GTOOutput(FR_Ib,FR_Ib_temp,x_GTO,Force,index,SLRParameter)
+        G1 = SLRParameter.G1;
+        G2 = SLRParameter.G2;
+        num1 = SLRParameter.num_GTO(1);
+        num2 = SLRParameter.num_GTO(2);
+        num3 = SLRParameter.num_GTO(3);
+        den1 = SLRParameter.den_GTO(1);
+        den2 = SLRParameter.den_GTO(2);
+        den3 = SLRParameter.den_GTO(3);
         
         x_GTO(index) = G1*log(Force/G2+1);
         
@@ -755,23 +768,6 @@ output.U = U_mat;
         if FR_Ib(index)<0
             FR_Ib(index) = 0;
         end
-    end
-
-%% Renshaw cell
-    function [FR_RI,FR_RI_temp] = RenshawOutput(FR_RI,FR_RI_temp,ND,index)
-        num1 = 0.238563173450928;
-        num2 = -0.035326319453965;
-        num3 = -0.200104635331441;
-        den1 = 1.0;
-        den2 = -1.705481699867712;
-        den3 = 0.708613918533233;
-        
-        FR_RI_temp(:,index) = (num3*ND(:,index-2) + num2*ND(:,index-1) + num1*ND(:,index)...
-            - den3*FR_RI_temp(:,index-2) - den2*FR_RI_temp(:,index-1))/den1;
-        FR_RI(:,index) = FR_RI_temp(:,index);
-        index_negative = FR_RI(:,index) < 0;
-        FR_RI(index_negative,index) = 0;
-        
     end
 
     function [x] = noise(x,D,Fs)

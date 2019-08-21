@@ -50,13 +50,35 @@ for j = 1
     controlOpt = 1;
     % 1: feedfoward input
     % 2: feedback 
+    
     %%
     SLRParameter.gamma_dynamic = 20;
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 20*Fs/1000;
     SLRParameter.Ia_gain = 10000;
+    
+    SLRParameter.G1 = 60; % conversion factor (Hz)
+    SLRParameter.G2 = 4; % conversion factor (N)
+    % transfer function describing GTO dynamics
+    s = tf('s');
+    H = (1.7*s^2+2.58*s+0.4)/(s^2+2.2*s+0.4);
+    Hd = c2d(H,1/Fs);
+    [num,den] = tfdata(Hd);
+    SLRParameter.num_GTO = cell2mat(num);
+    SLRParameter.den_GTO = cell2mat(den);
     SLRParameter.Ib_gain = 10000;
     SLRParameter.Ib_delay = 40*Fs/1000;
+    
+    delta = 0.0015;
+    tau1 = 0.14;
+    tau3 = 0.003;
+    tau4 = 0.09;
+    H_RI = (1+tau1*s)*exp(-delta*s)/((1+tau3*s)*(1+tau4*s));
+    Hd_RI = c2d(H_RI,1/Fs);
+    [num_RI_temp,den_RI_temp] = tfdata(Hd_RI);
+    SLRParameter.num_RI = cell2mat(num_RI_temp);
+    SLRParameter.den_RI = cell2mat(den_RI_temp);
+
     SLRParameter.RI_gain = 10;
     SLRParameter.RI_delay = 5*Fs/1000;
     SLRParameter.C_delay = 200*Fs/1000;
