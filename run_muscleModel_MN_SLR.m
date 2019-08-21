@@ -35,7 +35,7 @@ for j = 1
     j
     if j < 2
         Fs = 10000;
-        time = 0:1/Fs:1;
+        time = 0:1/Fs:10;
     elseif j >= 2 && j < 4
         Fs = 15000;
         time = 0:1/Fs:15;
@@ -47,7 +47,7 @@ for j = 1
         time = 0:1/Fs:15;
     end
     %% 
-    controlOpt = 1;
+    controlOpt = 2;
     % 1: feedfoward input
     % 2: feedback 
     
@@ -55,7 +55,7 @@ for j = 1
     SLRParameter.gamma_dynamic = 20;
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 20*Fs/1000;
-    SLRParameter.Ia_gain = 10000;
+    SLRParameter.Ia_gain = 5000;
     
     SLRParameter.G1 = 60; % conversion factor (Hz)
     SLRParameter.G2 = 4; % conversion factor (N)
