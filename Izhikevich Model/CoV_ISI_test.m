@@ -8,20 +8,20 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_7';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Izhikevich Model';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_7';
 
 %%
-Fs = 1000;
+Fs = 10000;
 time = 0:1/Fs:5;
 
-U_amp_vec = 0.01:0.01:1;
+U_amp_vec = 0.1; %0.01:0.01:1;
 
 FR = zeros(1,length(U_amp_vec));
 ISI_CoV = zeros(1,length(U_amp_vec));
 r_vec = zeros(1,length(U_amp_vec));
 %%
-n = 210;
+n = 1;
 cd(model_parameter_folder)
 load('modelParameter')
 cd(code_folder)
@@ -57,8 +57,6 @@ for i = 1:length(U_amp_vec)
     spike_train = zeros(1,length(time));
     I_vec = zeros(1,length(time));
     
-    
-   
     for t = 1:length(time)
         [noise_1] = noise(noise_1,Fs,10000);
         [noise_2] = noise(noise_2,Fs,1);
@@ -77,7 +75,7 @@ for i = 1:length(U_amp_vec)
     ISI = diff(spike_time)/(Fs/1000);
     FR(i) = mean(1./ISI*1000);
     FR_sd = std(1./ISI*1000);
-    ISI_CoV(i) = FR_sd/FR(i)*100;
+    ISI_CoV(i) = FR_sd/FR(i)*100
     
     temp1 = ISI(1:end-1);
     temp2 = ISI(2:end);
@@ -87,30 +85,30 @@ for i = 1:length(U_amp_vec)
 end
 
 %%
-offset = mean(ISI_CoV(end-10:end));
-[peak,loc] = max(ISI_CoV);
-
-dForce = (U_amp_vec-U_amp_vec(loc))*100;
-dForce(dForce<=0) = 0;
-CoV_ISI_ex = offset+(peak-offset)*exp(-dForce/2.5);
-
-figure(1)
-plot(U_amp_vec*100,ISI_CoV,'LineWidth',1)
-hold on 
-plot(U_amp_vec*100,CoV_ISI_ex,'LineWidth',1)
-plot([U_th_target*100 U_th_target*100],[0 peak+5],'--k','LineWidth',1)
-legend('New model','Mortiz et al. 2005','Recruitment Threshold')
-xlabel('Actovaton (%Maximum)','FontSize',14)
-ylabel('CoV ISI (%)','FontSize',14)
+% offset = mean(ISI_CoV(end-10:end));
+% [peak,loc] = max(ISI_CoV);
+% 
+% dForce = (U_amp_vec-U_amp_vec(loc))*100;
+% dForce(dForce<=0) = 0;
+% CoV_ISI_ex = offset+(peak-offset)*exp(-dForce/2.5);
+% 
+% figure(1)
+% plot(U_amp_vec*100,ISI_CoV,'LineWidth',1)
+% hold on 
+% plot(U_amp_vec*100,CoV_ISI_ex,'LineWidth',1)
+% plot([U_th_target*100 U_th_target*100],[0 peak+5],'--k','LineWidth',1)
+% legend('New model','Mortiz et al. 2005','Recruitment Threshold')
+% xlabel('Actovaton (%Maximum)','FontSize',14)
+% ylabel('CoV ISI (%)','FontSize',14)
 %%
-figure(2)
-plot(U_amp_vec*100,FR,'LineWidth',1)
-hold on
-plot([U_th_target*100 U_th_target*100],[0 max(FR)+5],'--k','LineWidth',1)
-plot([0 100],[MDR_target MDR_target],'--r','LineWidth',1)
-plot([0 100],[PDR_target PDR_target],'--r','LineWidth',1)
-xlabel('Actovaton (%Maximum)','FontSize',14)
-ylabel('Discharge Rate (Hz)','FontSize',14)
+% figure(2)
+% plot(U_amp_vec*100,FR,'LineWidth',1)
+% hold on
+% plot([U_th_target*100 U_th_target*100],[0 max(FR)+5],'--k','LineWidth',1)
+% plot([0 100],[MDR_target MDR_target],'--r','LineWidth',1)
+% plot([0 100],[PDR_target PDR_target],'--r','LineWidth',1)
+% xlabel('Actovaton (%Maximum)','FontSize',14)
+% ylabel('Discharge Rate (Hz)','FontSize',14)
 %%
 function [u,v,spike_vec] = motoneuron(I,u,v,spike_vec,a,Fs)
 b_MN = 0.2;
@@ -121,9 +119,10 @@ alpha_MN = 0.04;
 beta_MN  = 5;
 gamma_MN = 140;
 
-index = v>=30;
+V_thres = 30+normrnd(0,1);
+index = v>=V_thres;
 spike_vec(index) = 1;
-v(index) = c_MN;
+v(index) = c_MN+normrnd(0,1);
 u(index) = u(index) + d_MN;
 
 v_dot = (alpha_MN*v.^2+beta_MN.*v+gamma_MN-u+I);
