@@ -47,7 +47,7 @@ for j = 1
         time = 0:1/Fs:15;
     end
     %% 
-    controlOpt = 2;
+    controlOpt = 1;
     % 1: feedfoward input
     % 2: feedback 
     

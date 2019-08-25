@@ -308,7 +308,7 @@ for t = 1:length(time)
     [F_ce(t),F_se(t)] = contraction_dynamics_v2(A,L_se,L_ce,V_ce,FL,FV,index_slow,Lmax,PTi,F0);
     
     k_0_de = h*MuscleVelocity(t);
-    l_0_de = h*contraction_dynamics(A,L_se,L_ce,V_ce,FL,FV,modelParameter,index_slow,Lmax,PTi_new,F0);
+    l_0_de = h*contraction_dynamics(A,L_se,L_ce,V_ce,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     k_1_de = h*(MuscleVelocity(t)+l_0_de/2);
     l_1_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_0_de/L0)*L0*cos(alpha))/L0T,L_ce+k_0_de/L0,V_ce+l_0_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     k_2_de = h*(MuscleVelocity(t)+l_1_de/2);

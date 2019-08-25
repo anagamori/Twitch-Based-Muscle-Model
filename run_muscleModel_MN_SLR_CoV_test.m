@@ -11,7 +11,7 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/SLR/GD_40_GS_40_Ia_2000_DL_30';
+data_folder = '/Volumes/DATA2/New_Model/SLR/CoV_ISI_test';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_7';
 
@@ -31,7 +31,7 @@ modelParameter.recruitment = 3; % 1: Loeb's formulation, 2: Fuglevand's formulat
 
 amp_vec = [0.01:0.01:1];
 
-for j = 1:length(amp_vec)
+for j = 31:length(amp_vec)
     j
     Fs = 30000;
     time = 0:1/Fs:15;
@@ -45,7 +45,7 @@ for j = 1:length(amp_vec)
     SLRParameter.gamma_dynamic = 20;
     SLRParameter.gamma_static = 20;
     SLRParameter.Ia_delay = 20*Fs/1000;
-    SLRParameter.Ia_gain = 5000;
+    SLRParameter.Ia_gain = 10000;
     
     SLRParameter.G1 = 60; % conversion factor (Hz)
     SLRParameter.G2 = 4; % conversion factor (N)
