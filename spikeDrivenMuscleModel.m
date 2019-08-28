@@ -242,7 +242,6 @@ if figOpt == 1
 end
 
 output.spike_train = spike_train;
-output.Force = F_ce;
 output.ForceTendon = F_se;
 output.Lce = MuscleLength./(L0/100);
 output.Vce = MuscleVelocity./(L0/100);
