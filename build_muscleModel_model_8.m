@@ -12,7 +12,7 @@ clear all
 clc
 
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_6';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_8';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 3.1*pi/180; %[radians]
 modelParameter.optimalLength = 5.98; % [cm]
