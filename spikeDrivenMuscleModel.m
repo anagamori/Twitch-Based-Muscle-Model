@@ -26,7 +26,7 @@ N_MU = modelParameter.N_MU; % number of motor units
 i_MU = modelParameter.i_MU; % index for motor units
 
 %% Peak tetanic force
-PTi_new = modelParameter.PTi_new;
+PTi = modelParameter.PTi;
 
 %% Fractional PSCA
 %F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
@@ -37,7 +37,7 @@ index_slow = modelParameter.index_slow;
 parameter_Matrix = modelParameter.parameterMatrix;
 
 %% Recruitment threshold
-U_th_new = modelParameter.U_th_new;
+U_th = modelParameter.U_th;
 
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
@@ -104,25 +104,25 @@ rng('shuffle')
 for t = 1:length(time)
     if t > 1
         %% Effective activation (Song et al., 2008)
-        U_eff_dot = (synaptic_drive(t) - U_eff)/T_U;
-        U_eff = U_eff_dot*1/Fs + U_eff;
+        %U_eff_dot = (synaptic_drive(t) - U_eff)/T_U;
+        U_eff = synaptic_drive(t); %U_eff_dot*1/Fs + U_eff;
         
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
+            DR_MU = (PDR-MDR)./(1-U_th).*(U_eff-U_th) + MDR;
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 2
-            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+            DR_MU = g_e.*(U_eff-U_th)+MDR;
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 3
-            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+            DR_MU = g_e.*(U_eff-U_th)+MDR;
             for m = 1:length(index_saturation)
                 index = index_saturation(m);
                 if U_eff <= U_th_t(index)
-                    DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff-U_th_new(index));
+                    DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff-U_th(index));
                 else
                     DR_temp(index) = PDR(index)-k_e(index)*(1-U_eff);
                 end
@@ -145,9 +145,9 @@ for t = 1:length(time)
         Y_mat(:,t) = Y_i;
         
         %% Convert activation into spike trains
-        index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1)' == 0);
-        index_2 = i_MU(DR_MU >= MDR & spike_time'==t);
-        index = [index_1 index_2];
+        index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1) == 0);
+        index_2 = i_MU(DR_MU >= MDR & spike_time ==t);
+        index = [index_1;index_2];
         
         for j = 1:length(index) % loop through motor units whose firing rate is greater than minimum firing rate defined by the user
             n = index(j);
@@ -213,16 +213,16 @@ for t = 1:length(time)
     A_tilde_mat(:,t) = A_tilde;
     A_mat(:,t) = A;
     
-    [F_ce(t),F_se(t)] = contraction_dynamics_v2(A,L_se,L_ce,V_ce,FL,FV,index_slow,Lmax,PTi_new,F0);
+    [F_ce(t),F_se(t)] = contraction_dynamics_v2(A,L_se,L_ce,V_ce,FL,FV,index_slow,Lmax,PTi,F0);
     
     k_0_de = h*MuscleVelocity(t);
-    l_0_de = h*contraction_dynamics(A,L_se,L_ce,V_ce,FL,FV,modelParameter,index_slow,Lmax,PTi_new,F0);
+    l_0_de = h*contraction_dynamics(A,L_se,L_ce,V_ce,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     k_1_de = h*(MuscleVelocity(t)+l_0_de/2);
-    l_1_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_0_de/L0)*L0*cos(alpha))/L0T,L_ce+k_0_de/L0,V_ce+l_0_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi_new,F0);
+    l_1_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_0_de/L0)*L0*cos(alpha))/L0T,L_ce+k_0_de/L0,V_ce+l_0_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     k_2_de = h*(MuscleVelocity(t)+l_1_de/2);
-    l_2_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_1_de/L0)*L0*cos(alpha))/L0T,L_ce+k_1_de/L0,V_ce+l_1_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi_new,F0);
+    l_2_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_1_de/L0)*L0*cos(alpha))/L0T,L_ce+k_1_de/L0,V_ce+l_1_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     k_3_de = h*(MuscleVelocity(t)+l_2_de);
-    l_3_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_2_de/L0)*L0*cos(alpha))/L0T,L_ce+k_2_de/L0,V_ce+l_2_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi_new,F0);
+    l_3_de = h*contraction_dynamics(A,(Lmt - (L_ce+k_2_de/L0)*L0*cos(alpha))/L0T,L_ce+k_2_de/L0,V_ce+l_2_de/L0,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
     MuscleLength(t+1) = MuscleLength(t) + 1/6*(k_0_de+2*k_1_de+2*k_2_de+k_3_de);
     MuscleVelocity(t+1) = MuscleVelocity(t) + 1/6*(l_0_de+2*l_1_de+2*l_2_de+l_3_de);
     
@@ -455,7 +455,7 @@ output.Vce = MuscleVelocity./(L0/100);
             F_pe2 = 0;
         end
         
-        f_i = A.*PT'.*(FL_vec.*FV_vec+F_pe2);
+        f_i = A.*PT.*(FL_vec.*FV_vec+F_pe2);
         
         F_m_temp = sum(f_i);
         F_m = F_m_temp + F_pe1*F0;
@@ -491,7 +491,7 @@ output.Vce = MuscleVelocity./(L0/100);
             F_pe2 = 0;
         end
         
-        f_i = A.*PT'.*(FL_vec.*FV_vec+F_pe2);
+        f_i = A.*PT.*(FL_vec.*FV_vec+F_pe2);
         
         F_m_temp = sum(f_i);
         F_m = F_m_temp + F_pe1*F0;

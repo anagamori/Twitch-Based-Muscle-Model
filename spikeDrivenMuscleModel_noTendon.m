@@ -18,7 +18,7 @@ N_MU = modelParameter.N_MU; % number of motor units
 i_MU = modelParameter.i_MU; % index for motor units
 
 %% Peak tetanic force
-PTi_new = modelParameter.PTi_new;
+PTi = modelParameter.PTi;
 
 %% Fractional PSCA
 %F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
@@ -29,7 +29,7 @@ index_slow = modelParameter.index_slow;
 parameter_Matrix = modelParameter.parameterMatrix;
 
 %% Recruitment threshold
-U_th_new = modelParameter.U_th_new;
+U_th = modelParameter.U_th;
 
 %% Minimum and maximum firing rate
 FR_half = modelParameter.FR_half;
@@ -46,9 +46,6 @@ if recruitmentType == 3
 end
 
 %% Activation dynamics (Song et al., 2008)
-U_eff = 0;
-T_U = 0.03;
-
 tau_1 = parameter_Matrix(:,9);
 R_temp = exp(-time./tau_1);
 gamma = parameter_Matrix(:,15);
@@ -93,25 +90,25 @@ for t = 1:length(time)
     
     if t > 1
         %% Effective activation (Song et al., 2008)
-        U_eff_dot = (synaptic_drive(t) - U_eff)/T_U;
-        U_eff = U_eff_dot*1/Fs + U_eff;
+        
+        U_eff = synaptic_drive(t); 
         
         %% Calculate firing rate
         % Linear increase in discharge rate up to Ur
         if recruitmentType == 1
-            DR_MU = (PDR-MDR)./(1-U_th_new).*(U_eff-U_th_new) + MDR;
+            DR_MU = (PDR-MDR)./(1-U_th).*(U_eff-U_th) + MDR;
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 2
-            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+            DR_MU = g_e.*(U_eff-U_th)+MDR;
             DR_MU(DR_MU<MDR) = 0;
             DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         elseif recruitmentType == 3
-            DR_MU = g_e.*(U_eff-U_th_new)+MDR;
+            DR_MU = g_e.*(U_eff-U_th)+MDR;
             for m = 1:length(index_saturation)
                 index = index_saturation(m);
                 if U_eff <= U_th_t(index)
-                    DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff-U_th_new(index));
+                    DR_temp(index) = MDR(index) + lamda(index).*k_e(index)*(U_eff-U_th(index));
                 else
                     DR_temp(index) = PDR(index)-k_e(index)*(1-U_eff);
                 end
@@ -133,9 +130,9 @@ for t = 1:length(time)
         Y_mat(:,t) = Y_i;
         
         %% Convert activation into spike trains
-        index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1)' == 0);
-        index_2 = i_MU(DR_MU >= MDR & spike_time'==t);
-        index = [index_1 index_2];
+        index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1) == 0);
+        index_2 = i_MU(DR_MU >= MDR & spike_time ==t);
+        index = [index_1;index_2];
         
         for j = 1:length(index) % loop through motor units whose firing rate is greater than minimum firing rate defined by the user
             n = index(j);
@@ -213,7 +210,7 @@ for t = 1:length(time)
             FV(index_slow+1:end) = FVcon_fast_function(Lce,Vce);
         end
         %%
-        f_i = A.*PTi_new'.*FL.*FV;
+        f_i = A.*PTi.*FL.*FV;
         force(:,t) = f_i;
         
         Force(t) = sum(f_i);
