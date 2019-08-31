@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_4_20_CoV_50_Ur_Rec_3';
+condition = 'Model_8_20_CoV_50_Ur_Rec_3';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -19,7 +19,7 @@ f = 0:0.5:100;
 for i = 1:3
     if i == 1
         amp_vec = 0.1:0.1:1;
-        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_1_CoV_20';
+        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_3_N_120_CoV_20';
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
