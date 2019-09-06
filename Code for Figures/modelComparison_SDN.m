@@ -23,7 +23,7 @@ f = 0:0.5:100;
 
 for i = 1:4
     if i == 1
-        condition = 'Model_6_10_CoV_50_Ur_Rec_3'; %_CTvsPTi';
+        condition = 'Model_8_20_CoV_50_Ur_Rec_3'; %_CTvsPTi';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
@@ -34,8 +34,12 @@ for i = 1:4
         load('mean_pxx')
         cd(code_folder)
         color_code = [37  65 178]/255;
+        mean_mean_Force = mean(mean_Force);
+        MVC_FM = mean_mean_Force(end);
+        std_FM = mean(std_Force./MVC_FM.*100);
+        mean_force_FM = mean(mean_Force)./mean_mean_Force(end)*100;
     elseif i == 2
-        condition = 'Model_4_10_CoV_50_Ur_Rec_3_PR_100'; %_CTvsPTi_PR_100';
+        condition = 'Model_8_20_CoV_50_Ur_Rec_3_PT_100'; %_CTvsPTi_PR_100';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
@@ -47,7 +51,7 @@ for i = 1:4
         cd(code_folder)
         color_code = [77 172 38]/255;
     elseif i == 3
-        condition = 'Model_6_10_CoV_80_Ur_Rec_3';
+        condition = 'Model_8_20_CoV_80_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
@@ -61,7 +65,7 @@ for i = 1:4
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
     elseif i == 4
-        condition = 'Model_4_10_CoV_50_Ur_Rec_3_N_100';
+        condition = 'Model_6_20_CoV_50_Ur_Rec_3';
         Fs = 2000;
         time =0:1/Fs:15;
         data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
@@ -156,29 +160,33 @@ xlabel('Activation (%)','FontSize',14)
 ylabel('Force (% Maximum)','FontSize',14)
 set(gca,'TickDir','out');
 set(gca,'box','off')
-legend('Default','RP = 100','Ur = 0.8','N = 100','location','northwest')
+legend('Default','RP = 100','Ur = 0.8','N = 300','location','northwest')
 ylim([0 101])
 % cd (figure_folder)
 % saveas(gcf,'activation2meanForce_FV_comparison','pdf')
 % cd (code_folder)
 
+a = std_FM(1)/mean_force_FM(1);
+a_todorov = 0.4;
 x = [0 amp_vec]*100;
-y_0 = 0.2*1/6;
-y_100 = 1.2+0.2*2.5/6;
-a = (y_100-y_0)/100;
-
-std_N_100 = mean(std_Force./MVC.*100);
-mean_force_N_100 = mean(mean_Force)./mean_mean_Force(end)*100;
-y_5_new = std_N_100(1);
-b = y_5_new - a*mean_force_N_100(1);
+% y_0 = 0.2*1/6;
+% y_100 = 1.2+0.2*2.5/6;
+% a = (y_100-y_0)/100;
+% 
+% std_N_100 = mean(std_Force./MVC.*100);
+% mean_force_N_100 = mean(mean_Force)./mean_mean_Force(end)*100;
+% y_5_new = std_N_100(1);
+% b = y_5_new - a*mean_force_N_100(1);
 
 figure(2)
 xlabel('Mean Force (%)','FontSize',14)
-plot(x,x*a+b,'LineWidth',2,'Color','k')
+plot(x,x*a,'LineWidth',2,'Color','k')
+hold on 
+plot(x,x*a_todorov,'LineWidth',2,'Color','k')
 xlabel('Mean Force (%)','FontSize',14)
 ylabel('SD (%MVC)','FontSize',14)
-legend('Default','RP = 100','Ur = 0.8','N = 100','Jones et al. 2002','location','northwest')
-yticks(0:0.2:1.4)
+legend('Default','RP = 100','Ur = 0.8','N = 300','location','northwest')
+%yticks(0:0.2:1.4)
 xlim([0 100])
 set(gca,'TickDir','out');
 set(gca,'box','off')
@@ -191,7 +199,7 @@ figure(3)
 xlabel('Activation (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])
-legend('Default','RP = 100','Ur = 0.8','N = 100')
+legend('Default','RP = 100','Ur = 0.8','N = 300')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 % cd (figure_folder)

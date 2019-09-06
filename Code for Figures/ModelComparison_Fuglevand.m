@@ -11,15 +11,15 @@ clc
 
 %%
 condition = 'Model_8_20_CoV_50_Ur_Rec_3';
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
-figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
+figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 f = 0:0.5:100;
 
 for i = 1:3
     if i == 1
         amp_vec = 0.1:0.1:1;
-        data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_3_N_120_CoV_20';
+        data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_3_N_120_CoV_20';
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -27,9 +27,14 @@ for i = 1:3
         load('mean_pxx')
         cd(code_folder)
         color_code = [100 100 100]/255;
+        mean_mean_Force = mean(mean_Force);
+        MVC_FM = mean_mean_Force(end);
+        std_FM = mean(std_Force./MVC_FM.*100);
+        mean_force_FM = mean(mean_Force)./mean_mean_Force(end)*100;
+
     elseif i == 2
         amp_vec = [0.05 0.1:0.1:1];
-        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -39,7 +44,7 @@ for i = 1:3
         color_code = [230 57 70]/255;
     elseif i == 3
         amp_vec = [0.05 0.1:0.1:1];
-        data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -127,6 +132,14 @@ for i = 1:3
     
 end
 
+x = [0 amp_vec]*100;
+y_0 = 0.2*1/6;
+y_100 = 1.2+0.2*2.5/6;
+a = (y_100-y_0)/100;
+
+y_5_new = std_FM(1);
+b = y_5_new - a*mean_force_FM(1);
+
 %%
 figure(1)
 xlabel('Activation (%)','FontSize',14)
@@ -141,6 +154,7 @@ legend('Fuglevand model','New model without tendon','New model with tendon','loc
 
 figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
+plot(x,x*a+b,'LineWidth',2,'Color','k')
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('SD (%Maximum Force)','FontSize',14)
 legend('Fuglevand model','New model without tendon','New model with tendon','location','northwest')
