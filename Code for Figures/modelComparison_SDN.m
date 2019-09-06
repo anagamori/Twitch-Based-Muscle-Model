@@ -167,7 +167,7 @@ ylim([0 101])
 % cd (code_folder)
 
 a = std_FM(1)/mean_force_FM(1);
-a_todorov = 0.4;
+a_todorov = 0.1;
 x = [0 amp_vec]*100;
 % y_0 = 0.2*1/6;
 % y_100 = 1.2+0.2*2.5/6;
