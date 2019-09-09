@@ -23,15 +23,15 @@ cov_Force = zeros(10,length(amp_vec));
 pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-for j = 1:10
+for j = 0:10
     cd(data_folder)
     load(['Force_mat_' num2str(j)])
     cd(code_folder)
     for i = 1:10
         Force =  Force_mat(i,:);
-        mean_Force(i,j) = mean(Force(5*Fs+1:end));
-        std_Force(i,j) = std(Force(5*Fs+1:end));
-        cov_Force(i,j) =  std_Force(i,j)/mean_Force(i,j)*100;
+        mean_Force(i,j+1) = mean(Force(5*Fs+1:end));
+        std_Force(i,j+1) = std(Force(5*Fs+1:end));
+        cov_Force(i,j+1) =  std_Force(i,j+1)/mean_Force(i,j+1)*100;
               
         [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),gausswin(5*Fs),0.9*5*Fs,0:0.5:100,Fs,'power');
     end
@@ -40,7 +40,7 @@ for j = 1:10
     plot(time,Force_mat)
     hold on
         
-    mean_pxx(j,:) = mean(pxx);
+    mean_pxx(j+1,:) = mean(pxx);
     %clear Force_mat
 end
 
