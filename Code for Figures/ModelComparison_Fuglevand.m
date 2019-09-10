@@ -18,7 +18,7 @@ f = 0:0.5:100;
 
 for i = 1:3
     if i == 1
-        amp_vec = 0.1:0.1:1;
+        amp_vec = [0.05  0.1:0.1:1];
         data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/Model_3_N_120_CoV_20';
         cd(data_folder)
         load('mean_Force')
@@ -63,14 +63,14 @@ for i = 1:3
     
     std_Force_norm = std_Force./mean_mean_Force(end)*100;
     figure(2)
-    %shadedErrorBar(amp_vec*100,mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    shadedErrorBar(mean(mean_Force_norm),mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(amp_vec*100,mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(mean(mean_Force_norm),mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     
     figure(3)
-    %shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    shadedErrorBar(mean(mean_Force_norm),mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(mean(mean_Force_norm),mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     %%
@@ -154,7 +154,7 @@ legend('Fuglevand model','New model without tendon','New model with tendon','loc
 
 figure(2)
 %xlabel('Mean Force (%)','FontSize',14)
-plot(x,x*a+b,'LineWidth',2,'Color','k')
+%plot(x,x*a+b,'LineWidth',2,'Color','k')
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('SD (%Maximum Force)','FontSize',14)
 legend('Fuglevand model','New model without tendon','New model with tendon','location','northwest')

@@ -1,12 +1,12 @@
 %==========================================================================
 % spikeDrivenMuscleModel_test.m
 % Author: Akira Nagamori
-% Last update: 3/27/19
+% Last update: 9/9/19
 % Descriptions
 %   A new model driven by spike trains inspired by Williams et al. 1998
 %   Generate twitch response and test activation-frequency response with a
 %   given parameter set
-%   Used to generate a and b of Summary_spikeDrivenMuscleModel
+%   Used to generate activation-frequency relationship of the new model in a of Summary_FMvsNew
 %==========================================================================
 
 close all
@@ -14,12 +14,16 @@ clear all
 clc
 
 %%
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1';
+code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_8';
 
 %% 
-test_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_1/FT';
-MU_No = 230;
+cd(data_folder)
+load('modelParameter')
+cd(code_folder)
+
+parameterMatrix = modelParameter.parameterMatrix;
+
 %% Simulation parameters
 % Simulation parameters
 Fs = 2000; %sampling frequency
@@ -27,22 +31,20 @@ h = 1/Fs;
 time = 0:1/Fs:5; %simulation time
 
 Lce = 1; % muscle length
-%% Model parameters
-cd(test_folder)
-load(['MU_' num2str(MU_No)])
-cd(code_folder)
+%%
+MU_No = 94;
 
-S = parameter(1); %7;
-C = parameter(2); %1.025;
-k_1 = parameter(3); %14.625;
-k_2 = parameter(4); %4.9375;
-k_3 = parameter(5)*Lce + parameter(6); %17.41*Lce - 2.85;
-k_4 = parameter(7)*Lce + parameter(8); %-7.67*Lce + 14.92;
-tau_1 = parameter(9); %0.0051;
-tau_2 = parameter(10); % 0.04;
-N = parameter(11)*Lce + parameter(12); %-2.26*Lce + 4.20;
-K = parameter(13)*Lce + parameter(14); %-0.044*Lce + 0.080;
-alpha = parameter(15); %4.475;
+S = parameterMatrix (MU_No,1); 
+C = parameterMatrix (MU_No,2); 
+k_1 = parameterMatrix (MU_No,3); 
+k_2 = parameterMatrix (MU_No,4); 
+k_3 = parameterMatrix (MU_No,5)*Lce + parameterMatrix (MU_No,6);
+k_4 = parameterMatrix (MU_No,7)*Lce + parameterMatrix (MU_No,8);
+tau_1 = parameterMatrix (MU_No,9); %0.0051;
+tau_2 = parameterMatrix (MU_No,10); % 0.04;
+N = parameterMatrix (MU_No,11)*Lce + parameterMatrix (MU_No,12); %-2.26*Lce + 4.20;
+K = parameterMatrix (MU_No,13)*Lce + parameterMatrix (MU_No,14); %-0.044*Lce + 0.080;
+alpha = parameterMatrix (MU_No,15); %4.475;
 %%
 for i = 1:2
     if i == 1
@@ -50,7 +52,7 @@ for i = 1:2
         FR_test = 1;
     elseif i == 2
         % Generate a set of spike trains at multiple frequencies
-        FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %2:1:50; %[2  8 15 25 40]; %[2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200]; %10:10:100];
+        FR_test = [2 20 40 70 100]; %[2  8 15 25 40]; 
     end
     %% initialization
     mean_exc = zeros(1,length(FR_test));

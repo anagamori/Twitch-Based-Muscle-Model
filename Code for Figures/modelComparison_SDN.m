@@ -91,16 +91,16 @@ for i = 1:4
     figure(2)
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec*100,mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
-    shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    %shadedErrorBar(amp_vec*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(amp_vec*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     
     figure(3)
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec*100,mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
-    %shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     %%
@@ -167,7 +167,7 @@ ylim([0 101])
 % cd (code_folder)
 
 a = std_FM(1)/mean_force_FM(1);
-a_todorov = 0.1;
+a_todorov = 0.1289;
 x = [0 amp_vec]*100;
 % y_0 = 0.2*1/6;
 % y_100 = 1.2+0.2*2.5/6;
@@ -182,11 +182,12 @@ figure(2)
 xlabel('Mean Force (%)','FontSize',14)
 plot(x,x*a,'LineWidth',2,'Color','k')
 hold on 
-plot(x,x*a_todorov,'LineWidth',2,'Color','k')
+plot(x,x*a_todorov,'--','LineWidth',2,'Color','k')
 xlabel('Mean Force (%)','FontSize',14)
 ylabel('SD (%MVC)','FontSize',14)
-legend('Default','RP = 100','Ur = 0.8','N = 300','location','northwest')
-%yticks(0:0.2:1.4)
+legend('Default','RP = 100','Ur = 0.8','N = 300','Jones et al. 2002','Todorov 2004','location','northwest')
+yticks(0:0.5:2)
+ylim([0 2])
 xlim([0 100])
 set(gca,'TickDir','out');
 set(gca,'box','off')
