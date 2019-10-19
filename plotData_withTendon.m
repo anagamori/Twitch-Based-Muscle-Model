@@ -15,7 +15,7 @@ code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 Fs = 10000;
-amp_vec = [0.05 0.1:0.1:1];
+amp_vec = [0.025 0.05 0.1:0.1:1];
 time =0:1/Fs:15;
 nTrial = 10;
 mean_Force = zeros(nTrial,length(amp_vec));
@@ -24,7 +24,7 @@ cov_Force = zeros(nTrial,length(amp_vec));
 pxx = zeros(nTrial,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-trial_vec = 0:10; %0:10; %[0:6 8:10];
+trial_vec = -1:10; %0:10; %[0:6 8:10];
 for k = 1:length(trial_vec)
     j = trial_vec(k);
     cd(data_folder)
@@ -32,9 +32,9 @@ for k = 1:length(trial_vec)
     cd(code_folder)
     for i = 1:10
         Force =  Force_mat(i,:);
-        mean_Force(i,j+1) = mean(Force(5*Fs+1:end));
-        std_Force(i,j+1) = std(Force(5*Fs+1:end));
-        cov_Force(i,j+1) =  std_Force(i,j+1)/mean_Force(i,j+1)*100;
+        mean_Force(i,j+2) = mean(Force(5*Fs+1:end));
+        std_Force(i,j+2) = std(Force(5*Fs+1:end));
+        cov_Force(i,j+2) =  std_Force(i,j+2)/mean_Force(i,j+2)*100;
               
         [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),rectwin(length(Force(5*Fs+1:end))),0,0:0.5:100,Fs,'power');
     end
@@ -43,7 +43,7 @@ for k = 1:length(trial_vec)
     plot(time,Force_mat)
     hold on
         
-    mean_pxx(j+1,:) = mean(pxx);
+    mean_pxx(j+2,:) = mean(pxx);
     %clear Force_mat
 end
 

@@ -88,7 +88,7 @@ for j = -1:10 %:length(amp_vec)
         %Force_mat(i,:) = Force;
     end
     toc
-    mean_pxx(j+2,:) = mean(pxx);
+    mean_pxx(j+1,:) = mean(pxx);
     cd(data_folder)
     save(['Force_mat_' num2str(j)],'Force_mat')
     cd(code_folder)
