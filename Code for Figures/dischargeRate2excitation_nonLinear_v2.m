@@ -13,6 +13,7 @@ load('modelParameter')
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
+N_MU = modelParameter.N_MU;
 MDR = modelParameter.MDR;
 PDR = modelParameter.PDR;
 U_th = modelParameter.U_th;
@@ -41,7 +42,7 @@ for i = 1:length(U_vec)
     
     DR_MU(index_saturation) = DR_temp(index_saturation);
     % DR_MU(1:index_slow) = DR_temp(1:index_slow);
-    DR_MU(DR_MU<MDR) = 0;
+    DR_MU(DR_MU<MDR) = NaN;
     DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
     DR_mat(:,i) = DR_MU;
 end
@@ -49,7 +50,7 @@ end
 %%
 %close all
 %index_plot = 1:1:300; %[1 50 100 150 200 250 300];
-index_plot = [1 10 20 38 40 60 80 83 100 120];
+index_plot = [2 10 38 40 60 80 83 100 111 120];
 figure(1)
 plot(U_vec*100,DR_mat(index_plot,:),'k','LineWidth',1)
 xlabel('Activation (%Maximum)','FontSize',8)
