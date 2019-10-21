@@ -55,7 +55,7 @@ for j = 2:10
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
     if j == 2
-        for i = 6:10
+        for i = 7:10
             i
             tic
             output = spikeDrivenMuscleModel_variableCoV(Fs,time,input,modelParameter,1);
