@@ -30,7 +30,7 @@ modelParameter.recruitment = 3; % 1: Loeb's formulation, 2: Fuglevand's formulat
 
 amp_vec = [0.05 0.1:0.1:1];
 trial_vec = [7 10];
-for j = 6:10
+for j = 8:10
     j
     if j <= 1
         Fs = 10000;
@@ -54,8 +54,8 @@ for j = 6:10
     amp = amp_vec(j+1);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
-    if j == 6
-        for i = 3:10
+    if j == 8
+        for i = 6:10
             i
             tic
             output = spikeDrivenMuscleModel_variableCoV(Fs,time,input,modelParameter,1);
