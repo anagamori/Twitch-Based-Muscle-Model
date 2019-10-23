@@ -28,7 +28,7 @@ pxx = zeros(nTrial,1001);
 mean_pxx = zeros(length(amp_vec),1001);
 mean_pxx_2 = zeros(length(amp_vec),1001);
 % %%
-for j = 8 %:length(amp_vec)
+for j = 9 %:length(amp_vec)
     if j <= 1
         Fs = 10000;
         time = 0:1/Fs:15;
