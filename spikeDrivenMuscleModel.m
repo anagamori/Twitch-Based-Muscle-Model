@@ -75,7 +75,6 @@ spike_train = zeros(N_MU,length(time));
 force = zeros(N_MU,length(time));
 F_ce = zeros(1,length(time));
 F_se = zeros(1,length(time));
-F_total = zeros(1,length(time));
 
 R = zeros(N_MU,length(time));
 c = zeros(N_MU,1);
@@ -213,7 +212,7 @@ for t = 1:length(time)
     A_tilde_mat(:,t) = A_tilde;
     A_mat(:,t) = A;
     
-    [F_ce(t),F_se(t)] = contraction_dynamics_v2(A,L_se,L_ce,V_ce,FL,FV,index_slow,Lmax,PTi,F0);
+    [force(:,t),F_se(t)] = contraction_dynamics_v2(A,L_se,L_ce,V_ce,FL,FV,index_slow,Lmax,PTi,F0);
     
     k_0_de = h*MuscleVelocity(t);
     l_0_de = h*contraction_dynamics(A,L_se,L_ce,V_ce,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
@@ -235,7 +234,7 @@ end
 %%
 if figOpt == 1
     figure(1)
-    plot(time,F_ce)
+    plot(time,F_se)
     xlabel('Time (s)')
     ylabel('Force (N)')
     hold on
@@ -243,8 +242,7 @@ end
 
 output.spike_train = spike_train;
 output.ForceTendon = F_se;
-output.Lce = MuscleLength./(L0/100);
-output.Vce = MuscleVelocity./(L0/100);
+output.force = force;
 
 %% Convert spike trian into activation
     function [c,cf,A_tilde,A] = spike2activation(R,c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs)
@@ -469,7 +467,7 @@ output.Vce = MuscleVelocity./(L0/100);
             + (L_m_dot).^2*tan(rho).^2/(L_m);
     end
 
-     function [F_m,F_t] = contraction_dynamics_v2(A,L_s,L_m,L_m_dot,FL_vec,FV_vec,index_slow,Lmax,PT,F0)
+     function [f_i,F_t] = contraction_dynamics_v2(A,L_s,L_m,L_m_dot,FL_vec,FV_vec,index_slow,Lmax,PT,F0)
         %% Force-length and force-velocity
         FL_vec(1:index_slow) = FL_slow_function(L_m);
         FL_vec(index_slow+1:end) = FL_fast_function(L_m);
