@@ -63,6 +63,9 @@ gamma = parameter_Matrix(:,15);
 a_s = ones(N_MU,1)*0.96;
 %% Discharge rate parameters
 cv_MU = modelParameter.CV_MU; % coefficient of variation for interspike intervals
+Z = randn(N_MU,length(time));
+Z(Z>3.9) = 3.9;
+Z(Z<-3.9) = -3.9;
 
 %% Muscle length
 V_ce = 0;
@@ -155,10 +158,7 @@ for t = 1:length(time)
                 spike_train(n,t) = 1; % add a spike to the vector
                 spike_train_temp(t) = 1;
                 mu = 1/DR_MU(n);
-                Z = randn(1);
-                Z(Z>3.9) = 3.9;
-                Z(Z<-3.9) = -3.9;
-                spike_time_temp = (mu + mu*cv_MU*Z)*Fs;
+                spike_time_temp = (mu + mu*cv_MU*Z(n,t))*Fs;
                 if spike_time_temp <= 0.002*Fs
                     spike_time_temp = 0.002*Fs;
                 end
@@ -173,10 +173,7 @@ for t = 1:length(time)
                     % update mean firing rate of the motor unit given the
                     % current value of input
                     mu = 1/DR_MU(n); % interspike interval
-                    Z = randn(1);
-                    Z(Z>3.9) = 3.9;
-                    Z(Z<-3.9) = -3.9;
-                    spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
+                    spike_time_temp = (mu + mu*cv_MU*Z(n,t))*Fs; % interspike interval
                     if spike_time_temp <= 0.002*Fs
                         spike_time_temp = 0.002*Fs;
                     end
@@ -188,11 +185,8 @@ for t = 1:length(time)
                     spike_train(n,t) = 1;
                     spike_train_temp(t) = 1;
                     spike_time(n) = t;
-                    mu = 1/DR_MU(n); % interspike interval
-                    Z = randn(1);
-                    Z(Z>3.9) = 3.9;
-                    Z(Z<-3.9) = -3.9;
-                    spike_time_temp = (mu + mu*cv_MU*Z)*Fs; % interspike interval
+                    mu = 1/DR_MU(n); % interspike interval            
+                    spike_time_temp = (mu + mu*cv_MU*Z(n,t))*Fs; % interspike interval
                     if spike_time_temp <= 0.002*Fs
                         spike_time_temp = 0.002*Fs;
                     end
