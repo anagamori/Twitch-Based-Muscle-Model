@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_9_var_CoV_50_Ur_Rec_3';
+condition = 'Model_8_var_CoV_50_Ur_Rec_3';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -22,6 +22,7 @@ cd(data_folder)
 load('mean_Force')
 load('std_Force')
 load('cov_Force')
+load('cov_Force_dt')
 load('mean_pxx')
 cd(code_folder)
 color_code = [37  65 178]/255;
@@ -42,7 +43,7 @@ CoV_vec = [6/7*0.5+4.5 2/7*0.5+2.5 5/7*0.5+1 1.5 3.5/7*0.5 + 1.5 6/7*0.5+1 3/7*0
 % CoV_vec_int_2 = interp1(force_vec,CoV_vec,xi_2,'spline');
 
 figure(1)
-shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+shadedErrorBar(amp_vec*100,mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
 %shadedErrorBar(mean(mean_Force_norm),mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
 hold on
 plot(force_vec,CoV_vec,'--k','LineWidth',2)
