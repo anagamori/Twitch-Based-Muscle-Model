@@ -62,7 +62,7 @@ for i = 1:3
     figure(1)
     plot(f,pxx_spike_norm*100,'LineWidth',1,'color',color_code)
     hold on
-    xlim([0 50])
+    xlim([0 30])
     yticks(0:1:4)
     title('Unit Force')
     xlabel('Frequency (Hz)','FontSize',10)
@@ -87,7 +87,7 @@ for i = 1:3
     figure(3)
     plot(f,pxx_conv./sum(pxx_conv)*100,'LineWidth',1,'color',color_code)
     hold on
-    xlim([0 50])
+    xlim([0 30])
     title('Convolution with a fixed twitch profile')
     xlabel('Frequency (Hz)','FontSize',10)
     ylabel('Proportion of Total Power (%)','FontSize',10)
@@ -97,7 +97,7 @@ for i = 1:3
     figure(4)
     plot(f,pxx_unit_force./sum(pxx_unit_force)*100,'LineWidth',1,'color',color_code)
     hold on
-    xlim([0 50])
+    xlim([0 30])
     %yticks(0:10:50)
     title('Spke Train')
     xlabel('Frequency (Hz)','FontSize',10)
@@ -111,7 +111,7 @@ for i = 1:3
     figure(5)
     plot(f,pxx_force./sum(pxx_force)*100,'LineWidth',1,'color',color_code)
     hold on
-    xlim([0 50])
+    xlim([0 30])
     %yticks(0:10:50)
     title('Spke Train')
     xlabel('Frequency (Hz)','FontSize',10)
