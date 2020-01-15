@@ -52,15 +52,15 @@ for i = 1:3
     force_temp = conv(spike_train,twitch);
     force_temp = force_temp(5*Fs+1:length(spike_train));
     %%
-    [pxx_spike,~] = pwelch(spike_train(5*Fs+1:end)-mean(spike_train(5*Fs+1:end)),[],[],0:0.1:100,Fs,'power');
+    [pxx_spike,~] = pwelch(spike_train(5*Fs+1:end)-mean(spike_train(5*Fs+1:end)),[],[],0:0.1:100,Fs);
     pxx_spike_norm = pxx_spike./sum(pxx_spike);
-    [pxx_unit_force,~] = pwelch(force(5*Fs+1:end)-mean(force(5*Fs+1:end)),[],[],0:0.1:100,Fs,'power');
-    [pxx_force,~] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),[],[],0:0.1:100,Fs,'power');
+    [pxx_unit_force,~] = pwelch(force(5*Fs+1:end)-mean(force(5*Fs+1:end)),[],[],0:0.1:100,Fs);
+    [pxx_force,~] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),[],[],0:0.1:100,Fs);
     
-    [pxx_unit_force_conv,~] = pwelch(force_temp-mean(force_temp),[],[],0:0.1:100,Fs,'power');
+    [pxx_unit_force_conv,~] = pwelch(force_temp-mean(force_temp),[],[],0:0.1:100,Fs);
     %%
     figure(1)
-    plot(f,pxx_spike_norm*100,'LineWidth',1,'color',color_code)
+    plot(f,pxx_spike,'LineWidth',1,'color',color_code)
     hold on
     xlim([0 30])
     yticks(0:1:4)
@@ -71,7 +71,7 @@ for i = 1:3
     set(gca,'box','off')
     
     figure(2)
-    plot(f,pxx_spike_norm*100,'LineWidth',1,'color',color_code)
+    plot(f,pxx_spike,'LineWidth',1,'color',color_code)
     hold on
     xlim([0 10])
     %yticks(0:1:4)
@@ -94,8 +94,9 @@ for i = 1:3
     set(gca,'TickDir','out');
     set(gca,'box','off')
     
+    %./sum(pxx_unit_force)*100
     figure(4)
-    plot(f,pxx_unit_force./sum(pxx_unit_force)*100,'LineWidth',1,'color',color_code)
+    plot(f,pxx_unit_force,'LineWidth',1,'color',color_code)
     hold on
     xlim([0 30])
     %yticks(0:10:50)
@@ -109,7 +110,7 @@ for i = 1:3
     hold on
     
     figure(5)
-    plot(f,pxx_force./sum(pxx_force)*100,'LineWidth',1,'color',color_code)
+    plot(f,pxx_force,'LineWidth',1,'color',color_code)
     hold on
     xlim([0 30])
     %yticks(0:10:50)
