@@ -14,9 +14,14 @@ code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Code for 
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 Fs = 10000;
-T = 0.074;
+T = 0.07;
 t_twitch = 0:1/Fs:1;
 twitch = t_twitch./T.*exp(1-t_twitch./T);
+
+T_2 = 0.06;
+t_twitch = 0:1/Fs:1;
+twitch_2 = t_twitch./T_2.*exp(1-t_twitch./T_2);
+
 [pxx_twitch,f] = pwelch(twitch,[],[],0:0.1:100,Fs,'power');
 pxx_twitch_norm = pxx_twitch./sum(pxx_twitch);
 
@@ -51,6 +56,16 @@ for i = 1:3
     
     force_temp = conv(spike_train,twitch);
     force_temp = force_temp(5*Fs+1:length(spike_train));
+    cov(i) = std(force_temp)/mean(force_temp)*100;
+    
+    force_temp_2 = conv(spike_train,twitch_2);
+    force_temp_2 = force_temp_2(5*Fs+1:length(spike_train));
+    cov_2(i) = std(force_temp_2)/mean(force_temp_2)*100;
+    
+    figure(11)
+    plot(force_temp)
+    hold on
+    plot(force_temp_2)
     %%
     [pxx_spike,~] = pwelch(spike_train(5*Fs+1:end)-mean(spike_train(5*Fs+1:end)),[],[],0:0.1:100,Fs);
     pxx_spike_norm = pxx_spike./sum(pxx_spike);
@@ -58,6 +73,7 @@ for i = 1:3
     [pxx_force,~] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),[],[],0:0.1:100,Fs);
     
     [pxx_unit_force_conv,~] = pwelch(force_temp-mean(force_temp),[],[],0:0.1:100,Fs);
+    [pxx_unit_force_conv_2,~] = pwelch(force_temp_2-mean(force_temp_2),[],[],0:0.1:100,Fs);
     %%
     figure(1)
     plot(f,pxx_spike,'LineWidth',1,'color',color_code)
