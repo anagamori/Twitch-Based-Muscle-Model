@@ -21,6 +21,7 @@ amp_vec = [0.025 0.05 0.1:0.1:1];
 nTrial = 10;
 mean_Force = zeros(nTrial,length(amp_vec));
 std_Force = zeros(nTrial,length(amp_vec));
+std_Force_dt = zeros(nTrial,length(amp_vec));
 cov_Force = zeros(nTrial,length(amp_vec));
 cov_Force_dt = zeros(nTrial,length(amp_vec));
 pxx = zeros(nTrial,201);
@@ -48,6 +49,7 @@ for k = 1:length(trial_vec)
         end
         mean_Force(i,j+2) = mean(Force);
         std_Force(i,j+2) = std(Force);
+        std_Force_dt(i,j+2) = mean(std_Force_segment);
         cov_Force(i,j+2) =  std_Force(i,j+2)/mean_Force(i,j+2)*100;
         cov_Force_dt(i,j+2) =  mean(cov_Force_segment);
               
@@ -65,6 +67,7 @@ end
 cd(save_folder)
 save('mean_Force','mean_Force')
 save('std_Force','std_Force')
+save('std_Force_dt','std_Force_dt')
 save('cov_Force','cov_Force')
 save('cov_Force_dt','cov_Force_dt')
 save('mean_pxx','mean_pxx')
