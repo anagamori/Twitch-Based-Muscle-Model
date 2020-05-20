@@ -49,7 +49,7 @@ hold on
 plot(force_vec,CoV_vec,'--k','LineWidth',2)
 plot(force_vec,CoV_vec,'o','LineWidth',2,'color','k')
 plot([x(1) x(end)],[0.02*100 0.02*100],'LineWidth',2,'Color',[77 172 38]/255)
-%plot([x(1) x(end)],[a_todorov*100 a_todorov*100],'LineWidth',2,'Color',[77 172 38]/255)
+plot([x(1) x(end)],[a_todorov*100 a_todorov*100],'LineWidth',2,'Color',[77 172 38]/255)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])

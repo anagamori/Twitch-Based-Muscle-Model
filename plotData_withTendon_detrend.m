@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_8_var_CoV_50_Ur_Rec_3';
+condition = 'Model_11_var_CoV_80_Ur_Rec_3';
 data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
 save_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -27,7 +27,7 @@ cov_Force_dt = zeros(nTrial,length(amp_vec));
 pxx = zeros(nTrial,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-trial_vec = -1:10; %-1:10; %0:10; %[0:6 8:10];
+trial_vec = -1:10; %[-1:8 10]; %-1:10; %-1:10; %0:10; %[0:6 8:10];
 for k = 1:length(trial_vec)
     j = trial_vec(k);
    
@@ -36,16 +36,17 @@ for k = 1:length(trial_vec)
     cd(code_folder)
     for i = 1:10
         Force_temp =  Force_mat(i,:);
-        Force = Force_temp(5*Fs+1:end);
+        Force = Force_temp(8*Fs+1:end);
         Force_dt = detrend(Force,1,1*Fs);
         bp_time = 1:1*Fs:length(Force_dt);
+        std_Force_segment = zeros(1,length(bp_time)-1);
         cov_Force_segment = zeros(1,length(bp_time)-1);
         for n = 1:length(bp_time)-1
             Force_segment = Force(bp_time(n):bp_time(n+1));
             Force_segment_dt = detrend(Force_segment,1);
             mean_Force_segment = mean(Force_segment);
-            std_Force_segment = std(Force_segment_dt);
-            cov_Force_segment(n) = std_Force_segment/mean_Force_segment*100;
+            std_Force_segment(n) = std(Force_segment_dt);
+            cov_Force_segment(n) = std_Force_segment(n)/mean_Force_segment*100;
         end
         mean_Force(i,j+2) = mean(Force);
         std_Force(i,j+2) = std(Force);
