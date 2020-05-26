@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_11_var_CoV_80_Ur_Rec_3';
+condition = 'Model_11_var_CoV_80_Ur_Rec_3_N_400';
 data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
 save_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -18,7 +18,7 @@ figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures
 Fs = 10000;
 time = 0:1/Fs:15;
 amp_vec = [0.025 0.05 0.1:0.1:1];
-nTrial = 10;
+nTrial = 5;
 mean_Force = zeros(nTrial,length(amp_vec));
 std_Force = zeros(nTrial,length(amp_vec));
 std_Force_dt = zeros(nTrial,length(amp_vec));
@@ -34,25 +34,17 @@ for k = 1:length(trial_vec)
     cd(data_folder)
     load(['Force_mat_' num2str(j)])
     cd(code_folder)
-    for i = 1:10
+    for i = 1:nTrial
         Force_temp =  Force_mat(i,:);
         Force = Force_temp(8*Fs+1:end);
-        Force_dt = detrend(Force,1,1*Fs);
-        bp_time = 1:1*Fs:length(Force_dt);
-        std_Force_segment = zeros(1,length(bp_time)-1);
-        cov_Force_segment = zeros(1,length(bp_time)-1);
-        for n = 1:length(bp_time)-1
-            Force_segment = Force(bp_time(n):bp_time(n+1));
-            Force_segment_dt = detrend(Force_segment,1);
-            mean_Force_segment = mean(Force_segment);
-            std_Force_segment(n) = std(Force_segment_dt);
-            cov_Force_segment(n) = std_Force_segment(n)/mean_Force_segment*100;
-        end
+        window = 1*Fs;
+        bp = [1:window:length(Force)];
+        Force_dt = detrend(Force,1,bp);
         mean_Force(i,j+2) = mean(Force);
         std_Force(i,j+2) = std(Force);
-        std_Force_dt(i,j+2) = mean(std_Force_segment);
+        std_Force_dt(i,j+2) = std(Force_dt);
         cov_Force(i,j+2) =  std_Force(i,j+2)/mean_Force(i,j+2)*100;
-        cov_Force_dt(i,j+2) =  mean(cov_Force_segment);
+        cov_Force_dt(i,j+2) =  std(Force_dt)/mean_Force(i,j+2)*100;
               
         [pxx(i,:),f] = pwelch(Force-mean(Force),rectwin(length(Force)),0,0:0.5:100,Fs,'power');
     end

@@ -67,7 +67,7 @@ plot(x,x*a_todorov,'LineWidth',2,'Color',[208 28 139]/255)
 yticks(0:0.25:1.75)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('SD (%Maximum Force)','FontSize',14)
-ylim([0 1.5])
+ylim([0 2])
 xlim([0 100])
 legend('New model','Moritz et al. 2005','','Jones et al. 2002','Todorov 2004','location','northeast')
 set(gca,'TickDir','out');

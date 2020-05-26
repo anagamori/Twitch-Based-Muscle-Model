@@ -11,9 +11,9 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/New_Model/withTendon/Model_11_var_CoV_80_Ur_Rec_3_PR_100';
+data_folder = '/Volumes/DATA2/New_Model/withTendon/Model_11_var_CoV_80_Ur_Rec_3_N_400';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_11_PR_100';
+model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_11_N_400';
 
 %%
 cd(model_parameter_folder)
@@ -55,8 +55,8 @@ for j = -1:10 %length(amp_vec)
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,2*Fs) amp-amp/50*[1:10*Fs]/Fs];
     %%
-    if j == 7
-        for i = 1:10
+    if j == 8
+        for i = 6:10
             i
             tic
             output = spikeDrivenMuscleModel_variableCoV(Fs,time,input,modelParameter,1);
@@ -68,7 +68,7 @@ for j = -1:10 %length(amp_vec)
             
         end
     elseif j == 10
-        for i = 1:10
+        for i = 6:10
             i
             tic
             output = spikeDrivenMuscleModel_variableCoV(Fs,time,input,modelParameter,1);
@@ -80,7 +80,7 @@ for j = -1:10 %length(amp_vec)
             
         end
     else
-        for i = 1:10
+        for i = 6:10
             i
             tic
             output = spikeDrivenMuscleModel_variableCoV(Fs,time,input,modelParameter,1);

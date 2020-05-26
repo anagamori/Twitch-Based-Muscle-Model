@@ -68,17 +68,13 @@ DR_mat = zeros(N_MU,length(time));
 
 spike_time = zeros(N_MU,1);
 spike_train = zeros(N_MU,length(time));
-F_ce = zeros(1,length(time));
+force = zeros(N_MU,length(time));
 F_se = zeros(1,length(time));
 
 R = zeros(N_MU,length(time));
 c = zeros(N_MU,1);
 cf = zeros(N_MU,1);
 A = zeros(N_MU,1);
-c_mat = zeros(N_MU,length(time));
-cf_mat = zeros(N_MU,length(time));
-A_tilde_mat = zeros(N_MU,length(time));
-A_mat = zeros(N_MU,length(time));
 
 S_i = zeros(N_MU,1);
 Y_i = zeros(N_MU,1);
@@ -202,14 +198,9 @@ for t = 1:length(time)
         end
     end
     %% Convert spikes into activation
-    [c,cf,A_tilde,A] = spike2activation(R(:,t),c,cf,A,parameter_Matrix,L_ce,S_i,Y_i,Fs);
+    [c,cf,~,A] = spike2activation(R(:,t),c,cf,A,parameter_Matrix,L_ce,S_i,Y_i,Fs);
     
-    c_mat(:,t) = c;
-    cf_mat(:,t) = cf;
-    A_tilde_mat(:,t) = A_tilde;
-    A_mat(:,t) = A;
-    
-    [F_ce(t),F_se(t)] = contraction_dynamics_v2(A,L_se,L_ce,V_ce,FL,FV,index_slow,Lmax,PTi,F0);
+    [force(:,t),F_se(t)] = contraction_dynamics_v2(A,L_se,L_ce,V_ce,FL,FV,index_slow,Lmax,PTi,F0);
     
     k_0_de = h*MuscleVelocity(t);
     l_0_de = h*contraction_dynamics(A,L_se,L_ce,V_ce,FL,FV,modelParameter,index_slow,Lmax,PTi,F0);
@@ -231,7 +222,7 @@ end
 %%
 if figOpt == 1
     figure(1)
-    plot(time,F_ce)
+    plot(time,F_se)
     xlabel('Time (s)')
     ylabel('Force (N)')
     hold on
@@ -239,6 +230,7 @@ end
 
 output.spike_train = spike_train;
 output.ForceTendon = F_se;
+%output.force = force;
 output.Lce = MuscleLength./(L0/100);
 output.Vce = MuscleVelocity./(L0/100);
 
@@ -465,7 +457,7 @@ output.Vce = MuscleVelocity./(L0/100);
             + (L_m_dot).^2*tan(rho).^2/(L_m);
     end
 
-     function [F_m,F_t] = contraction_dynamics_v2(A,L_s,L_m,L_m_dot,FL_vec,FV_vec,index_slow,Lmax,PT,F0)
+     function [f_i,F_t] = contraction_dynamics_v2(A,L_s,L_m,L_m_dot,FL_vec,FV_vec,index_slow,Lmax,PT,F0)
         %% Force-length and force-velocity
         FL_vec(1:index_slow) = FL_slow_function(L_m);
         FL_vec(index_slow+1:end) = FL_fast_function(L_m);
@@ -478,9 +470,6 @@ output.Vce = MuscleVelocity./(L0/100);
             FV_vec(index_slow+1:end) = FVcon_fast_function(L_m,L_m_dot);
         end
         
-        %% Passive element 1
-        F_pe1 = Fpe1_function(L_m/Lmax,L_m_dot);
-        
         %% Passive element 2
         F_pe2 = Fpe2_function(L_m);
         if F_pe2 > 0
@@ -488,9 +477,7 @@ output.Vce = MuscleVelocity./(L0/100);
         end
         
         f_i = A.*PT.*(FL_vec.*FV_vec+F_pe2);
-        
-        F_m_temp = sum(f_i);
-        F_m = F_m_temp + F_pe1*F0;
+       
         
         F_t = Fse_function(L_s) * F0;
     
