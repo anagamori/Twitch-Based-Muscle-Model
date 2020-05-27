@@ -11,8 +11,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
-model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_11_N_400';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
+model_parameter_folder =  '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Model Parameters/Model_11_N_400';
 %%
 cd(model_parameter_folder)
 load('FR_half')

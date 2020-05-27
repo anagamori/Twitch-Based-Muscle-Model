@@ -10,11 +10,11 @@ close all
 clear all
 clc
 
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_8');
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_8');
 load('modelParameter')
 load('CT_vec')
 load('t2t')
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
 N_MU = modelParameter.N_MU;

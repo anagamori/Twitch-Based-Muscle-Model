@@ -11,7 +11,7 @@ close all
 clear all
 clc
 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_8');
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11');
 load('modelParameter')
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
@@ -72,7 +72,7 @@ figure(2)
 scatter(U_th*100,PDR,'filled','k','LineWidth',0.5)
 hold on
 plot(U_th*100,PDR_Calc,'r','LineWidth',1)
-xlim([-5 55])
+xlim([-5 85])
 xticks([0 0.1 0.2 0.3 0.4 0.5]*100)
 xlabel('Recruitment Threshold (%Maximum)','FontSize',8)
 ylabel('Discharge Rate (Hz)','FontSize',8)
@@ -86,7 +86,7 @@ fig.PaperPosition = [0 0 3.34 3.34];
 %%
 clear U_th_diff
 DR_temp = zeros(modelParameter.N_MU,1);
-U = 0.1;
+U = 0.3;
 DR_MU = g_e.*(U-U_th)+MDR;
 
 %    DR_temp = MDR + lamda.*k_e.*(U_vec(i)-U_th_new);
