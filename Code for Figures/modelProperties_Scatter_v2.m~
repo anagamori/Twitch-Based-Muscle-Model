@@ -15,33 +15,24 @@ load('modelParameter')
 load('CT_vec')
 load('FR_half')
 load('t2t')
+load('index_MU')
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
 N_MU = modelParameter.N_MU;
-PDR_temp = 2*FR_half';
-idx_all = zeros(1,length(200));
-for i = 1:200
-    loc = find(PDR_temp==modelParameter.PDR(i));
-    %[~,loc] = min(abs(PDR_temp-modelParameter.PDR(i)));
-    idx_temp = [];
-    for j = 1:length(loc)
-        idx_temp = [idx_temp find(loc(j)==idx_all)];
-    end
-    loc(idx_temp) = [];
-    idx_all(i) = loc(1);
-end
-index_MU = idx_all; 
 
 CT = CT_vec(index_MU)';
 t2t = t2t(index_MU)';
 FR_half = modelParameter.FR_half;
+MDR = FR_half/2;
+PDR = FR_half*2;
 PTi = modelParameter.PTi;
 index_slow = modelParameter.index_slow;
 U_th = modelParameter.U_th;
 
 %%
 %randperm(300,50)
+
 figure(1)
 plot(CT(1:index_slow),PTi(1:index_slow),'o','color',[36 123 160]/255,'LineWidth',1)
 hold on 
@@ -132,14 +123,60 @@ ax = gca;
 ax.FontSize = 10;
 
 %%
+x = 22.5:5:87.5;
+frac_Cuseum = [0.016941 0.056471 0.13882 0.19859 0.17129 0.16094 0.11059 0.049882 0.024471 0.020706 0.024471 0.016941 0.0056471 0.0089412];
+
+int = 20:5:90;
+count_slow = zeros(1,length(x));
+count_fast = zeros(1,length(x));
+for i = 1:length(int)-1
+    count_slow(i) = length(find(CT(1:index_slow)>=int(i)&CT(1:index_slow)<int(i+1)));
+    count_fast(i) = length(find(CT(index_slow+1:end)>=int(i)&CT(index_slow+1:end)<int(i+1)));
+end
+frac_slow = count_slow./(sum(count_slow)+sum(count_fast));
+frac_fast = count_fast./(sum(count_slow)+sum(count_fast));
 figure(7)
-histogram(CT(1:index_slow),10:10:120,'FaceColor',[36 123 160]/255)
-hold on
-histogram(CT(index_slow+1:end),10:10:120,'FaceColor',[255 22 84]/255)
-xlabel('Contraction Time (s)','FontSize',14)
-ylabel('Counts','FontSize',14)
-legend('Slow-twitch','Fast-twitch')
+h = bar(x,frac_slow,'hist');
+set(h,'FaceColor',[36 123 160]/255,'FaceAlpha',0.5);
+hold on 
+h2 = bar(x,frac_fast,'hist');
+set(h2,'FaceColor',[255 22 84]/255,'FaceAlpha',0.5);
+plot(x,frac_Cuseum,'k','LineWidth',1)
+plot(x,frac_Cuseum,'o', 'Color','k','MarkerFaceColor', 'k')
+xlabel('Contraction Time (s)','FontSize',10)
+ylabel('Proportion','FontSize',14)
+legend('Slow-twitch','Fast-twitch','Cutsem et al. 1993')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 ax = gca;
 ax.FontSize = 10;
+
+%%
+x = 5:2:15;
+frac_Cutsem = [0.17846 0.20369 0.23015 0.17908 0.11508 0.038769];
+int = 2:2:20;
+count_slow = zeros(1,length(int)-1);
+count_fast = zeros(1,length(int)-1);
+for i = 1:length(int)-1
+    count_slow(i) = length(find(MDR(1:index_slow)>=int(i)&MDR(1:index_slow)<int(i+1)));
+    count_fast(i) = length(find(MDR(index_slow+1:end)>=int(i)&MDR(index_slow+1:end)<int(i+1)));
+end
+frac_slow = count_slow./(sum(count_slow)+sum(count_fast));
+frac_fast = count_fast./(sum(count_slow)+sum(count_fast));
+
+figure(7)
+h = bar(frac_slow,'hist');
+set(h,'FaceColor',[36 123 160]/255,'FaceAlpha',0.5);
+hold on 
+h2 = bar(x,frac_fast,'hist');
+set(h2,'FaceColor',[255 22 84]/255,'FaceAlpha',0.5);
+plot(x,frac_Cuseum,'k','LineWidth',1)
+plot(x,frac_Cuseum,'o', 'Color','k','MarkerFaceColor', 'k')
+xlabel('Contraction Time (s)','FontSize',10)
+ylabel('Proportion','FontSize',14)
+legend('Slow-twitch','Fast-twitch','Cutsem et al. 1993')
+set(gca,'TickDir','out');
+set(gca,'box','off')
+ax = gca;
+ax.FontSize = 10;
+
