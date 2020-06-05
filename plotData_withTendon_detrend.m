@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_11_var_CoV_80_Ur_Rec_3_N_400';
+condition = 'Model_11_var_CoV_80_Ur_Rec_3';
 data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
 save_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -18,7 +18,7 @@ figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures
 Fs = 10000;
 time = 0:1/Fs:15;
 amp_vec = [0.025 0.05 0.1:0.1:1];
-nTrial = 5;
+nTrial = 10;
 mean_Force = zeros(nTrial,length(amp_vec));
 std_Force = zeros(nTrial,length(amp_vec));
 std_Force_dt = zeros(nTrial,length(amp_vec));

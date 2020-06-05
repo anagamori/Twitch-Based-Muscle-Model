@@ -28,11 +28,11 @@ modelParameter.recruitment = 3; % 1: Variable gain, 2: Fuglevand's formulation
 %% Simlulation parameters
 Fs = 10000;
 time = 0:1/Fs:15;
-amp_vec = [0.05 0.1:0.1:1];
+amp_vec = [0.025 0.05 0.1:0.1:1];
 %parpool(10)
-for j = 0:10 %1:length(amp_vec)
+for j = -1:10 %1:length(amp_vec)
     j
-    amp = amp_vec(j+1);
+    amp = amp_vec(j+2);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     
     output_temp = cell(1,10);
