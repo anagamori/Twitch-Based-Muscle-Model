@@ -10,7 +10,7 @@ close all
 clear all
 clc
 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11_v2');
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11');
 load('modelParameter')
 load('CT_vec')
 load('FR_half')
