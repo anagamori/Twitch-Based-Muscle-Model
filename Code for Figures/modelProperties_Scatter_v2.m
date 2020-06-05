@@ -113,9 +113,9 @@ ax.FontSize = 10;
 
 %%
 figure(6)
-histogram(PTi(1:index_slow),'FaceColor',[36 123 160]/255)
+histogram(PTi(1:index_slow),0:1:12,'FaceColor',[36 123 160]/255)
 hold on
-histogram(PTi(index_slow+1:end),'FaceColor',[255 22 84]/255)
+histogram(PTi(index_slow+1:end),0:1:12,'FaceColor',[255 22 84]/255)
 xlabel('Peak Tetanic Force','FontSize',14)
 ylabel('Counts','FontSize',14)
 legend('Slow-twitch','Fast-twitch')

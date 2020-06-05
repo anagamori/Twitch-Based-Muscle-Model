@@ -8,7 +8,7 @@
 %   Used for c of Summary_Recruitment.pdf
 %==========================================================================
 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_8');
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11');
 load('modelParameter')
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
@@ -23,7 +23,7 @@ lamda =  modelParameter.lamda;
 k_e =  modelParameter.k_e;
 index_saturation = modelParameter.index_saturation;
 U_th_t =  modelParameter.U_th_t;
-
+index_slow = modelParameter.index_slow;
 %% Discharge rate of motor unit
 U_vec = 0:0.001:1;
 DR_mat = zeros(N_MU,length(U_vec));
@@ -50,16 +50,21 @@ end
 %%
 %close all
 %index_plot = 1:1:300; %[1 50 100 150 200 250 300];
-index_plot = [2 10 38 40 60 80 83 100 111 120];
+
+index_plot_slow = [2 10 111 120 130];
+index_plot_fast = [160 180 190 197 200];
 figure(1)
-plot(U_vec*100,DR_mat(index_plot,:),'k','LineWidth',1)
+plot(U_vec*100,DR_mat(index_plot_slow,:),'Color',[36 123 160]/255,'LineWidth',1)
+hold on 
+plot(U_vec*100,DR_mat(index_plot_fast,:),'Color',[255 22 84]/255,'LineWidth',1)
 xlabel('Activation (%Maximum)','FontSize',8)
 ylabel('Discharge Rate (Hz)','FontSize',8)
 set(gca,'TickDir','out');
 set(gca,'box','off')
-ax = gca;
-ax.FontSize = 6;
-fig = gcf;
-fig.PaperUnits = 'inches';
-fig.PaperPosition = [0 0 3.34 3.34];
-hold on
+hold off
+% ax = gca;
+% ax.FontSize = 6;
+% fig = gcf;
+% fig.PaperUnits = 'inches';
+% fig.PaperPosition = [0 0 3.34 3.34];
+% hold on
