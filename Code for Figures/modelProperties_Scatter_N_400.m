@@ -21,8 +21,8 @@ cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 %%
 N_MU = modelParameter.N_MU;
 
-CT = CT_vec(index_MU)';
-t2t = t2t(index_MU)';
+CT = CT_vec';
+%t2t = t2t(index_MU)';
 FR_half = modelParameter.FR_half;
 MDR = FR_half/2;
 PDR = FR_half*2;
@@ -45,40 +45,40 @@ ax = gca;
 ax.FontSize = 10;
 
 %%
-mdl_CT_t2t_slow = fitlm(CT(1:index_slow),t2t(1:index_slow));
-betahat_CT_t2t_slow = mdl_CT_t2t_slow.Coefficients.Estimate;
-mdl_CT_t2t_fast = fitlm(CT(index_slow+1:N_MU),t2t(index_slow+1:N_MU));
-betahat_CT_t2t_fast = mdl_CT_t2t_fast.Coefficients.Estimate;
-
-figure(2)
-plot(CT(1:index_slow),t2t(1:index_slow),'o','color',[36 123 160]/255,'LineWidth',1)
-hold on 
-plot(CT(1:index_slow),betahat_CT_t2t_slow(1)+CT(1:index_slow)*betahat_CT_t2t_slow(2),'k','LineWidth',1)
-plot(CT(index_slow+1:end),t2t(index_slow+1:end),'o','color',[255 22 84]/255,'LineWidth',1)
-plot(CT(index_slow+1:end),betahat_CT_t2t_fast(1)+CT(index_slow+1:end)*betahat_CT_t2t_fast(2),'k','LineWidth',1)
-text(mean(CT(1:index_slow)),0.6,num2str(sqrt(mdl_CT_t2t_slow.Rsquared.Ordinary)))
-text(mean(CT(index_slow+1:end)),0.6,num2str(sqrt(mdl_CT_t2t_fast.Rsquared.Ordinary)))
-xlabel('Contraction Time (ms)','FontSize',14)
-ylabel('Twitch-Tetanus Ratio','FontSize',14)
-ylim([0 0.65])
-set(gca,'TickDir','out');
-set(gca,'box','off')
-ax = gca;
-ax.FontSize = 10;
+% mdl_CT_t2t_slow = fitlm(CT(1:index_slow),t2t(1:index_slow));
+% betahat_CT_t2t_slow = mdl_CT_t2t_slow.Coefficients.Estimate;
+% mdl_CT_t2t_fast = fitlm(CT(index_slow+1:N_MU),t2t(index_slow+1:N_MU));
+% betahat_CT_t2t_fast = mdl_CT_t2t_fast.Coefficients.Estimate;
+% 
+% figure(2)
+% plot(CT(1:index_slow),t2t(1:index_slow),'o','color',[36 123 160]/255,'LineWidth',1)
+% hold on 
+% plot(CT(1:index_slow),betahat_CT_t2t_slow(1)+CT(1:index_slow)*betahat_CT_t2t_slow(2),'k','LineWidth',1)
+% plot(CT(index_slow+1:end),t2t(index_slow+1:end),'o','color',[255 22 84]/255,'LineWidth',1)
+% plot(CT(index_slow+1:end),betahat_CT_t2t_fast(1)+CT(index_slow+1:end)*betahat_CT_t2t_fast(2),'k','LineWidth',1)
+% text(mean(CT(1:index_slow)),0.6,num2str(sqrt(mdl_CT_t2t_slow.Rsquared.Ordinary)))
+% text(mean(CT(index_slow+1:end)),0.6,num2str(sqrt(mdl_CT_t2t_fast.Rsquared.Ordinary)))
+% xlabel('Contraction Time (ms)','FontSize',14)
+% ylabel('Twitch-Tetanus Ratio','FontSize',14)
+% ylim([0 0.65])
+% set(gca,'TickDir','out');
+% set(gca,'box','off')
+% ax = gca;
+% ax.FontSize = 10;
 
 %% 
-figure(3)
-histogram(t2t(1:index_slow),0:0.05:0.6,'FaceColor',[36 123 160]/255)
-hold on
-histogram(t2t(index_slow+1:end),0:0.05:0.6,'FaceColor',[255 22 84]/255)
-xlabel('Twitch-Tetanus Ratio','FontSize',14)
-ylabel('Counts','FontSize',14)
-legend('Slow-twitch','Fast-twitch')
-set(gca,'TickDir','out');
-set(gca,'box','off')
-ax = gca;
-ax.FontSize = 10;
-
+% figure(3)
+% histogram(t2t(1:index_slow),0:0.05:0.6,'FaceColor',[36 123 160]/255)
+% hold on
+% histogram(t2t(index_slow+1:end),0:0.05:0.6,'FaceColor',[255 22 84]/255)
+% xlabel('Twitch-Tetanus Ratio','FontSize',14)
+% ylabel('Counts','FontSize',14)
+% legend('Slow-twitch','Fast-twitch')
+% set(gca,'TickDir','out');
+% set(gca,'box','off')
+% ax = gca;
+% ax.FontSize = 10;
+% 
 %%
 figure(4)
 plot(U_th(1:index_slow),PTi(1:index_slow),'o','color',[36 123 160]/255,'LineWidth',1)

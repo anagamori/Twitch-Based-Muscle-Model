@@ -18,12 +18,10 @@ model_parameter_folder =  '/Users/akira/Documents/Github/Twitch-Based-Muscle-Mod
 cd(model_parameter_folder)
 load('CT_vec')
 load('index_MU')
-load('FR_half')
 %load('modelParameter')
 cd(code_folder)
 index_MU_1 = index_MU; 
 CT_temp_1 = CT_vec(index_MU_1);
-FR_half_1 = FR_half';
 
 cd(model_parameter_folder)
 load('FR_half_2')
@@ -37,13 +35,11 @@ r = randperm(length(index_temp),200);
 index_MU_2 = sort(r)+4; 
 CT_temp_2 = CT_vec(index_MU_2);
 
-%[CT_temp_all,index_MU] = sort([CT_temp_1 CT_temp_2],'descend');
-CT_temp = [CT_temp_1 CT_temp_2];
-index_MU = [1:135 [1:126]+200 136:200 [127:200]+200];
-CT_vec = CT_temp(index_MU);
+[CT_temp_all,index_MU] = sort([CT_temp_1 CT_temp_2],'descend');
+
+index_MU = [index_MU_1(1:135) index_MU_2(1:126)+200 index_MU_1(136:end) index_MU_2(127:end)+200];
 cd(model_parameter_folder)
 save('index_MU_2','index_MU_2')
-save('CT_vec_new','CT_vec')
 cd(code_folder)
 
 %% Muscle architectural parameters
@@ -90,8 +86,8 @@ PTi = P_MU./sum(P_MU)*modelParameter.F0; % peak tetanic force for individual uni
 %% Fractional PSCA
 F_pcsa_slow = 0.7; % fractional PSCA of slow-twitch motor units (0-1)
 % value obtained from Jaworowski et al. 2002 for TA muscle
-%[~, modelParameter.index_slow] = min(abs(cumsum(PTi) - modelParameter.F0*F_pcsa_slow)); 
-modelParameter.index_slow = 135+126;
+[~, modelParameter.index_slow] = min(abs(cumsum(PTi) - modelParameter.F0*F_pcsa_slow)); 
+index_slow = 
 %% Model parameters for activation-frequency relationship
 cd(model_parameter_folder )
 load('pool_parameter_matrix')
