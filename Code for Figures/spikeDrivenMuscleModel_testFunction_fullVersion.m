@@ -82,7 +82,7 @@ for i = 1:2
             spike_temp = zeros(1,length(time));
             if spike(t) == 1
                 spike_temp(t) = 1;
-                temp = conv(spike_temp,R_temp*(1+2*A^alpha));
+                temp = conv(spike_temp,R_temp*(1+2*c^alpha));
                 R = R + temp(1:length(time));
             end
             %R = spike(t) + exp(-h/tau_1)*R; %*(1+3*A^alpha);
@@ -171,6 +171,9 @@ for i = 1:2
     end
     if plotOpt == 1
         figure(i)
+        subplot(2,1,1)
+        plot(time,c_vec,'LineWidth',1)
+        subplot(2,1,2)
         plot(time,A_vec,'LineWidth',1)
         hold on
         xlabel('Time (s)','FontSize',14)

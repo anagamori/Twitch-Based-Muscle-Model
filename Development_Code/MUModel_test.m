@@ -1,5 +1,5 @@
 
-function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,FR_half_temp,fiber_type,plotOpt)
+function [Data] = MUModel_test(parameter,Lce,FR_half_temp,fiber_type,plotOpt)
 %==========================================================================
 % model_test.m
 % Author: Akira Nagamori
@@ -11,7 +11,7 @@ function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,
 %   relationship (e.g., parameter(5), parameter(6), etc)
 %==========================================================================
 %% Simulation parameters
-Fs = 5000; %sampling frequency
+Fs = 2000; %sampling frequency
 time = 0:1/Fs:6; %simulation time
 
 S = parameter(1); %7;
@@ -20,6 +20,7 @@ k_1 = parameter(3); %14.625;
 k_2 = parameter(4); %4.9375;
 k_3 = parameter(5)*Lce + parameter(6); %17.41*Lce - 2.85;
 k_4 = parameter(7)*Lce + parameter(8); %-7.67*Lce + 14.92;
+k_4_i = k_4;
 tau_1 = parameter(9); %0.0051;
 tau_2 = parameter(10); % 0.04;
 N = parameter(11)*Lce + parameter(12); %-2.26*Lce + 4.20;
@@ -66,23 +67,29 @@ for i = 1:2
         %%  initialization
         c = 0; % free calcium concentration
         cf = 0; % concentraction of calcium bound to troponin
+        cs = C - c - cf;
         A = 0; % muscle activation
         
         c_vec = zeros(1,length(time));
         cf_vec = zeros(1,length(time));
+        cs_vec = zeros(1,length(time));
         A_tilda_vec = zeros(1,length(time));
         A_vec = zeros(1,length(time));
         
         
-        R_temp = exp(-time/tau_1);
+        R_temp = 1-exp(-time/tau_1);
+        R_temp_2 = exp(-time/0.01);
         R = zeros(1,length(time));
+        %%
         for t = 1:length(time)
+            %%
+            k_4 = k_4_i/(1+2*A);
             %% Stage 1
             % Calcium diffusion to sarcoplasm
             spike_temp = zeros(1,length(time));
             if spike(t) == 1
                 spike_temp(t) = 1;
-                temp = conv(spike_temp,R_temp*(1+2*A^alpha));
+                temp = conv(spike_temp,R_temp_2.*R_temp*cs); %(1+2*c^alpha));
                 R = R + temp(1:length(time));
             end
             %R = spike(t) + exp(-h/tau_1)*R; %*(1+3*A^alpha);
@@ -92,7 +99,7 @@ for i = 1:2
             cf_dot = (1-cf)*(k_3*c-k_4*cf);
             c = c_dot/Fs + c;
             cf = cf_dot/Fs + cf;
-            
+            cs = C - c - cf;
             %% Stage 2
             % Cooperativity and saturation
             if cf < 0
@@ -108,6 +115,7 @@ for i = 1:2
 %             b0 = 17.5;
 %             b1 = 0.6;
 %             tau_2 = tau_2_0*(1-b1.*A)^2;
+            %tau_2_new = tau_2*cosh(A_tilda+11)
             A_dot = (A_tilda-A)/tau_2;
             A = A_dot/Fs + A;
             
@@ -116,6 +124,7 @@ for i = 1:2
             %R_vec(t) = R;
             c_vec(t) = c;
             cf_vec(t) = cf;
+            cs_vec(t) = cs;
             A_tilda_vec(t) = A_tilda;
             A_vec(t) = A;
             
@@ -229,17 +238,17 @@ for i = 1:2
         error = sum(error_temp)
         if plotOpt == 1
             figure(6)
-            %plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
-            plot(FR_test,mean_exc,'LineWidth',2,'color','b')
-            xlim([0 100])
+            plot(FR_test/FR_half,mean_exc,'LineWidth',2,'color','b')
+            %plot(FR_test,mean_exc,'LineWidth',2,'color','b')
+            %xlim([0 100])
             xlabel('Frequency (f_{0.5})','FontSize',14)
             ylabel('Activation','FontSize',14)
             set(gca,'TickDir','out');
             set(gca,'box','off')
             hold on
             %plot(f_eff,Af_new,'color','r')
-            plot(f_eff*FR_half,Af_Song,'color','k','LineWidth',1)
-            %xlim([0 3])
+            plot(f_eff,Af_Song,'color','k','LineWidth',1)
+            xlim([0 3])
             legend('New','Song')
             movegui('northeast')
             
