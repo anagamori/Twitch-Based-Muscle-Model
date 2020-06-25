@@ -14,8 +14,8 @@ close all
 clc
 clear all
 %%
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11';
 
 %% 
 cd(data_folder)
@@ -24,7 +24,7 @@ cd(code_folder)
 
 parameterMatrix = modelParameter.parameterMatrix;
 
-MU_No = 30;
+MU_No = 1;
 MU_type = 'slow';
 parameter = parameterMatrix(MU_No,:);
 %%
