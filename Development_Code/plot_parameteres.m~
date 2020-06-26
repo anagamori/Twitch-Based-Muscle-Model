@@ -37,8 +37,7 @@ for i = 1:N_MU
     hold on 
     
     figure(4)
-    ax_4 = plot(Data{2,10}*100,Data{2,11}*100,'color',[11,19,43]/255);
-    ax_4.Color(4) = 0.5;
+    plot(Data{2,10},Data{2,11})
     hold on
 end
 
@@ -50,24 +49,7 @@ plot(CT,1./FR_half*1000,'o')
 
 figure(3)
  plot(f_exp./f_half_exp,fusion_exp,'LineWidth',1,'color','k')
- 
- x_scale = 20/2.9;
-y_scale =20/2.1;
-
-x = [0.6 2.0 4.6 7 9.5 11.2 12.7 13.5 13.8];
-y = [0.25 3 5 7.2 8.8 9.4 9.5 10.1 10.1];
-
-Force = x*x_scale;
-Fusion = y*y_scale;
-
-figure(4)
-hold on
-plot(Force,Fusion,'LineWidth',2,'color',[252,163,17]/255)
-xlabel('Activation (%)')
-ylabel('Fusion (%)')
-set(gca,'TickDir','out');
-set(gca,'box','off')
-            
+ figure
 %%
 cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
 save('CT','CT')

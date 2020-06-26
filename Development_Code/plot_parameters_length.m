@@ -18,28 +18,30 @@ f_half_exp = f_exp(loc);
 fusion_exp = [-0.28169 17.465 36.62 58.31 74.93 85.915 90.141 92.394 94.93 96.056 96.62 97.465 97.465 97.746 98.028 97.746 97.465 97.465 97.746 96.62];
 
 
-for i = 1:N_MU
-
+for i = 10
+    
     cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
-    load(['Data_' num2str(i)])
+    load(['Data_v2_' num2str(i)])
     cd(code_folder)
-
-    CT(i) = Data{2,1};
-    t2t(i) = Data{2,5};
-    FR_half(i) = Data{2,6};
-    
-    Af(i,:) = Data{2,10}';
-    fusion(i,:) = Data{2,11}';
-    
-    figure(3)
-    plot(Data{2,9},Data{2,11}*100)
-    xlim([0 3])
-    hold on 
-    
-    figure(4)
-    ax_4 = plot(Data{2,10}*100,Data{2,11}*100,'color',[11,19,43]/255);
-    ax_4.Color(4) = 0.5;
-    hold on
+    for j = 1:5
+        Data = DAta
+        CT(i) = Data{2,1};
+        t2t(i) = Data{2,5};
+        FR_half(i) = Data{2,6};
+        
+        Af(i,:) = Data{2,10}';
+        fusion(i,:) = Data{2,11}';
+        
+        figure(3)
+        plot(Data{2,9},Data{2,11}*100)
+        xlim([0 3])
+        hold on
+        
+        figure(4)
+        ax_4 = plot(Data{2,10}*100,Data{2,11}*100,'color',[11,19,43]/255);
+        ax_4.Color(4) = 0.5;
+        hold on
+    end
 end
 
 figure(1)
@@ -49,9 +51,9 @@ figure(2)
 plot(CT,1./FR_half*1000,'o')
 
 figure(3)
- plot(f_exp./f_half_exp,fusion_exp,'LineWidth',1,'color','k')
- 
- x_scale = 20/2.9;
+plot(f_exp./f_half_exp,fusion_exp,'LineWidth',1,'color','k')
+
+x_scale = 20/2.9;
 y_scale =20/2.1;
 
 x = [0.6 2.0 4.6 7 9.5 11.2 12.7 13.5 13.8];
@@ -67,7 +69,7 @@ xlabel('Activation (%)')
 ylabel('Fusion (%)')
 set(gca,'TickDir','out');
 set(gca,'box','off')
-            
+
 %%
 cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
 save('CT','CT')

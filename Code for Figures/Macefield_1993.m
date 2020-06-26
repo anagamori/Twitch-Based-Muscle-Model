@@ -10,7 +10,7 @@ y = [0.25 3 5 7.2 8.8 9.4 9.5 10.1 10.1];
 
 Force = x*x_scale;
 Fusion = y*y_scale;
-3
+
 figure
 plot(Force,Fusion)
 xlabel('Mean Force (%)','FontSize',14)
