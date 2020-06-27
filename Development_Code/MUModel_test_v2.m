@@ -73,7 +73,6 @@ for i = 1:nTrial
         %%  initialization
         c = 0; % free calcium concentration
         cf = 0; % concentraction of calcium bound to troponin
-        cs = C - c - cf;
         A = 0; % muscle activation
         
         c_vec = zeros(1,length(time));

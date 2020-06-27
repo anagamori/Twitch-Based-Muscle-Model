@@ -73,6 +73,6 @@ for n = 1:200
     end
     
     cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
-    save(['Data_v2_' num2str(MU_No)],'Data')
+    save(['Data_v2_' num2str(MU_No)],'Data_all')
     cd(code_folder)
 end

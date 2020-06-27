@@ -1,9 +1,9 @@
-close all
+%close all
 clc
 clear all
 
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code';
-data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code';
+data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11';
 
 N_MU = 200;
 CT = zeros(N_MU,1);
@@ -20,8 +20,8 @@ fusion_exp = [-0.28169 17.465 36.62 58.31 74.93 85.915 90.141 92.394 94.93 96.05
 
 for i = 1:N_MU
 
-    cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
-    load(['Data_' num2str(i)])
+    cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
+    load(['Data_v2_' num2str(i)])
     cd(code_folder)
 
     CT(i) = Data{2,1};
@@ -67,9 +67,14 @@ xlabel('Activation (%)')
 ylabel('Fusion (%)')
 set(gca,'TickDir','out');
 set(gca,'box','off')
-            
+
+figure(6)
+plot(mean(Af)*100,mean(fusion)*100,'LineWidth',1,'color','k')
+hold on 
+plot(Force,Fusion,'LineWidth',2,'color',[252,163,17]/255)
+
 %%
-cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
+cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
 save('CT','CT')
 save('t2t','t2t')
 save('FR_half','FR_half')
