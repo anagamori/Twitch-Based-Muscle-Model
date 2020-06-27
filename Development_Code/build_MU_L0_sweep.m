@@ -34,8 +34,8 @@ Lce = 1;
 % tau_3 = 0.033698122; %parameter(15); %4.475;
 % alpha = 1.2;
 
-for i = 237
-    MU_No = 69;
+for i = 301
+    MU_No = 62;
     cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
     load(['Data_' num2str(MU_No)])
     cd(code_folder)

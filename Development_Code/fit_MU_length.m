@@ -19,8 +19,8 @@ data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Par
 
 simOpt = 0;
 Fs = 5000;
-%parpool(10)
-for m = 7:200
+parpool(10)
+for m = 69:200
     m
     MU_No = m;
     if m <= 147
