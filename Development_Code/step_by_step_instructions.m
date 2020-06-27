@@ -15,5 +15,8 @@ adjust_MU_LO
 % generate parameter, phi
 fit_MU_length.m
 
+%
+plot_parameters.m
+
 % final test 
 test_MU_length.m

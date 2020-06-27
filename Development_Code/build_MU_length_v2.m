@@ -12,8 +12,8 @@ Fs = 10000;
 parameter_all = zeros(200,14);
 for n = 1:200
     cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
-    load(['Data_' num2str(n)])
-    load(['phi_' num2str(n)])
+    load(['Data_v2_' num2str(n)])
+    load(['phi_v2_' num2str(n)])
     cd(code_folder)
     parameter = Data{2,12};
     parameter(12) = 0.8;
