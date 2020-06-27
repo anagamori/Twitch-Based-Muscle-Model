@@ -55,7 +55,7 @@ F_pcsa_slow = 0.4; % fractional PSCA of slow-twitch motor units (0-1)
 %% Model parameters for activation-frequency relationship
 cd(model_parameter_folder )
 load('pool_parameter_matrix')
-modelParameter.parameterMatrix = parameter_Matrix(index_MU,:);
+modelParameter.parameterMatrix = parameter_Matrix;
 cd(code_folder)
 
 %% Assign peak tetanic force into each unit
@@ -85,7 +85,7 @@ modelParameter.U_th = U_th(index_MU_PTi);
 cd(model_parameter_folder)
 load('FR_half')
 cd(code_folder)
-modelParameter.FR_half = FR_half(index_MU)';
+modelParameter.FR_half = FR_half';
 modelParameter.MDR = modelParameter.FR_half/2;
 modelParameter.PDR = modelParameter.FR_half*2;
 
