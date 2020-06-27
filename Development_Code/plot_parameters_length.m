@@ -6,8 +6,10 @@ code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/D
 data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11';
 
 N_MU = 200;
-CT = zeros(N_MU,1);
-t2t = zeros(N_MU,1);
+CT = zeros(1,5);
+t2t = zeros(1,5);
+twitch_amp = zeros(1,5);
+p2p =zeros(52,5);
 FR_half = zeros(N_MU,1);
 Af = zeros(N_MU,52);
 fusion = zeros(N_MU,52);
@@ -18,40 +20,77 @@ f_half_exp = f_exp(loc);
 fusion_exp = [-0.28169 17.465 36.62 58.31 74.93 85.915 90.141 92.394 94.93 96.056 96.62 97.465 97.465 97.746 98.028 97.746 97.465 97.465 97.746 96.62];
 
 
-for i = 10
-    
+Lce_vec = [1 1.2 1.1 0.9 0.8];
+
+for i = 100
+    if i <= 147
+        fiber_type = 'slow';
+    else
+        fiber_type = 'fast';
+    end
     cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
-    load(['Data_v2_' num2str(i)])
+    load(['Data_full_' num2str(i)])
     cd(code_folder)
     for j = 1:5
-        Data = DAta
-        CT(i) = Data{2,1};
-        t2t(i) = Data{2,5};
+        Data = Data_all{j};
+        CT(j) = Data{2,1};
+        t2t(j) = Data{2,5};
         FR_half(i) = Data{2,6};
+        
+        twitch_amp(j) = Data{2,4};
+        p2p(:,j) = Data{2,13};
         
         Af(i,:) = Data{2,10}';
         fusion(i,:) = Data{2,11}';
         
+        f_eff = Data{2,9};
+        Lce = Lce_vec(j);
+        if strcmp(fiber_type,'slow')
+            a_f = 0.56;
+            n_f0 = 2.1;
+            n_f1 = 5;
+        elseif strcmp(fiber_type,'fast')
+            a_f = 0.56;
+            n_f0 = 2.1;
+            n_f1 = 3.3;
+        end
+        n_f = n_f0 +n_f1* (1/Lce-1);
+        Af_Song = 1-exp(-(f_eff./(a_f*n_f)).^n_f);
+        
+        figure(2)
+        plot(Data{2,9},Data{2,10}*100,'LineWidth',1,'color',[11,19,43]/255)
+        xlim([0 3])
+        hold on
+        plot(f_eff,Af_Song*100,'LineWidth',1,'color',[252,163,17]/255)
+        
         figure(3)
-        plot(Data{2,9},Data{2,11}*100)
+        plot(Data{2,9},Data{2,11}*100,'LineWidth',1,'color',[11,19,43]/255)
         xlim([0 3])
         hold on
         
         figure(4)
-        ax_4 = plot(Data{2,10}*100,Data{2,11}*100,'color',[11,19,43]/255);
-        ax_4.Color(4) = 0.5;
+        %ax_4 =
+        plot(Data{2,10}*100,Data{2,11}*100,'LineWidth',1,'color',[11,19,43]/255)
+        %ax_4.Color(4) = 0.5;
         hold on
+        
+        
     end
 end
 
-figure(1)
-plot(CT,t2t,'o')
-
 figure(2)
-plot(CT,1./FR_half*1000,'o')
+xlabel('Discharge Rate (f_{0.5})')
+ylabel('Activation (%)')
+set(gca,'TickDir','out');
+set(gca,'box','off')
 
 figure(3)
-plot(f_exp./f_half_exp,fusion_exp,'LineWidth',1,'color','k')
+plot(f_exp./f_half_exp,fusion_exp,'LineWidth',1,'color',[252,163,17]/255)
+xlabel('Discharge Rate (f_{0.5})')
+ylabel('Fusion (%)')
+set(gca,'TickDir','out');
+set(gca,'box','off')
+%legend('Lce = 1','Lce = 1.2', 'Lce = 1.1', 'Lce = 0.9', 'Lce = 0.8')
 
 x_scale = 20/2.9;
 y_scale =20/2.1;
@@ -70,9 +109,11 @@ ylabel('Fusion (%)')
 set(gca,'TickDir','out');
 set(gca,'box','off')
 
-%%
-cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
-save('CT','CT')
-save('t2t','t2t')
-save('FR_half','FR_half')
-cd(code_folder)
+
+figure(5)
+plot(Data{2,9},1-p2p./twitch_amp(2),'LineWidth',1,'color',[11,19,43]/255)
+xlim([0 3])
+xlabel('Discharge Rate (f_{0.5})')
+ylabel('Fusion (%)')
+set(gca,'TickDir','out');
+set(gca,'box','off')

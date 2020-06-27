@@ -1,5 +1,5 @@
 %==========================================================================
-% adjust_MU_LO.m
+% adjust_MU_L0.m
 % Author: Akira Nagamori
 % Last update: 6/26/2020
 % Descriptions:

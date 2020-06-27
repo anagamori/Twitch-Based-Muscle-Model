@@ -77,7 +77,6 @@ for i = 1:nTrial
         
         c_vec = zeros(1,length(time));
         cf_vec = zeros(1,length(time));
-        cs_vec = zeros(1,length(time));
         A_tilda_vec = zeros(1,length(time));
         A_vec = zeros(1,length(time));
         
@@ -104,7 +103,7 @@ for i = 1:nTrial
             cf_dot = (1-cf)*(k_3*c-k_4*cf);
             c = c_dot/Fs + c;
             cf = cf_dot/Fs + cf;
-            cs = C - c - cf;
+       
             %% Stage 2
             % Cooperativity and saturation
             if cf < 0
@@ -122,7 +121,7 @@ for i = 1:nTrial
             %% Store variables
             c_vec(t) = c;
             cf_vec(t) = cf;
-            cs_vec(t) = cs;
+   
             A_tilda_vec(t) = A_tilda;
             A_vec(t) = A;
             
