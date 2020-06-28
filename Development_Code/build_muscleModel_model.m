@@ -11,8 +11,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/';
-model_parameter_folder =  '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/';
+model_parameter_folder =  '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
@@ -85,7 +85,7 @@ modelParameter.U_th = U_th(index_MU_PTi);
 cd(model_parameter_folder)
 load('FR_half')
 cd(code_folder)
-modelParameter.FR_half = FR_half';
+modelParameter.FR_half = FR_half;
 modelParameter.MDR = modelParameter.FR_half/2;
 modelParameter.PDR = modelParameter.FR_half*2;
 

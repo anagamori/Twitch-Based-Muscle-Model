@@ -10,9 +10,9 @@ clear all
 clc
 
 %%
-condition = 'Model_11_var_CoV_80_Ur_Rec_3_N_400';
-data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
-data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+condition = 'Model_default';
+data_folder = ['/Volumes/DATA2/PLOS_CB_Data/withTendon/' condition];
+data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/New Model/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -21,7 +21,7 @@ amp_vec = [0.025 0.05 0.1:0.1:1];
 
 
 
-nTrial = 10;
+nTrial = 2;
 Force_mat = zeros(nTrial,15*10000+1);
 mean_Force = zeros(nTrial,length(amp_vec));
 std_Force = zeros(nTrial,length(amp_vec));
@@ -31,25 +31,25 @@ mean_pxx = zeros(length(amp_vec),1001);
 mean_pxx_2 = zeros(length(amp_vec),1001);
 % %%
 j_vec = [-1:8 10];
-for j = -1:10 %length(amp_vec)
+for j = 1:length(amp_vec)
     %j = j_vec(j+2);
-    if j <= 1
+    if j <= 1+2
         Fs = 10000;
         time = 0:1/Fs:15;
-    elseif j >= 2 && j <= 4
+    elseif j >= 2+2 && j <= 4+2
         Fs = 15000;
         time = 0:1/Fs:15;
-    elseif j > 4 && j < 7
+    elseif j > 4+2 && j < 7+2
         Fs = 20000;
         time = 0:1/Fs:15;
-    elseif j >= 7 && j <= 8
+    elseif j >= 7+2 && j <= 8+2
         Fs = 25000;
         time = 0:1/Fs:15;
-    elseif j >= 9
+    elseif j >= 9+2
         Fs = 30000;
         time = 0:1/Fs:15;
     end
-    duration = 8*Fs;
+    duration = 10*Fs;
     %             time = 0:1/Fs:15;
     %         elseif j >= 2 && j < 3
     %             Fs = 15000;
@@ -78,9 +78,9 @@ for j = -1:10 %length(amp_vec)
         load(['Data_' num2str(j) '_' num2str(i)])
         cd(code_folder)
         Force =  output.ForceTendon;
-        mean_Force(i,j+2) = mean(Force(end-duration+2:end));
-        std_Force(i,j+2) = std(Force(end-duration+2:end));
-        cov_Force(i,j+2) =  std_Force(i,j+2)/mean_Force(i,j+2)*100;
+        mean_Force(i,j) = mean(Force(end-duration+2:end));
+        std_Force(i,j) = std(Force(end-duration+2:end));
+        cov_Force(i,j) =  std_Force(i,j)/mean_Force(i,j)*100;
         [pxx(i,:),f] = pwelch(Force(end-duration+1:end)-mean(Force(end-duration+1:end)),gausswin(5*Fs),0.9*5*Fs,0:0.1:100,Fs,'power');
         figure(11)
         plot(time,Force)
@@ -105,7 +105,7 @@ for j = -1:10 %length(amp_vec)
         
     end
     toc
-    mean_pxx(j+2,:) = mean(pxx);
+    mean_pxx(j,:) = mean(pxx);
     cd(data_folder)
     save(['Force_mat_' num2str(j)],'Force_mat')
     save(['mean_FR_' num2str(j)],'mean_FR')

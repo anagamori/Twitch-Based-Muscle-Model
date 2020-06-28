@@ -1,7 +1,7 @@
 %==========================================================================
 %PDRvsUth_nonlinear.m
 % Author: Akira Nagamori
-% Last update: 6/27/19
+% Last update: 6/27/20
 % Descriptions:
 %   Plot the relationship between excitation and discharge rate of
 %   individual motor units
@@ -11,9 +11,9 @@ close all
 clear all
 clc
 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11');
+cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
 load('modelParameter')
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
+cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
 MDR = modelParameter.MDR;
@@ -86,7 +86,7 @@ fig.PaperPosition = [0 0 3.34 3.34];
 %%
 clear U_th_diff
 DR_temp = zeros(modelParameter.N_MU,1);
-U = 0.3;
+U = 1;
 DR_MU = g_e.*(U-U_th)+MDR;
 
 %    DR_temp = MDR + lamda.*k_e.*(U_vec(i)-U_th_new);

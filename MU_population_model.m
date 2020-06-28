@@ -47,8 +47,8 @@ U_th_t = modelParameter.U_th_t;
 %% Module 2 parameters
 tau_1 = parameter_Matrix(:,7);
 tau_2 = parameter_Matrix(:,8);
-R_temp = 1-exp(-time/tau_1);
-R_temp_2 = exp(-time/tau_2);
+R_temp = 1-exp(-time./tau_1);
+R_temp_2 = exp(-time./tau_2);
 
 %% Sag parameter
 a_s = ones(N_MU,1)*0.96;
@@ -57,6 +57,7 @@ a_s = ones(N_MU,1)*0.96;
 V_ce = 0;
 %% Initilization
 DR_temp = zeros(N_MU,1);
+DR_MU = zeros(N_MU,1);
 DR_mat = zeros(N_MU,length(time));
 
 spike_time = zeros(N_MU,1);
@@ -91,10 +92,10 @@ rng('shuffle')
 for t = 1:length(time)
     if t > 1
         %% Module 1
-        % Compute discharge rates 
-        U = synaptic_input(t); 
+        % Compute discharge rates
+        U = synaptic_input(t);
         
-        CV_ISI = 10+20*exp(-(U_eff*100-U_th*100)/2.5);
+        CV_ISI = 10+20*exp(-(U*100-U_th*100)/2.5);
         CV_ISI = CV_ISI./100;
         
         DR_MU = g_e.*(U-U_th)+MDR;
@@ -109,9 +110,9 @@ for t = 1:length(time)
         DR_MU(index_saturation) = DR_temp(index_saturation);
         DR_MU(DR_MU<MDR) = 0;
         DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
- 
+        
         DR_mat(:,t) = DR_MU;
-    
+        
         % Generate spike trains
         index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1) == 0);
         index_2 = i_MU(DR_MU >= MDR & spike_time ==t);
@@ -124,13 +125,16 @@ for t = 1:length(time)
                 spike_train(n,t) = 1; % add a spike to the vector
                 spike_train_temp(t) = 1;
                 mu = 1/DR_MU(n);
-                spike_time_temp = (mu + mu*CV_ISI(n))*Fs;
+                Z = randn(1);
+                Z(Z>3.9) = 3.9;
+                Z(Z<-3.9) = -3.9;
+                spike_time_temp = (mu + mu*CV_ISI(n)*Z)*Fs;
                 if spike_time_temp <= 0.002*Fs
                     spike_time_temp = 0.002*Fs;
                 end
                 spike_time(n) = round(spike_time_temp) + t;
                 
-                temp = conv(spike_train_temp,R_temp_2.*R_temp);
+                temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
                 R(n,:) = R(n,:) + temp(1:length(time));
             else % when the motor unit have already fired at least once
                 if spike_time(n) == t % when the motor unit fires
@@ -139,26 +143,32 @@ for t = 1:length(time)
                     % update mean firing rate of the motor unit given the
                     % current value of input
                     mu = 1/DR_MU(n); % interspike interval
-                    spike_time_temp = (mu + mu*CV_ISI(n))*Fs; % interspike interval
+                    Z = randn(1);
+                    Z(Z>3.9) = 3.9;
+                    Z(Z<-3.9) = -3.9;
+                    spike_time_temp = (mu + mu*CV_ISI(n)*Z)*Fs; % interspike interval
                     if spike_time_temp <= 0.002*Fs
                         spike_time_temp = 0.002*Fs;
                     end
                     spike_time(n) = round(spike_time_temp) + t;
                     
-                    temp = conv(spike_train_temp,R_temp_2.*R_temp);
+                    temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
                     R(n,:) = R(n,:) + temp(1:length(time));
                 elseif t > spike_time(n) + round(1/DR_MU(n)*Fs)
                     spike_train(n,t) = 1;
                     spike_train_temp(t) = 1;
                     spike_time(n) = t;
                     mu = 1/DR_MU(n); % interspike interval
-                    spike_time_temp = (mu + mu*CV_ISI(n))*Fs; % interspike interval
+                    Z = randn(1);
+                    Z(Z>3.9) = 3.9;
+                    Z(Z<-3.9) = -3.9;
+                    spike_time_temp = (mu + mu*CV_ISI(n)*Z)*Fs; % interspike interval
                     if spike_time_temp <= 0.002*Fs
                         spike_time_temp = 0.002*Fs;
                     end
                     spike_time(n) = round(spike_time_temp) + t;
                     
-                    temp = conv(spike_train_temp,R_temp_2.*R_temp);
+                    temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
                     R(n,:) = R(n,:) + temp(1:length(time));
                 end
             end
@@ -173,7 +183,7 @@ for t = 1:length(time)
     Y_i = yield_function(Y_i,V_ce,Fs);
     Y_i(index_slow+1:end) = 1;
     Y_mat(:,t) = Y_i;
-        
+    
     [c,cf,A_tilde,A] = spike2activation(R(:,t),c,cf,A,parameter_Matrix,L_ce,S_i,Y_i,Fs);
     
     c_mat(:,t) = c;
@@ -212,38 +222,40 @@ end
 
 output.spike_train = spike_train;
 output.ForceTendon = F_se;
-output.force = force;
+%output.force = force;
+output.Lce = MuscleLength./(L0/100);
+output.Vce = MuscleVelocity./(L0/100);
 
 %% Convert spike trian into activation
     function [c,cf,A_tilde,A] = spike2activation(R,c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs)
-              
+        
         S = parameter_Matrix(:,1);
         C = parameter_Matrix(:,2);
         k_1 = parameter_Matrix(:,3);
         k_2 = parameter_Matrix(:,4);
         k_3 = parameter_Matrix(:,5);
-        k_4_i = parameter_Matrix(:,6);       
+        k_4_i = parameter_Matrix(:,6);
         N = parameter_Matrix(:,9);
         K = parameter_Matrix(:,10);
         tau_3 = parameter_Matrix(:,11);
         gamma = parameter_Matrix(:,12);
         phi_1 = parameter_Matrix(:,13);
         phi_2 = parameter_Matrix(:,14);
-
+        
         if Lce >= 1
-            k_3 = (phi_1*k_3)*(Lce-1) + k_3; % a_k_3 > 0
-            N = (-phi_1*N)*(Lce-1) + N; % a_k_3 < 0
-            K = (-phi_1*K)*(Lce-1) + K;
-            gamma = (phi_1*gamma)*(Lce-1) + gamma; % a_k_3 > 0
+            k_3 = (phi_1.*k_3)*(Lce-1) + k_3; % a_k_3 > 0
+            N = (-phi_1.*N)*(Lce-1) + N; % a_k_3 < 0
+            K = (-phi_1.*K)*(Lce-1) + K;
+            gamma = (phi_1.*gamma)*(Lce-1) + gamma; % a_k_3 > 0
         elseif Lce < 1
-            k_3 = (phi_2*k_3)*(Lce-1) + k_3; % a_k_3 > 0
-            N = (-phi_2*N)*(Lce-1) + N; % a_k_3 < 0
-            K = (-phi_2*K)*(Lce-1) + K;
-            gamma = (phi_2*gamma)*(Lce-1) + gamma; % a_k_3 > 0
+            k_3 = (phi_2.*k_3)*(Lce-1) + k_3; % a_k_3 > 0
+            N = (-phi_2.*N)*(Lce-1) + N; % a_k_3 < 0
+            K = (-phi_2.*K)*(Lce-1) + K;
+            gamma = (phi_2.*gamma)*(Lce-1) + gamma; % a_k_3 > 0
         end
         
         %% Stage 1
-        k_4 = k_4_i/(1+gamma*A);
+        k_4 = k_4_i./(1+gamma.*A);
         c_dot = k_1.*(C-c-cf).*R - k_2.*c.*(S-C+c+cf)-(k_3.*c-k_4.*cf).*(1-cf);
         cf_dot = (1-cf).*(k_3.*c-k_4.*cf);
         c = c_dot/Fs + c;
