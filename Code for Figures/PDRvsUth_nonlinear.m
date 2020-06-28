@@ -11,9 +11,9 @@ close all
 clear all
 clc
 
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
-load('modelParameter')
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
+load('modelParameter_v2')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
 MDR = modelParameter.MDR;
@@ -86,7 +86,7 @@ fig.PaperPosition = [0 0 3.34 3.34];
 %%
 clear U_th_diff
 DR_temp = zeros(modelParameter.N_MU,1);
-U = 1;
+U = 0.1;
 DR_MU = g_e.*(U-U_th)+MDR;
 
 %    DR_temp = MDR + lamda.*k_e.*(U_vec(i)-U_th_new);

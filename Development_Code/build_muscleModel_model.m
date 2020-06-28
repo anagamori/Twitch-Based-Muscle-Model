@@ -11,8 +11,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/';
-model_parameter_folder =  '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
+code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/';
+model_parameter_folder =  '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
@@ -92,8 +92,8 @@ modelParameter.PDR = modelParameter.FR_half*2;
 %% Gain for frequency-activation relationship
 modelParameter.g_e = (modelParameter.PDR-modelParameter.MDR)./(1-modelParameter.U_th); % variable gain for each unit (linear increase in discharge rate upon recruitment to the maximum excitation)
 
-Ur_t = 0.2;
-f_t = 1.2;
+Ur_t = 0.1;
+f_t = 1.1;
 modelParameter.index_saturation = find(modelParameter.U_th<Ur_t);
 f_k_e = fit([Ur_1 Ur_t]',[30 1]','poly1');
 coeffs_f_k_e = coeffvalues(f_k_e);
@@ -104,7 +104,7 @@ modelParameter.U_th_t = (modelParameter.k_e-(modelParameter.PDR-f_t*modelParamet
 
 %% Save model parameters
 cd(model_parameter_folder)
-save('modelParameter','modelParameter')
+save('modelParameter_v2','modelParameter')
 cd(code_folder)
 
 

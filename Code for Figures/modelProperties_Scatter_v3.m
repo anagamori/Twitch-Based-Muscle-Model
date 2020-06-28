@@ -1,21 +1,21 @@
 %==========================================================================
-% modelProperties_Scatter_v2.m
+% modelProperties_Scatter_v3.m
 % Author: Akira Nagamori
-% Last update: 5/26/2020
+% Last update: 6/27/2020
 % Descriptions:
 %   Plot tiwtch amplitude of all motor units 
-%   Used to generate Model_Characteristics in the manuscript
+%   Used to generate panels in Fig. 2&3 in the manuscript
 %==========================================================================
 close all
 clear all
 clc
 
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
 load('modelParameter')
 load('CT')
 load('FR_half')
 load('t2t')
-cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
+cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
 N_MU = modelParameter.N_MU;
@@ -125,7 +125,7 @@ ax.FontSize = 10;
 
 %%
 x = 22.5:5:87.5;
-frac_Cuseum = [0.016941 0.056471 0.13882 0.19859 0.17129 0.16094 0.11059 0.049882 0.024471 0.020706 0.024471 0.016941 0.0056471 0.0089412];
+frac_Cuseum = [0.016941 0.056471 0.13882 0.19859 0.17129 0.16094 0.11059 0.049882 0.024471 0.020706 0.024471 0.016941 0.0056471 0.0089412 ];
 
 int = 20:5:90;
 count_slow = zeros(1,length(x));
@@ -137,10 +137,10 @@ end
 frac_slow = count_slow./(sum(count_slow)+sum(count_fast));
 frac_fast = count_fast./(sum(count_slow)+sum(count_fast));
 figure(7)
-h = bar(x,frac_slow,'hist');
+h = bar(22.5:5:87.5,frac_slow,'hist');
 set(h,'FaceColor',[36 123 160]/255,'FaceAlpha',0.5);
 hold on 
-h2 = bar(x,frac_fast,'hist');
+h2 = bar(22.5:5:87.5,frac_fast,'hist');
 set(h2,'FaceColor',[255 22 84]/255,'FaceAlpha',0.5);
 plot(x,frac_Cuseum,'k','LineWidth',1)
 plot(x,frac_Cuseum,'o', 'Color','k','MarkerFaceColor', 'k')
@@ -155,7 +155,7 @@ ax.FontSize = 10;
 %%
 x = 5:2:15;
 frac_Cutsem = [0.17846 0.20369 0.23015 0.17908 0.11508 0.038769];
-int = 2:2:20;
+int = 2:2:26;
 count_slow = zeros(1,length(int)-1);
 count_fast = zeros(1,length(int)-1);
 for i = 1:length(int)-1
@@ -166,11 +166,12 @@ frac_slow = count_slow./(sum(count_slow)+sum(count_fast));
 frac_fast = count_fast./(sum(count_slow)+sum(count_fast));
 
 figure(8)
-h = bar(3:2:19,frac_slow,'hist');
+h = bar(3:2:25,frac_slow,'hist');
 set(h,'FaceColor',[36 123 160]/255,'FaceAlpha',0.5);
-set(gca,'XTick',2:2:20)
+set(gca,'XTick',2:2:26)
 hold on 
-h2 = bar(3:2:19,frac_fast,'hist');
+h2 = bar(3:2:25,frac_fast,'hist');
+xlim([2 26])
 set(h2,'FaceColor',[255 22 84]/255,'FaceAlpha',0.5);
 plot(x,frac_Cutsem,'k','LineWidth',1)
 plot(x,frac_Cutsem,'o', 'Color','k','MarkerFaceColor', 'k')
@@ -186,7 +187,7 @@ ax.FontSize = 10;
 x = 15:10:65;
 frac_Cutsem = [0.071464 0.26427 0.30149 0.14516 0.12134 0.026055];
 
-int = 10:10:80;
+int = 10:10:100;
 count_slow = zeros(1,length(int)-1);
 count_fast = zeros(1,length(int)-1);
 for i = 1:length(int)-1
@@ -197,11 +198,11 @@ frac_slow = count_slow./(sum(count_slow)+sum(count_fast));
 frac_fast = count_fast./(sum(count_slow)+sum(count_fast));
 
 figure(9)
-h = bar(15:10:75,frac_slow,'hist');
+h = bar(15:10:95,frac_slow,'hist');
 set(h,'FaceColor',[36 123 160]/255,'FaceAlpha',0.5);
-set(gca,'XTick',10:10:80)
+set(gca,'XTick',10:10:100)
 hold on 
-h2 = bar(15:10:75,frac_fast,'hist');
+h2 = bar(15:10:95,frac_fast,'hist');
 set(h2,'FaceColor',[255 22 84]/255,'FaceAlpha',0.5);
 plot(x,frac_Cutsem,'k','LineWidth',1)
 plot(x,frac_Cutsem,'o', 'Color','k','MarkerFaceColor', 'k')
