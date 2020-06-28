@@ -24,7 +24,7 @@ cd(code_folder)
 
 amp_vec = [0.025 0.05 0.1:0.1:1];
 trial_vec = [7 10];
-for j = 1 %:length(amp_vec)
+for j = 2:length(amp_vec)-1
     j
     if j <= 1+2
         Fs = 10000;
