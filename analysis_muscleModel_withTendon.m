@@ -21,7 +21,7 @@ amp_vec = [0.025 0.05 0.1:0.1:1];
 
 
 
-nTrial = 1;
+nTrial = 6;
 Force_mat = zeros(nTrial,15*10000+1);
 mean_Force = zeros(nTrial,length(amp_vec));
 std_Force = zeros(nTrial,length(amp_vec));
@@ -196,7 +196,7 @@ else
     % saveas(gcf,'meanForce2CoV_withTendon','pdf')
     % cd (code_folder)
     figure(4)
-    plot(amp_vec,mean(cov_Force_dt),'LineWidth',2)
+    plot(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force_dt),'LineWidth',2)
     xlabel('Mean Force (%)','FontSize',14)
     ylabel('CoV (%)','FontSize',14)
     set(gca,'TickDir','out');

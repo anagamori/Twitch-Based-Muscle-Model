@@ -59,7 +59,7 @@ for j = 1:length(amp_vec)
     %input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,2*Fs) amp-amp/50*[1:10*Fs]/Fs];
     %%
     if j == 1
-        for i = 2
+        for i = 7
             i
             tic
             output = MU_population_model(Fs,time,input,modelParameter,1);
@@ -69,7 +69,7 @@ for j = 1:length(amp_vec)
             cd(code_folder)            
         end
     elseif j == 10
-        for i = 2
+        for i = 7
             i
             tic
             output = MU_population_model(Fs,time,input,modelParameter,1);
@@ -80,7 +80,7 @@ for j = 1:length(amp_vec)
             
         end
     else
-        for i = 2
+        for i = 7
             i
             tic
             output = MU_population_model(Fs,time,input,modelParameter,1);

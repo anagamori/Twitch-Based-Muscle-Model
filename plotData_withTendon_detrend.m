@@ -9,16 +9,16 @@ clear all
 clc
 
 %%
-condition = 'Model_11_var_CoV_80_Ur_Rec_3_N_400';
-data_folder = ['/Volumes/DATA2/New_Model/withTendon/' condition];
-save_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/withTendon/' condition];
+condition = 'Model_default_v2';
+data_folder = ['/Volumes/DATA2/PLOS_CB_Data/withTendon/' condition];
+save_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 Fs = 10000;
 time = 0:1/Fs:15;
 amp_vec = [0.025 0.05 0.1:0.1:1];
-nTrial = 10;
+nTrial = 6;
 mean_Force = zeros(nTrial,length(amp_vec));
 std_Force = zeros(nTrial,length(amp_vec));
 std_Force_dt = zeros(nTrial,length(amp_vec));
@@ -27,7 +27,7 @@ cov_Force_dt = zeros(nTrial,length(amp_vec));
 pxx = zeros(nTrial,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-trial_vec = -1:10; %[-1:8 10]; %-1:10; %-1:10; %0:10; %[0:6 8:10];
+trial_vec = 1:length(amp_vec);
 for k = 1:length(trial_vec)
     j = trial_vec(k);
    
@@ -36,15 +36,15 @@ for k = 1:length(trial_vec)
     cd(code_folder)
     for i = 1:nTrial
         Force_temp =  Force_mat(i,:);
-        Force = Force_temp(8*Fs+1:end);
+        Force = Force_temp(5*Fs+1:end);
         window = 1*Fs;
         bp = [1:window:length(Force)];
         Force_dt = detrend(Force,1,bp);
-        mean_Force(i,j+2) = mean(Force);
-        std_Force(i,j+2) = std(Force);
-        std_Force_dt(i,j+2) = std(Force_dt);
-        cov_Force(i,j+2) =  std_Force(i,j+2)/mean_Force(i,j+2)*100;
-        cov_Force_dt(i,j+2) =  std(Force_dt)/mean_Force(i,j+2)*100;
+        mean_Force(i,j) = mean(Force);
+        std_Force(i,j) = std(Force);
+        std_Force_dt(i,j) = std(Force_dt);
+        cov_Force(i,j) =  std_Force(i,j)/mean_Force(i,j)*100;
+        cov_Force_dt(i,j) =  std(Force_dt)/mean_Force(i,j)*100;
               
         [pxx(i,:),f] = pwelch(Force-mean(Force),rectwin(length(Force)),0,0:0.5:100,Fs,'power');
     end
@@ -53,7 +53,7 @@ for k = 1:length(trial_vec)
     plot(time,Force_mat)
     hold on
         
-    mean_pxx(j+2,:) = mean(pxx);
+    mean_pxx(j,:) = mean(pxx);
     %clear Force_mat
 end
 
