@@ -24,7 +24,7 @@ cd(code_folder)
 
 amp_vec = [0.025 0.05 0.1:0.1:1];
 trial_vec = [7 10];
-for j = 1:length(amp_vec)
+for j = 9:length(amp_vec)
     j
 %     if j <= 1+2
 %         Fs = 10000;
@@ -93,9 +93,9 @@ for j = 1:length(amp_vec)
         end
     end
     
-    figure(2)
-    plot(output.Vce)
-    hold on 
+%     figure(2)
+%     plot(output.Vce)
+%     hold on
     
     Force = output.ForceTendon(end-5*Fs+1:end);
     CoV = std(Force)/mean(Force)
