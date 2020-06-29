@@ -119,12 +119,12 @@ for t = 1:length(time)
     
 end
 
-output.Force = force;
+%output.Force = force;
 output.SpikeTrain = spike_train;
 output.TotalForce = sum(force);
-output.FR = FR_mat;
-output.g = outputG;
-output.index = outputIndex;
-output.Ur = RTEn/Emax;
+%output.FR = FR_mat;
+%output.g = outputG;
+%output.index = outputIndex;
+%output.Ur = RTEn/Emax;
 
 end

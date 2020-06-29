@@ -9,10 +9,10 @@ amp_temp = [0.025 0.05 0.1:0.1:1];
 RP_temp = 10:10:150;
 
 
-data_directory = '/Volumes/DATA2/New_Model/Fuglevand/N_120_CV_10';
-code_directory = '/Users/akira/Documents/Github/Motor-Unit-Model-Fuglevand/';
-
-maxForce = 1.9758e+04;
+data_directory = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/N_200_CoV_20';
+code_directory = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Fuglevand Model';
+%%
+maxForce = 3.3282e+04;
 for k = 1:length(amp_temp)
     trialN = k; %+30; 
     % predefine model parameters
@@ -22,32 +22,34 @@ for k = 1:length(amp_temp)
     U = [zeros(1,1*Fs) (amp/2)*(0:1/Fs:2) amp*ones(1,length(t)-3*Fs-1)];
     
     modelParameter.N = 200;    
-    modelParameter.RR = 17;    
+    modelParameter.RR = 65;     %65 for U_r = 0.8
     modelParameter.MFR = 8;   
-    modelParameter.g_e = 1.0;    
+    modelParameter.g_e = 1.5;    
     modelParameter.PFR1 = 35;   
     modelParameter.PFRD = 10;
-    modelParameter.cv = 0.1;    
+    modelParameter.cv = 0.2;    
     modelParameter.RP = 100;    
     modelParameter.T_L = 90;    
     modelParameter.RT = 3;   
     
     Data = cell(1,10);
     tic
-    for i = 1:10
-        % Run motor unit model        
+    for i = 1
+        % Run motor unit model   
+        tic
         output = MotorUnitModel_varCoV(t,U,modelParameter,Fs);       
+        toc
         Data{i} = output;
     end
     toc
     
-    cd (data_directory)
-    save(['Trial_' num2str(trialN)],'Data','-v7.3')
-    cd (code_directory)
+%     cd (data_directory)
+%     save(['Trial_' num2str(trialN)],'Data','-v7.3')
+%     cd (code_directory)
     
     output_temp = Data{1};
     
-    Force = output_temp.TotalForce(4*Fs+1:end)/maxForce;
+    Force = output_temp.TotalForce(5*Fs+1:end)/maxForce;
     meanForce = mean(Force) 
     SD = std(Force)
     CoV = std(Force)/mean(Force)
