@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_default';
+condition = 'Model_default_v2';
 data_folder = ['/Volumes/DATA2/PLOS_CB_Data/withTendon/' condition];
 data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/New Model/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -34,20 +34,14 @@ mean_pxx_2 = zeros(length(amp_vec),1001);
 j_vec = [-1:8 10];
 for j = 1:length(amp_vec)
     %j = j_vec(j+2);
-    if j <= 1+2
+    if j <= 7
         Fs = 10000;
         time = 0:1/Fs:15;
-    elseif j >= 2+2 && j <= 4+2
+    elseif j > 7 && j <= 9
         Fs = 15000;
         time = 0:1/Fs:15;
-    elseif j > 4+2 && j < 7+2
+    elseif j >= 10
         Fs = 20000;
-        time = 0:1/Fs:15;
-    elseif j >= 7+2 && j <= 8+2
-        Fs = 25000;
-        time = 0:1/Fs:15;
-    elseif j >= 9+2
-        Fs = 30000;
         time = 0:1/Fs:15;
     end
     duration = 10*Fs;
@@ -201,8 +195,14 @@ else
     % cd (figure_folder)
     % saveas(gcf,'meanForce2CoV_withTendon','pdf')
     % cd (code_folder)
-    
     figure(4)
+    plot(amp_vec,mean(cov_Force_dt),'LineWidth',2)
+    xlabel('Mean Force (%)','FontSize',14)
+    ylabel('CoV (%)','FontSize',14)
+    set(gca,'TickDir','out');
+    set(gca,'box','off')
+    
+    figure(5)
     plot(f,mean_pxx([1 3 5 8],:),'LineWidth',2)
     xlabel('Frequency (Hz)','FontSize',14)
     ylabel('Power (N^2)','FontSize',14)
