@@ -9,7 +9,7 @@ amp_temp = [0.025 0.05 0.1:0.1:1];
 RP_temp = 10:10:150;
 
 
-data_directory = '/Volumes/DATA2/PLOS_CB_Data/Fuglevand/N_100_CoV_20';
+data_directory = '/Volumes/DATA2/PLOS_CB_Data/Fuglevand/N_120_CoV_20';
 code_directory = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Fuglevand Model';
 
 maxForce = 1.9758e+04;
@@ -22,7 +22,7 @@ for k = 1:length(amp_temp)
     t_sin = [1:7*Fs]/Fs;
     U = [zeros(1,1*Fs) (amp/2)*(0:1/Fs:2) amp*ones(1,length(t)-3*Fs-1)];
     
-    modelParameter.N = 100;    
+    modelParameter.N = 120;    
     modelParameter.RR = 65;    
     modelParameter.MFR = 8;   
     modelParameter.g_e = 1.0;    

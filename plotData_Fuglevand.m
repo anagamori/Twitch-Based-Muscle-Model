@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'N_100_CoV_var';
+condition = 'N_120_CoV_20';
 data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
@@ -79,7 +79,8 @@ ylabel('SD (N)','FontSize',14)
 hold on 
 errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2,'Color','r');
 legend('Activation Level','Force Level','Location','northwest')
-yticks([0.05 0.1 0.15 0.2 0.25])
+%yticks([0.05 0.1 0.15 0.2 0.25])
+%yticks([0.05 0.1 0.15 0.2 1.6])
 set(gca,'TickDir','out');
 set(gca,'box','off')
 cd (figure_folder)
