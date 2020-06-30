@@ -9,10 +9,10 @@ clear all
 clc
 
 %%
-condition = 'N_200_CoV_var';
-data_folder = ['/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/' condition];
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model';
-figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+condition = 'N_100_CoV_var';
+data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/Fuglevand/' condition];
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
+figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 Fs = 1000;
 amp_vec = [0.025 0.05 0.1:0.1:1];
@@ -25,7 +25,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 
 for j = 1:length(amp_vec)
-    cd(data_folder)
+    cd(['/Volumes/DATA2/PLOS_CB_Data/Fuglevand/' condition])
     load(['Force_mat_' num2str(j)])
     cd(code_folder)
     for i = 1:10
