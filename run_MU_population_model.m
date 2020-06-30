@@ -11,20 +11,20 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/PLOS_CB_Data/withTendon/Model_default_v2';
+data_folder = '/Volumes/DATA2/PLOS_CB_Data/withTendon/Model_N100_CoV_20';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 model_parameter_folder =  '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
 
 %%
 cd(model_parameter_folder)
-load('modelParameter_v2')
+load('modelParameter_N100')
 cd(code_folder)
 
 %% Simlulation parameters
 
 amp_vec = [0.025 0.05 0.1:0.1:1];
 trial_vec = [7 10];
-for j = 9:length(amp_vec)
+for j = 1:length(amp_vec)
     j
 %     if j <= 1+2
 %         Fs = 10000;
@@ -59,7 +59,7 @@ for j = 9:length(amp_vec)
     %input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,2*Fs) amp-amp/50*[1:10*Fs]/Fs];
     %%
     if j == 1
-        for i = 7
+        for i = 2
             i
             tic
             output = MU_population_model(Fs,time,input,modelParameter,1);
@@ -69,7 +69,7 @@ for j = 9:length(amp_vec)
             cd(code_folder)            
         end
     elseif j == 10
-        for i = 7
+        for i = 2
             i
             tic
             output = MU_population_model(Fs,time,input,modelParameter,1);
@@ -80,7 +80,7 @@ for j = 9:length(amp_vec)
             
         end
     else
-        for i = 7
+        for i = 2
             i
             tic
             output = MU_population_model(Fs,time,input,modelParameter,1);
