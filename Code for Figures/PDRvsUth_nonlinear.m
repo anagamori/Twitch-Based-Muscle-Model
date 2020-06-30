@@ -12,7 +12,7 @@ clear all
 clc
 
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
-load('modelParameter_v2')
+load('modelParameter_v3')
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
@@ -86,7 +86,7 @@ fig.PaperPosition = [0 0 3.34 3.34];
 %%
 clear U_th_diff
 DR_temp = zeros(modelParameter.N_MU,1);
-U = 0.1;
+U = 0.2;
 DR_MU = g_e.*(U-U_th)+MDR;
 
 %    DR_temp = MDR + lamda.*k_e.*(U_vec(i)-U_th_new);
