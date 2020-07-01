@@ -1,5 +1,5 @@
 
-function [Data] = MUModel_test_v2(parameter,Lce,FR_half_temp,fiber_type,plotOpt,simOpt,Fs)
+function [Data] = MUModel_test_v3(parameter,Lce,FR_half_temp,fiber_type,plotOpt,simOpt,Fs)
 %==========================================================================
 % model_test.m
 % Author: Akira Nagamori
@@ -17,6 +17,7 @@ S = parameter(1); %7;
 C = parameter(2); %1.025;
 k_1 = parameter(3); %14.625;
 k_2 = parameter(4); %4.9375;
+k_2_i = parameter(4); %4.9375;
 k_3 = parameter(5); %*Lce + parameter(6); %17.41*Lce - 2.85;
 k_4 = parameter(6); %*Lce + parameter(8); %-7.67*Lce + 14.92;
 k_4_i = k_4;
@@ -24,7 +25,7 @@ tau_1 = parameter(7); %0.0051;
 tau_2 = parameter(8); % 0.04;
 N = parameter(9); %*Lce + parameter(12); %-2.26*Lce + 4.20;
 K = parameter(10); %*Lce + parameter(14); %-0.044*Lce + 0.080;
-tau_3_i = parameter(11); %4.475;
+tau_3 = parameter(11); %4.475;
 alpha = parameter(12);
 
 %%
@@ -89,7 +90,7 @@ for i = 1:nTrial
         for t = 1:length(time)
             %%
             k_4 = k_4_i/(1+alpha*A);
-            tau_3 = tau_3_i*(cosh((cf-10)/10));
+            k_2_c = c^2*k_2_i^2/(1+c*k_2_i+c^2+k_2_i^2);
             %% Stage 1
             % Calcium diffusion to sarcoplasm
             spike_temp = zeros(1,length(time));
@@ -101,7 +102,7 @@ for i = 1:nTrial
             %R = spike(t) + exp(-h/tau_1)*R; %*(1+3*A^alpha);
             
             %%
-            c_dot = k_1*(C-c-cf)*R(t) - k_2*c*(S-C+c+cf) - (k_3*c-k_4*cf)*(1-cf);
+            c_dot = k_1*(C-c-cf)*R(t) - 3000000*k_2_c^2*(S-C+c+cf) - (k_3*c-k_4*cf)*(1-cf);
             cf_dot = (1-cf)*(k_3*c-k_4*cf);
             c = c_dot/Fs + c;
             cf = cf_dot/Fs + cf;

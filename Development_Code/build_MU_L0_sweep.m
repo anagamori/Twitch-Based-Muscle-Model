@@ -35,7 +35,7 @@ Lce = 1;
 % alpha = 1.2;
 
 for i = 301
-    MU_No = 62;
+    MU_No = 3;
     cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
     load(['Data_' num2str(MU_No)])
     cd(code_folder)
@@ -80,12 +80,12 @@ for i = 301
     param = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,tau_3,alpha];
     
     simOpt = 0;
-    Fs = 10000;
+    Fs = 2000;
     
     [Data] = MUModel_test_v2(param,Lce,0,MU_type,1,simOpt,Fs);
     MU_No = i;
-    cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
-    save(['Data_temp_' num2str(MU_No)],'Data')
-    cd(code_folder)
-    clear Data
+%     cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
+%     save(['Data_temp_' num2str(MU_No)],'Data')
+%     cd(code_folder)
+%     clear Data
 end

@@ -1,30 +1,49 @@
-close all
-clc
+%close all
+%clc
 clear all
 
-code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code';
-data_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11';
+code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code';
+data_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Model Parameters/Model_11';
 
 MU_type = 'fast';
 Lce = 1;
 
-S = 17.7; %parameter(1); %7;
-C = 1.8; %parameter(2); %1.025;
-k_1 = 65.32; %parameter(3); %14.625;
-k_2 = 45.1; %parameter(4); %4.9375;
-k_3 = 50.85; %parameter(5)*Lce + parameter(6); %17.41*Lce - 2.85;
-k_4 = 34.75; %parameter(7)*Lce + parameter(8); %-7.67*Lce + 14.92;
-tau_1 = 0.0023; %parameter(9); %0.0051;
-tau_2 = 0.024; %parameter(10); % 0.04;
-N = 2.2; %parameter(11)*Lce + parameter(12); %-2.26*Lce + 4.20;
-K = 0.039; %parameter(13)*Lce + parameter(14); %-0.044*Lce + 0.080;
-tau_3 = 0.07; %parameter(15); %4.475;
-alpha = 0.3;
+MU_No = 3;
+cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
+load(['Data_' num2str(MU_No)])
+cd(code_folder)
+
+parameter = Data{2,12};
+S = parameter(1);
+C = 1.8; %parameter(2);
+k_1 = parameter(3);
+k_2 = parameter(4);
+k_3 = parameter(5);
+k_4 = parameter(6);
+tau_1 = parameter(7);
+tau_2 = parameter(8);
+N = parameter(9);
+K = parameter(10);
+tau_3 = parameter(11);
+alpha = parameter(12);
+
+% S = 9; %parameter(1); %7;
+% C = 2; %parameter(2); %1.025;
+% k_1 = 20; %parameter(3); %14.625;
+% k_2 = 10; %parameter(4); %4.9375;
+% k_3 = 109; %parameter(5)*Lce + parameter(6); %17.41*Lce - 2.85;
+% k_4 = 98; %parameter(7)*Lce + parameter(8); %-7.67*Lce + 14.92;
+% tau_1 = 0.001; %parameter(9); %0.0051;
+% tau_2 = 0.02; %parameter(10); % 0.04;
+% N = 2.5; %parameter(11)*Lce + parameter(12); %-2.26*Lce + 4.20;
+% K = 0.15; %parameter(13)*Lce + parameter(14); %-0.044*Lce + 0.080;
+% tau_3 = 0.05; %parameter(15); %4.475;
+% alpha = 0.4;
 
 param = [S,C,k_1,k_2,k_3,k_4,tau_1,tau_2,N,K,tau_3,alpha];
 
-simOpt = 1;
-Fs = 10000;
+simOpt = 0;
+Fs = 2000;
 
 [~] = MUModel_test_v2(param,Lce,0,MU_type,1,simOpt,Fs);
 
@@ -43,7 +62,7 @@ f_half_exp = f_exp(loc);
 fusion_exp = [-0.28169 17.465 36.62 58.31 74.93 85.915 90.141 92.394 94.93 96.056 96.62 97.465 97.465 97.746 98.028 97.746 97.465 97.465 97.746 96.62];
 
 figure(7)
-hold on 
+hold on
 plot(f_exp./f_half_exp,fusion_exp/100,'LineWidth',1,'color','k')
 
 

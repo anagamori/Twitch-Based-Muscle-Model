@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_default';
+condition = 'Model_PR_100';
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
@@ -23,6 +23,7 @@ for i = 1:2
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
         cd(code_folder)
@@ -38,6 +39,7 @@ for i = 1:2
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
         cd(code_folder)
@@ -48,6 +50,7 @@ for i = 1:2
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
         cd(code_folder)
@@ -69,10 +72,14 @@ for i = 1:2
     
     
     figure(3)
-    shadedErrorBar(amp_vec*100,mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     %shadedErrorBar(mean(mean_Force_norm),mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
+     figure(4)
+    %shadedErrorBar(amp_vec*100,mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force_norm),mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    hold on
     %%
     figure(5)
     subplot(1,4,1);
@@ -184,6 +191,19 @@ set(gca,'box','off')
 % cd (figure_folder)
 % saveas(gcf,'activation2CoV_FV_comparison','pdf')
 % cd (code_folder)
+
+figure(4)
+%xlabel('Mean Force (%)','FontSize',14)
+plot(force_vec,CoV_vec,'--k','LineWidth',2)
+plot(force_vec,CoV_vec,'o','LineWidth',2,'color','k')
+
+xlabel('Mean Force (%Maximum Force)','FontSize',14)
+ylabel('CoV (%)','FontSize',14)
+xlim([0 100])
+legend('Fuglevand model','New model without tendon','New model without tendon','location','northwest')
+set(gca,'TickDir','out');
+set(gca,'box','off')
+
 
 figure(5)
 fig = gcf;

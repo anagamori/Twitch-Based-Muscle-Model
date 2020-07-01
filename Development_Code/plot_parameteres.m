@@ -20,7 +20,7 @@ f_half_exp = f_exp(loc);
 fusion_exp = [0 17.465 36.62 58.31 74.93 85.915 90.141 92.394 94.93 96.056 96.62 97.465 97.465 97.746 98.028 97.746 97.465 97.465 97.746 96.62];
 
 
-for i = 1:N_MU
+for i = 20 %1:N_MU
 
     cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
     load(['Data_v2_' num2str(i)])
@@ -88,9 +88,11 @@ hold on
 plot(Force,Fusion,'LineWidth',2,'color',[252,163,17]/255)
 
 % %%
-% cd('/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
-% save('CT','CT')
-% save('t2t','t2t')
-% save('FR_half','FR_half')
-% save('pool_parameter_matrix','parameter_Matrix')
-% cd(code_folder)
+cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
+save('CT','CT')
+save('t2t','t2t')
+save('FR_half','FR_half')
+%save('pool_parameter_matrix','parameter_Matrix')
+save('fusion','fusion')
+save('Af','Af')
+cd(code_folder)
