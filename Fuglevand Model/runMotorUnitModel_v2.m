@@ -22,7 +22,7 @@ for k = 1:length(amp_temp)
     t_sin = [1:7*Fs]/Fs;
     U = [zeros(1,1*Fs) (amp/2)*(0:1/Fs:2) amp*ones(1,length(t)-3*Fs-1)];
     
-    modelParameter.N = 120;    
+    modelParameter.N = 200;    
     modelParameter.RR = 65;    
     modelParameter.MFR = 8;   
     modelParameter.g_e = 1.0;    

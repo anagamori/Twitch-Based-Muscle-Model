@@ -11,7 +11,7 @@ function [Data] = spikeDrivenMuscleModel_testFunction_fullVersion(parameter,Lce,
 %   relationship (e.g., parameter(5), parameter(6), etc)
 %==========================================================================
 %% Simulation parameters
-Fs = 2000; %sampling frequency
+Fs = 5000; %sampling frequency
 time = 0:1/Fs:6; %simulation time
 
 S = parameter(1); %7;
@@ -35,7 +35,7 @@ for i = 1:2
         % Generate a set of spike trains at multiple frequencies
         if strcmp(fiber_type,'slow')
             %FR_test = [2 5 8 10 12 15 18 20 25 30 40 50]; % 60 70 80 100]; %10:10:100];
-            FR_test = 2:1:50;
+            FR_test = [2:2:100 200 300];
         elseif strcmp(fiber_type,'fast')
             %FR_test = [2 5 8 10 12 15 18 20 25 30 40 50 60 70 80 100 200 300];
             FR_test = [2:2:100 200 300];
