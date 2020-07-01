@@ -99,9 +99,9 @@ for t = 1:length(time)
         % Compute discharge rates
         U = synaptic_input(t);
         
-        CV_ISI = ones(N_MU)*0.2;
-%         CV_ISI = 10+20*exp(-(U*100-U_th*100)/2.5);
-%         CV_ISI = CV_ISI./100;
+        %CV_ISI = ones(N_MU)*0.2;
+        CV_ISI = 10+20*exp(-(U*100-U_th*100)/2.5);
+        CV_ISI = CV_ISI./100;
 %         
         DR_MU = g_e.*(U-U_th)+MDR;
         for m = 1:length(index_saturation)

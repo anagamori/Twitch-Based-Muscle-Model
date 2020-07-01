@@ -9,7 +9,7 @@ amp_temp = [0.025 0.05 0.1:0.1:1];
 RP_temp = 10:10:150;
 
 
-data_directory = '/Volumes/DATA2/PLOS_CB_Data/Fuglevand/N_120_CoV_20';
+data_directory = '/Volumes/DATA2/PLOS_CB_Data/Fuglevand/N_120_CoV_20_Ur_80';
 code_directory = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Fuglevand Model';
 
 maxForce = 1.9758e+04;

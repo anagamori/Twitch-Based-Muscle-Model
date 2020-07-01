@@ -11,8 +11,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/';
-model_parameter_folder =  '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/';
+model_parameter_folder =  '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
 %% Muscle architectural parameters
 modelParameter.pennationAngle = 9.6*pi/180; %[radians]
 modelParameter.optimalLength = 6.8; % [cm]
@@ -37,10 +37,10 @@ modelParameter.Lmt = Lm_initial*cos(alpha)+Lt_initial; % intial musculotendon le
 [modelParameter.L_ce,modelParameter.L_se,modelParameter.Lmax] =  InitialLength_function(modelParameter);
 
 %% Motor unit parameters
-modelParameter.N_MU = 100; % number of motor units
+modelParameter.N_MU = 200; % number of motor units
 modelParameter.i_MU = 1:modelParameter.N_MU; % index for motor units
 modelParameter.i_MU = modelParameter.i_MU';
-index = 1:2:200;
+index = 1:1:200;
 %% Peak tetanic force
 RP_MU = 25; %range of peak tension across motor untis in unit of fold
 b_MU = log(RP_MU)/modelParameter.N_MU; %coefficient to establish a range of twich force values
@@ -51,7 +51,7 @@ PTi = P_MU./sum(P_MU)*modelParameter.F0; % peak tetanic force for individual uni
 F_pcsa_slow = 0.4; % fractional PSCA of slow-twitch motor units (0-1)
 % value obtained from Jaworowski et al. 2002 for TA muscle
 [~, modelParameter.index_slow] = min(abs(cumsum(PTi) - modelParameter.F0*F_pcsa_slow)); 
-modelParameter.index_slow = 74;
+%modelParameter.index_slow = 74;
 %% Model parameters for activation-frequency relationship
 cd(model_parameter_folder )
 load('pool_parameter_matrix')
@@ -74,7 +74,7 @@ modelParameter.PTi = PTi(index_MU_PTi);
 % Find recruitment threshold for individual units using exponential fit
 % Recruitment threshold is correlated to peak tetanic tension
 %   Use index_MU_PTi to appropriately index each MU
-Ur = 0.8; % recruitment threshold for the lastly recruited motor unit
+Ur = 0.5; % recruitment threshold for the lastly recruited motor unit
 Ur_1 = 0.01; % reruitment threshold for the first unit
 f_RT = fit([1 modelParameter.N_MU]',[Ur_1 Ur]','exp1');
 coeffs_f_RT = coeffvalues(f_RT);
@@ -104,7 +104,7 @@ modelParameter.U_th_t = (modelParameter.k_e-(modelParameter.PDR-f_t*modelParamet
 
 %% Save model parameters
 cd(model_parameter_folder)
-save('modelParameter_v3','modelParameter')
+save('modelParameter_Ur_50','modelParameter')
 cd(code_folder)
 
 

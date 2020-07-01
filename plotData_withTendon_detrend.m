@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_N_100_CoV_20';
+condition = 'Model_default';
 data_folder = ['/Volumes/DATA2/PLOS_CB_Data/withTendon/' condition];
 save_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
