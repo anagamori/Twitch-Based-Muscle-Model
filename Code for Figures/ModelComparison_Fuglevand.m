@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_PR_100';
+condition = 'Model_Ur_50';
 code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
