@@ -22,7 +22,7 @@ for k = 1:length(amp_temp)
     U = [zeros(1,1*Fs) (amp/2)*(0:1/Fs:2) amp*ones(1,length(t)-3*Fs-1)];
     
     modelParameter.N = 200;    
-    modelParameter.RR = 17;     %65 for U_r = 0.8
+    modelParameter.RR = 65;     %65 for U_r = 0.8
     modelParameter.MFR = 8;   
     modelParameter.g_e = 1;    
     modelParameter.PFR1 = 35;   

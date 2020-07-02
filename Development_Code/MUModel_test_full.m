@@ -7,7 +7,7 @@ function [Data] = MUModel_test_full(parameter,Lce,FR_half_temp,FR_test_vec,fiber
 % Descriptions:
 %==========================================================================
 %% Simulation parameters
-time = 0:1/Fs:6; %simulation time
+time = 0:1/Fs:5; %simulation time
 
 S = parameter(1); 
 C = parameter(2); 
@@ -66,8 +66,8 @@ for i = 1:nTrial
             spike(1*Fs) = 1;
         else
             % Generate spike train
-            temp =spikeTrainGenerator(0:1/Fs:4,Fs,FR);
-            spike(1*Fs:5*Fs) = temp;
+            temp =spikeTrainGenerator(0:1/Fs:3,Fs,FR);
+            spike(1*Fs:4*Fs) = temp;
         end
         
         %%  initialization
@@ -128,8 +128,8 @@ for i = 1:nTrial
             
         end
         
-        mean_exc(f) = mean(A_vec(4.5*Fs:5*Fs));
-        p2p_exc(f) = max(A_vec(4.5*Fs:5*Fs))-min(A_vec(4.5*Fs:5*Fs));
+        mean_exc(f) = mean(A_vec(3.75*Fs:4*Fs));
+        p2p_exc(f) = max(A_vec(3*Fs:4*Fs))-min(A_vec(3*Fs:4*Fs));
         
         if i == 1
             %------------------------------------------------------------------
