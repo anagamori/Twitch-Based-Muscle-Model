@@ -9,11 +9,11 @@ amp_temp = [0.025 0.05 0.1:0.1:1];
 RP_temp = 10:10:150;
 
 
-data_directory = '/Volumes/DATA2/PLOS_CB_Data/Fuglevand/N_120_CoV_20_Ur_80';
+data_directory = '/Volumes/DATA2/PLOS_CB_Data/Fuglevand/N_200_Ur_50';
 code_directory = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Fuglevand Model';
 
 maxForce = 1.9758e+04;
-parpool(10)
+%parpool(10)
 for k = 1:length(amp_temp)
     trialN = k; %+30; 
     % predefine model parameters
@@ -23,7 +23,7 @@ for k = 1:length(amp_temp)
     U = [zeros(1,1*Fs) (amp/2)*(0:1/Fs:2) amp*ones(1,length(t)-3*Fs-1)];
     
     modelParameter.N = 200;    
-    modelParameter.RR = 65;    
+    modelParameter.RR = 17;    
     modelParameter.MFR = 8;   
     modelParameter.g_e = 1.0;    
     modelParameter.PFR1 = 35;   
@@ -37,7 +37,7 @@ for k = 1:length(amp_temp)
     tic
     parfor i = 1:10
         % Run motor unit model        
-        output = MotorUnitModel(t,U,modelParameter,Fs);       
+        output = MotorUnitModel_varCoV(t,U,modelParameter,Fs);       
         Data{i} = output;
     end
     toc

@@ -2,7 +2,7 @@ close all
 clear all
 clc
 
-data_directory = '/Volumes/DATA2/PLOS_CB_Data/Fuglevand/N_120_CoV_20_Ur_80';
+data_directory = '/Volumes/DATA2/PLOS_CB_Data/Fuglevand/N_200_Ur_50';
 code_directory = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Fuglevand Model/';
 %load ('Input')
 Fs = 1000;
