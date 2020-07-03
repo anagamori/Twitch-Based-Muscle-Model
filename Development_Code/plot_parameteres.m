@@ -9,6 +9,7 @@ N_MU = 200;
 CT = zeros(N_MU,1);
 t2t = zeros(N_MU,1);
 FR_half = zeros(N_MU,1);
+ratio = zeros(N_MU,1);
 Af = zeros(N_MU,52);
 fusion = zeros(N_MU,52);
 parameter_Matrix = zeros(N_MU,14);
@@ -20,7 +21,7 @@ f_half_exp = f_exp(loc);
 fusion_exp = [0 17.465 36.62 58.31 74.93 85.915 90.141 92.394 94.93 96.056 96.62 97.465 97.465 97.746 98.028 97.746 97.465 97.465 97.746 96.62];
 
 
-for i = 20 %1:N_MU
+for i = 1:N_MU
 
     cd('/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Development_Code/Data')
     load(['Data_v2_' num2str(i)])
@@ -30,6 +31,7 @@ for i = 20 %1:N_MU
     CT(i) = Data{2,1};
     t2t(i) = Data{2,5};
     FR_half(i) = Data{2,6};
+    ratio(i) = 1/FR_half(i)*1000/CT(i);
     
     Af(i,:) = Data{2,10}';
     fusion(i,:) = Data{2,11}';
@@ -95,4 +97,5 @@ save('FR_half','FR_half')
 %save('pool_parameter_matrix','parameter_Matrix')
 save('fusion','fusion')
 save('Af','Af')
+save('ratio','ratio')
 cd(code_folder)

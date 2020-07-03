@@ -12,13 +12,15 @@ clear all
 clc
 
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
-load('modelParameter_v3')
+load('modelParameter_v2')
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
 MDR = modelParameter.MDR;
 PDR = modelParameter.PDR;
 U_th = modelParameter.U_th;
+index_slow = modelParameter.index_slow;
+
 %%
 g_e = modelParameter.g_e;
 lamda =  modelParameter.lamda;
@@ -69,9 +71,10 @@ Rsq_1 = 1 - sum((PDR - PDR_Calc).^2)/sum((PDR - mean(PDR)).^2)
 [R_1,P_1] = corrcoef(U_th_vec,PDR)
 
 figure(2)
-scatter(U_th*100,PDR,'filled','k','LineWidth',0.5)
+scatter(U_th(1:index_slow)*100,PDR(1:index_slow),'filled','MarkerFaceColor',[36 123 160]/255,'LineWidth',0.5)
 hold on
-plot(U_th*100,PDR_Calc,'r','LineWidth',1)
+scatter(U_th(index_slow+1:end)*100,PDR(index_slow+1:end),'filled','MarkerFaceColor',[255 22 84]/255,'LineWidth',0.5)
+plot(U_th*100,PDR_Calc,'k','LineWidth',1)
 xlim([-5 85])
 xticks([0 0.1 0.2 0.3 0.4 0.5]*100)
 xlabel('Recruitment Threshold (%Maximum)','FontSize',8)
@@ -114,10 +117,17 @@ DR_Calc = X*b1;
 Rsq = 1 - sum((DR_vec - DR_Calc).^2)/sum((DR_vec - mean(DR_vec)).^2)
 [R,P] = corrcoef(U_th(DR_MU>0),DR_MU(DR_MU>0))
 
-figure(3)
-scatter(U_th_vec,DR_vec,'filled','k','LineWidth',0.5)
-hold on
-plot(U_th_vec,DR_Calc,'r','LineWidth',1)
+if length(DR_vec) <= index_slow
+    figure(3)
+    scatter(U_th_vec,DR_vec,'filled','MarkerFaceColor',[36 123 160]/255,'LineWidth',0.5)
+    hold on
+else
+    figure(3)
+    scatter(U_th_vec(1:index_slow),DR_vec(1:index_slow),'filled','MarkerFaceColor',[36 123 160]/255,'LineWidth',0.5)
+    hold on
+    scatter(U_th_vec(index_slow+1:end),DR_vec(index_slow+1:end),'filled','MarkerFaceColor',[255 22 84]/255,'LineWidth',0.5)
+end
+plot(U_th_vec,DR_Calc,'k','LineWidth',1)
 xlim([-1 11])
 xticks([0 0.05 0.1 0.15 0.2]*100)
 xlabel('Recruitment Threshold (%Maximum)','FontSize',8)
