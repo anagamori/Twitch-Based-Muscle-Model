@@ -3,11 +3,11 @@ clear all
 clc
 
 N = 200;
-RR = 110;     %65 for U_r = 0.8
+RR = 16;     %65 for U_r = 0.8
 MFR = 8;
-g_e = 1.5;
-PFR1 = 20;
-PFRD = -30;
+g_e = .2;
+PFR1 = 35;
+PFRD = 10;
 
 i = 1:N; %motor unit identification index
 a = log(RR)/N; %coefficient to establish a range of threshold values
@@ -45,3 +45,12 @@ hold on
 figure(3)
 plot(RTE/Emax,'o')
 hold on 
+
+
+%%
+g = 0.1:0.1:2;
+RR = 1:400;
+Uth_n = zeros(length(g),length(RR));
+for i = 1:length(g)
+    Uth_n(i,:) = RR./(g(i)*RR+17);
+end

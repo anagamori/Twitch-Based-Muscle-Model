@@ -76,7 +76,7 @@ hold on
 scatter(U_th(index_slow+1:end)*100,PDR(index_slow+1:end),'filled','MarkerFaceColor',[255 22 84]/255,'LineWidth',0.5)
 plot(U_th*100,PDR_Calc,'k','LineWidth',1)
 xlim([-5 85])
-xticks([0 0.1 0.2 0.3 0.4 0.5]*100)
+xticks([0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8]*100)
 xlabel('Recruitment Threshold (%Maximum)','FontSize',8)
 ylabel('Discharge Rate (Hz)','FontSize',8)
 set(gca,'TickDir','out');
@@ -128,7 +128,7 @@ else
     scatter(U_th_vec(index_slow+1:end),DR_vec(index_slow+1:end),'filled','MarkerFaceColor',[255 22 84]/255,'LineWidth',0.5)
 end
 plot(U_th_vec,DR_Calc,'k','LineWidth',1)
-xlim([-1 11])
+xlim([-1 U*100+1])
 xticks([0 0.05 0.1 0.15 0.2]*100)
 xlabel('Recruitment Threshold (%Maximum)','FontSize',8)
 ylabel('Discharge Rate (Hz)','FontSize',8)
