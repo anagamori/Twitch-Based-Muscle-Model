@@ -9,29 +9,38 @@ clear all
 clc
 
 %%
-condition = 'Model_11_var_CoV_80_Ur_Rec_3';
-data_folder = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/noTendon/' condition];
+condition = 'Model_default_v2';
+data_folder = ['/Volumes/DATA2/PLOS_CB_Data/noTendon/' condition];
+save_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/noTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
+nTrial = 2;
 Fs = 10000;
-amp_vec = [0.05 0.1:0.1:1];
+amp_vec = [0.025 0.05 0.1:0.1:1];
 time =0:1/Fs:15;
-mean_Force = zeros(10,length(amp_vec));
-std_Force = zeros(10,length(amp_vec));
-cov_Force = zeros(10,length(amp_vec));
-pxx = zeros(10,201);
+mean_Force = zeros(nTrial,length(amp_vec));
+std_Force = zeros(nTrial,length(amp_vec));
+std_Force_dt = zeros(nTrial,length(amp_vec));
+cov_Force = zeros(nTrial,length(amp_vec));
+cov_Force_dt = zeros(nTrial,length(amp_vec));
+pxx = zeros(nTrial,201);
 mean_pxx = zeros(length(amp_vec),201);
 
-for j = 0:10
+for j = 1:length(amp_vec)
     cd(data_folder)
     load(['Force_mat_' num2str(j)])
     cd(code_folder)
-    for i = 1:10
+    for i = 1:nTrial
         Force =  Force_mat(i,:);
-        mean_Force(i,j+1) = mean(Force(5*Fs+1:end));
-        std_Force(i,j+1) = std(Force(5*Fs+1:end));
-        cov_Force(i,j+1) =  std_Force(i,j+1)/mean_Force(i,j+1)*100;
+        window = 1*Fs;
+        bp = [1:window:length(Force)];
+        Force_dt = detrend(Force,1,bp);
+        mean_Force(i,j) = mean(Force(5*Fs+1:end));
+        std_Force(i,j) = std(Force(5*Fs+1:end));
+        std_Force_dt(i,j) = std(Force_dt(5*Fs+1:end));
+        cov_Force(i,j) =  std_Force(i,j)/mean_Force(i,j)*100;
+        cov_Force_dt(i,j) =  std(Force_dt(5*Fs+1:end))/mean_Force(i,j)*100;
               
         [pxx(i,:),f] = pwelch(Force(5*Fs+1:end)-mean(Force(5*Fs+1:end)),rectwin(length(Force(5*Fs+1:end))),0,0:0.5:100,Fs,'power');
     end
@@ -44,10 +53,12 @@ for j = 0:10
     %clear Force_mat
 end
 
-cd(data_folder)
+cd(save_folder)
 save('mean_Force','mean_Force')
 save('std_Force','std_Force')
+save('std_Force_dt','std_Force_dt')
 save('cov_Force','cov_Force')
+save('cov_Force_dt','cov_Force_dt')
 save('mean_pxx','mean_pxx')
 cd(code_folder)
 %%
