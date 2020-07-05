@@ -17,7 +17,7 @@ figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures
 %% 
 amp_vec = [0.025 0.05 0.1:0.1:1];
 Fs = 10000;
-nTrial = 2;
+nTrial = 10;
 
 Force_mat = zeros(nTrial,15*Fs+1);
 mean_Force = zeros(nTrial,length(amp_vec));

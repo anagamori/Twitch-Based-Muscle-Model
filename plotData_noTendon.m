@@ -15,7 +15,7 @@ save_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
-nTrial = 2;
+nTrial = 10;
 Fs = 10000;
 amp_vec = [0.025 0.05 0.1:0.1:1];
 time =0:1/Fs:15;

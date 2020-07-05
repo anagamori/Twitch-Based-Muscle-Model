@@ -24,7 +24,7 @@ cd(code_folder)
 
 amp_vec = [0.025 0.05 0.1:0.1:1];
 trial_vec = [7 10];
-for j = 6:length(amp_vec)
+for j = 1:length(amp_vec)
     j
 
         Fs = 10000;
@@ -34,7 +34,7 @@ for j = 6:length(amp_vec)
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
  
     %%
-    for i = 3:4
+    for i = 5:10
         i
         tic
         output = MU_population_model_noTendon(Fs,time,input,modelParameter,1);
