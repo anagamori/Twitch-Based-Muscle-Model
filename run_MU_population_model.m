@@ -11,13 +11,13 @@ clc
 
 
 %%
-data_folder = '/Volumes/DATA2/PLOS_CB_Data/withTendon/Model_N_400';
+data_folder = '/Volumes/DATA2/PLOS_CB_Data/withTendon/Model_Ur_50';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 model_parameter_folder =  '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
 
 %%
 cd(model_parameter_folder)
-load('modelParameter_N_400')
+load('modelParameter_Ur_50')
 cd(code_folder)
 
 %% Simlulation parameters
@@ -25,7 +25,7 @@ cd(code_folder)
 amp_vec = [0.025 0.05 0.1:0.1:1];
 %amp_vec = [0.106 0.29 0.62 0.78 0.93];
 trial_vec = [7 10];
-for j = 6:length(amp_vec)
+for j = 1:length(amp_vec)
     j
 %      Fs = 20000;
 %         time = 0:1/Fs:15;
