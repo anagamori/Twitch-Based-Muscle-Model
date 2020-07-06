@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_N_400';
+condition = 'Model_PR_100';
 data_folder = ['/Volumes/DATA2/PLOS_CB_Data/withTendon/' condition];
 data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/New Model/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
