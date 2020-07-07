@@ -81,8 +81,9 @@ for i = 1:nTrial
         A_vec = zeros(1,length(time));
         
         
-        R_temp = 1-exp(-time/tau_1);
+        R_temp_1 = 1-exp(-time/tau_1);
         R_temp_2 = exp(-time/tau_2);
+        R_temp = R_temp_2.*R_temp_1;
         R = zeros(1,length(time));
         %%
         for t = 1:length(time)
@@ -94,7 +95,7 @@ for i = 1:nTrial
             spike_temp = zeros(1,length(time));
             if spike(t) == 1
                 spike_temp(t) = 1;
-                temp = conv(spike_temp,R_temp_2.*R_temp);
+                temp = conv(spike_temp,R_temp);
                 R = R + temp(1:length(time));
             end
        
@@ -128,7 +129,7 @@ for i = 1:nTrial
             
         end
         
-        mean_exc(f) = mean(A_vec(3.75*Fs:4*Fs));
+        mean_exc(f) = mean(A_vec(3*Fs:4*Fs));
         p2p_exc(f) = max(A_vec(3*Fs:4*Fs))-min(A_vec(3*Fs:4*Fs));
         
         if i == 1
@@ -172,7 +173,13 @@ for i = 1:nTrial
             P =  pks/T;
             twitch_Milner_temp = P.*time.*exp(1-time/T);
             twitch_Milner = conv(spike,twitch_Milner_temp);
-        end        
+        end       
+        
+%         figure(11)
+%         plot(time,A_vec)
+%         set(gca,'TickDir','out');
+%         set(gca,'box','off')
+%         hold on
     end
     
     

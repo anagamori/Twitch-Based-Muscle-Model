@@ -67,8 +67,8 @@ for i = 1:3
     
     std_Force_norm = std_Force./mean_mean_Force(end)*100;
     figure(2)
-    shadedErrorBar(amp_vec*100,mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    %shadedErrorBar(mean(mean_Force_norm),mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    %shadedErrorBar(amp_vec*100,mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force_norm),mean(std_Force_norm),std(std_Force_norm),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     
@@ -79,12 +79,12 @@ for i = 1:3
     
      figure(4)
     %shadedErrorBar(amp_vec*100,mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    shadedErrorBar(mean(mean_Force_norm),mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force_norm),mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     %%
     figure(5)
     subplot(1,4,1);
-    plot(f,mean_pxx(1,:)./sum(mean_pxx(1,:))*100,'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(2,:)./sum(mean_pxx(2,:))*100,'LineWidth',2,'color',color_code)
     hold on
     xlim([0 30])
     ylim([0 20])
@@ -98,7 +98,7 @@ for i = 1:3
     
     
     subplot(1,4,2);
-    plot(f,mean_pxx(3,:)./sum(mean_pxx(3,:))*100,'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(4,:)./sum(mean_pxx(4,:))*100,'LineWidth',2,'color',color_code)
     hold on
     xlim([0 30])
     ylim([0 20])
@@ -112,7 +112,7 @@ for i = 1:3
     hold on
     
     subplot(1,4,3);
-    plot(f,mean_pxx(5,:)./sum(mean_pxx(5,:))*100,'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(6,:)./sum(mean_pxx(6,:))*100,'LineWidth',2,'color',color_code)
     hold on
     xlim([0 30])
     ylim([0 20])
@@ -126,7 +126,7 @@ for i = 1:3
     
     
     subplot(1,4,4);
-    plot(f,mean_pxx(8,:)./sum(mean_pxx(8,:))*100,'LineWidth',2,'color',color_code)
+    plot(f,mean_pxx(9,:)./sum(mean_pxx(9,:))*100,'LineWidth',2,'color',color_code)
     xlim([0 30])
     ylim([0 20])
     yticks(0:5:25)
@@ -180,8 +180,8 @@ set(gca,'box','off')
 
 figure(3)
 %xlabel('Mean Force (%)','FontSize',14)
-plot(force_vec,CoV_vec,'--k','LineWidth',2)
-plot(force_vec,CoV_vec,'o','LineWidth',2,'color','k')
+% plot(force_vec,CoV_vec,'--k','LineWidth',2)
+% plot(force_vec,CoV_vec,'o','LineWidth',2,'color','k')
 
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
@@ -195,9 +195,9 @@ set(gca,'box','off')
 
 figure(4)
 %xlabel('Mean Force (%)','FontSize',14)
-plot(force_vec,CoV_vec,'--k','LineWidth',2)
-plot(force_vec,CoV_vec,'o','LineWidth',2,'color','k')
-
+% plot(force_vec,CoV_vec,'--k','LineWidth',2)
+% plot(force_vec,CoV_vec,'o','LineWidth',2,'color','k')
+% 
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])

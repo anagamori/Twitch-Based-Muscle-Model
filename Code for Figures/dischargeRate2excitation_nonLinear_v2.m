@@ -9,7 +9,7 @@
 %==========================================================================
 
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
-load('modelParameter')
+load('modelParameter_v2')
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
@@ -51,7 +51,7 @@ end
 %close all
 %index_plot = 1:1:300; %[1 50 100 150 200 250 300];
 
-index_plot_slow = [2 15 100 111 122];
+index_plot_slow = [2 15 85 111 122];
 index_plot_fast = [160 180 190 197 200];
 figure(1)
 plot(U_vec*100,DR_mat(index_plot_slow,:),'Color',[36 123 160]/255,'LineWidth',1)

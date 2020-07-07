@@ -38,7 +38,7 @@ std_vec = CoV_vec./100.*force_vec;
 
 std_Force_dt = std_Force_dt/max_Force*100;
  
-a = std_vec(1)/force_vec(1);
+a =  mean(std_Force_dt(:,1))/mean(mean_Force_norm(:,1));
 a_todorov = 0.1289;
 x = [0 amp_vec]*100;
 
@@ -48,7 +48,7 @@ shadedErrorBar(mean(mean_Force_norm),mean(cov_Force_dt),std(cov_Force_dt),'linep
 hold on
 plot(force_vec,CoV_vec,'--k','LineWidth',2)
 plot(force_vec,CoV_vec,'o','LineWidth',2,'color','k')
-plot([x(1) x(end)],[0.02*100 0.02*100],'LineWidth',2,'Color',[77 172 38]/255)
+plot([x(1) x(end)],[a*100 a*100],'LineWidth',2,'Color',[77 172 38]/255)
 %plot([x(1) x(end)],[a_todorov*100 a_todorov*100],'LineWidth',2,'Color',[77 172 38]/255)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
@@ -62,7 +62,7 @@ shadedErrorBar(mean(mean_Force_norm),mean(std_Force_dt),std(std_Force_dt),'linep
 hold on
 plot(force_vec,std_vec,'--k','LineWidth',2)
 plot(force_vec,std_vec,'o','LineWidth',2,'color','k')
-plot(x,x*0.02,'LineWidth',2,'Color',[77 172 38]/255)
+plot(x,x*a,'LineWidth',2,'Color',[77 172 38]/255)
 plot(x,x*a_todorov,'LineWidth',2,'Color',[208 28 139]/255)
 yticks(0:0.25:1.75)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
