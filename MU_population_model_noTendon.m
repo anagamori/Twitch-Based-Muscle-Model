@@ -1,7 +1,7 @@
 %==========================================================================
 % muscleModel_noTendon.m
 % Author: Akira Nagamori
-% Last update: 3/5/19
+% Last update: 7/10/2020
 % Descriptions:
 %   Full model without tendon
 %==========================================================================
@@ -10,17 +10,10 @@ function [output] = MU_population_model_noTendon(Fs,time,synaptic_input,modelPar
 %% Motor unit architecture
 N_MU = modelParameter.N_MU; % number of motor units
 i_MU = modelParameter.i_MU; % index for motor units
+index_slow = modelParameter.index_slow;
 
 %% Peak tetanic force
 PTi = modelParameter.PTi;
-
-%% Fractional PSCA
-%F_pcsa_slow = 0.3; % fractional PSCA of slow-twitch motor units (0-1)
-%[~, index_slow] = min(abs(cumsum(PTi) - F0*F_pcsa_slow)); rng(1)
-index_slow = modelParameter.index_slow;
-
-%% Motor unit parameter
-parameter_Matrix = modelParameter.parameterMatrix;
 
 %% Recruitment threshold
 U_th = modelParameter.U_th;
@@ -40,18 +33,15 @@ Z = randn(N_MU,length(time));
 Z(Z>3.9) = 3.9;
 Z(Z<-3.9) = -3.9;
 
+%% Motor unit parameters
+parameter_Matrix = modelParameter.parameterMatrix;
+
 %% Activation dynamics (Song et al., 2008)
 tau_1 = parameter_Matrix(:,7);
 tau_2 = parameter_Matrix(:,8);
 R_temp = 1-exp(-time./tau_1);
 R_temp_2 = exp(-time./tau_2);
 
-%% Sag parameter
-a_s = ones(N_MU,1)*0.96;
-
-%% Muscle length
-Lce = 1;
-Vce = 0;
 %% Initilization
 spike_time = zeros(N_MU,1);
 spike_time_mat = zeros(N_MU,length(time));
@@ -59,6 +49,7 @@ spike_train = zeros(N_MU,length(time));
 force = zeros(N_MU,length(time));
 Force = zeros(1,length(time));
 
+% Module 2 parameteres
 R = zeros(N_MU,length(time));
 c = zeros(N_MU,1);
 cf = zeros(N_MU,1);
@@ -68,11 +59,15 @@ cf_mat = zeros(N_MU,length(time));
 A_tilde_mat = zeros(N_MU,length(time));
 A_mat = zeros(N_MU,length(time));
 
+a_s = ones(N_MU,1)*0.96;
 S_i = zeros(N_MU,1);
 Y_i = zeros(N_MU,1);
 S_mat = zeros(N_MU,length(time));
 Y_mat = zeros(N_MU,length(time));
 
+% Muscle length
+Lce = 1;
+Vce = 0;
 FL = zeros(N_MU,1);
 FV = zeros(N_MU,1);
 
@@ -82,14 +77,16 @@ DR_mat = zeros(N_MU,length(time));
 rng('shuffle')
 for t = 1:length(time)    
     if t > 1
-        %% Effective activation (Song et al., 2008)
-        
+       %% Module 1       
         U_eff = synaptic_input(t);
-        CV_ISI = 10+20*exp(-(U_eff*100-U_th*100)/2.5);
-        CV_ISI = CV_ISI./100;
-        %% Calculate firing rate
-        % Linear increase in discharge rate up to Ur
         
+        CV_ISI = 10+20*exp(-(U_eff*100-U_th*100)/2.5);
+        CV_ISI = CV_ISI./100;      
+        
+        % for constant CoV of ISI
+        % CV_ISI = ones(N_MU)*0.1;
+              
+       % compute discharge rate (DR_MU) 
         DR_MU = g_e.*(U_eff-U_th)+MDR;
         for m = 1:length(index_saturation)
             index = index_saturation(m);
@@ -103,8 +100,6 @@ for t = 1:length(time)
         DR_MU(DR_MU<MDR) = 0;
         DR_MU(DR_MU>PDR) = PDR(DR_MU>PDR);
         
-        % Zero the discharge rate of a MU if it is smaller than its minimum
-        % firing rate
         DR_mat(:,t) = DR_MU;
         %% Sag & Yield (Song et al., 2008)
         f_eff = DR_MU./FR_half;
@@ -115,46 +110,56 @@ for t = 1:length(time)
         Y_i(index_slow+1:end) = 1;
         Y_mat(:,t) = Y_i;
         
-        %% Convert activation into spike trains
+        % Convert activation into spike trains
         index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1) == 0);
         index_2 = i_MU(DR_MU >= MDR & spike_time ==t);
+        index = [index_1;index_2];
+        
+        % Generate spike trains
+        index_1 = i_MU(DR_MU >= MDR & DR_mat(:,t-1) == 0); % find index of units that discharge for the first time
+        index_2 = i_MU(DR_MU >= MDR & spike_time ==t); % find index of units whose spike time is at time = t
         index = [index_1;index_2];
         
         for j = 1:length(index) % loop through motor units whose firing rate is greater than minimum firing rate defined by the user
             n = index(j);
             spike_train_temp = zeros(1,length(t));
-            if ~any(spike_train(n,:)) % when the motor unit fires at the first time
+            if ~any(spike_train(n,:)) % when the motor unit fires for the first time
                 spike_train(n,t) = 1; % add a spike to the vector
                 spike_train_temp(t) = 1;
-                mu = 1/DR_MU(n);
-       
-                spike_time_temp = (mu + mu*CV_ISI(n)*Z(n,t))*Fs;
+                
+                % compute the spike time of the next spike
+                mu = 1/DR_MU(n); % interspike interval                  
+                spike_time_temp = (mu + mu*CV_ISI(n)*Z(n,t))*Fs; % add variabiltiy 
                 if spike_time_temp <= 0.002*Fs
                     spike_time_temp = 0.002*Fs;
                 end
                 spike_time(n) = round(spike_time_temp) + t;
                 
+                % assign the value of R 
                 temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
                 R(n,:) = R(n,:) + temp(1:length(time));
             else % when the motor unit have already fired at least once
                 if spike_time(n) == t % when the motor unit fires
                     spike_train(n,t) = 1;
                     spike_train_temp(t) = 1;
-                    % update mean firing rate of the motor unit given the
-                    % current value of input
-                    mu = 1/DR_MU(n); % interspike interval
-                    spike_time_temp = (mu + mu*CV_ISI(n)*Z(n,t))*Fs; % interspike interval
+                    
+                    % compute the spike time of the next spike
+                    mu = 1/DR_MU(n); % interspike interval                  
+                    spike_time_temp = (mu + mu*CV_ISI(n)*Z(n,t))*Fs; % add variabiltiy 
                     if spike_time_temp <= 0.002*Fs
                         spike_time_temp = 0.002*Fs;
                     end
                     spike_time(n) = round(spike_time_temp) + t;
                     
+                    % assign the value of R 
                     temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
                     R(n,:) = R(n,:) + temp(1:length(time));
-                elseif t > spike_time(n) + round(1/DR_MU(n)*Fs)
+                elseif t > spike_time(n) + round(1/DR_MU(n)*Fs) % after the motor unit stops firing                   
                     spike_train(n,t) = 1;
                     spike_train_temp(t) = 1;
                     spike_time(n) = t;
+                    
+                    % compute the spike time of the next spike
                     mu = 1/DR_MU(n); % interspike interval
                     spike_time_temp = (mu + mu*CV_ISI(n)*Z(n,t))*Fs; % interspike interval
                     if spike_time_temp <= 0.002*Fs
@@ -162,13 +167,14 @@ for t = 1:length(time)
                     end
                     spike_time(n) = round(spike_time_temp) + t;
                     
+                    % assign the value of R 
                     temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
                     R(n,:) = R(n,:) + temp(1:length(time));
                 end
             end
         end
         
-        %% Convert spikes into activation
+        %% Module 2: Convert spikes into activation
         [c,cf,A_tilde,A] = spike2activation(R(:,t),c,cf,A,parameter_Matrix,Lce,S_i,Y_i,Fs);
         
         c_mat(:,t) = c;
@@ -205,9 +211,7 @@ if figOpt == 1
     hold on
 end
 
-%output.DR = DR_mat;
 output.Force = Force;
-%output.force = force;
 output.spike_train = spike_train;
 
 %% Convert spike trian into activation
@@ -227,15 +231,15 @@ output.spike_train = spike_train;
         phi_2 = parameter_Matrix(:,14);
         
         if Lce >= 1
-            k_3 = (phi_1.*k_3)*(Lce-1) + k_3; % a_k_3 > 0
-            N = (-phi_1.*N)*(Lce-1) + N; % a_k_3 < 0
+            k_3 = (phi_1.*k_3)*(Lce-1) + k_3; 
+            N = (-phi_1.*N)*(Lce-1) + N; 
             K = (-phi_1.*K)*(Lce-1) + K;
-            gamma = (phi_1.*gamma)*(Lce-1) + gamma; % a_k_3 > 0
+            gamma = (phi_1.*gamma)*(Lce-1) + gamma; 
         elseif Lce < 1
-            k_3 = (phi_2.*k_3)*(Lce-1) + k_3; % a_k_3 > 0
-            N = (-phi_2.*N)*(Lce-1) + N; % a_k_3 < 0
+            k_3 = (phi_2.*k_3)*(Lce-1) + k_3; 
+            N = (-phi_2.*N)*(Lce-1) + N;
             K = (-phi_2.*K)*(Lce-1) + K;
-            gamma = (phi_2.*gamma)*(Lce-1) + gamma; % a_k_3 > 0
+            gamma = (phi_2.*gamma)*(Lce-1) + gamma; 
         end
         
         %% Stage 1
@@ -283,11 +287,7 @@ output.spike_train = spike_train;
 
 %% Force-length relationship for slow twitch
     function FL = FL_slow_function(L)
-        %---------------------------
-        % force length (F-L) relationship for slow-tiwtch fiber
-        % input: normalized muscle length and velocity
-        % output: F-L factor (0-1)
-        %---------------------------
+        
         beta = 2.3;
         omega = 1.12;
         rho = 1.62;
@@ -297,11 +297,7 @@ output.spike_train = spike_train;
 
 %% Force-length relationship for fast twitch
     function FL = FL_fast_function(L)
-        %---------------------------
-        % force length (F-L) relationship for fast-twitch fiber
-        % input: normalized muscle length and velocity
-        % output: F-L factor (0-1)
-        %---------------------------
+       
         beta = 1.55;
         omega = 0.75;
         rho = 2.12;
@@ -311,11 +307,7 @@ output.spike_train = spike_train;
 
 %% Concentric force-velocity relationship for slow twitch
     function FVcon = FVcon_slow_function(L,V)
-        %---------------------------
-        % concentric force velocity (F-V) relationship for slow-twitch fiber
-        % input: normalized muscle length and velocity
-        % output: F-V factor (0-1)
-        %---------------------------
+       
         Vmax = -7.88;
         cv0 = 5.88;
         cv1 = 0;
@@ -325,11 +317,7 @@ output.spike_train = spike_train;
 
 %% Concentric force-velocity relationship for fast twitch
     function FVcon = FVcon_fast_function(L,V)
-        %---------------------------
-        % concentric force velocity (F-V) relationship for fast-twitch fiber
-        % input: normalized muscle length and velocity
-        % output: F-V factor (0-1)
-        %---------------------------
+       
         Vmax = -9.15;
         cv0 = -5.7;
         cv1 = 9.18;
@@ -339,11 +327,7 @@ output.spike_train = spike_train;
 
 %% Eccentric force-velocity relationship for slow twitch
     function FVecc = FVecc_slow_function(L,V)
-        %---------------------------
-        % eccentric force velocity (F-V) relationship for slow-twitch fiber
-        % input: normalized muscle length and velocity
-        % output: F-V factor (0-1)
-        %---------------------------
+       
         av0 = -4.7;
         av1 = 8.41;
         av2 = -5.34;
@@ -353,11 +337,7 @@ output.spike_train = spike_train;
 
 %% Eccentric force-velocity relationship for slow twitch
     function FVecc = FVecc_fast_function(L,V)
-        %---------------------------
-        % eccentric force velocity (F-V) relationship for fast-twitch fiber
-        % input: normalized muscle length and velocity
-        % output: F-V factor (0-1)
-        %---------------------------
+        
         av0 = -1.53;
         av1 = 0;
         av2 = 0;
