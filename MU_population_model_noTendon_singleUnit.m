@@ -77,13 +77,13 @@ for t = 1:length(time)
         
         CV_ISI = 10+20*exp(-(U_eff*100-U_th*100)/2.5);
         CV_ISI = CV_ISI./100;
-        
+        % CV_ISI = 0.2;
         % for constant CoV of ISI
         % CV_ISI = ones(N_MU)*0.1;
         
         % compute discharge rate (DR_MU)
         DR_temp = g_e.*(U_eff-U_th)+MDR;
-        if test_unit <= index_saturation
+        if length(find(index_saturation==test_unit)) == 1
             if U_eff <= U_th_t
                 DR_temp = MDR + lamda.*k_e*(U_eff-U_th);
             else

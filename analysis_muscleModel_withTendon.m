@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_Ur_50';
+condition = 'onion_skin';
 data_folder = ['/Volumes/DATA2/PLOS_CB_Data/withTendon/' condition];
 data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/New Model/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -21,7 +21,7 @@ amp_vec = [0.025 0.05 0.1:0.1:1];
 
 
 
-nTrial = 10;
+nTrial = 6;
 Force_mat = zeros(nTrial,15*10000+1);
 mean_Force = zeros(nTrial,length(amp_vec));
 std_Force = zeros(nTrial,length(amp_vec));
@@ -65,11 +65,11 @@ for j = 1:length(amp_vec)
     %
     j
     tic
-        nMU = 100;
+    nMU = 200;
     mean_FR = zeros(nMU,nTrial);
     CoV_FR = zeros(nMU,nTrial);
     
-
+    
     for i = 1:nTrial
         cd(data_folder)
         load(['Data_' num2str(j) '_' num2str(i)])
@@ -160,7 +160,7 @@ if nTrial == 1
     ylabel('CoV (%)','FontSize',14)
     set(gca,'TickDir','out');
     set(gca,'box','off')
-   
+    
 else
     mean_mean_Force = mean(mean_Force);
     figure(1)
