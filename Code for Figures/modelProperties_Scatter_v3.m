@@ -11,7 +11,7 @@ clear all
 clc
 
 cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
-load('modelParameter')
+load('modelParameter_onion_skin')
 load('CT')
 load('FR_half')
 load('t2t')
@@ -23,8 +23,8 @@ N_MU = modelParameter.N_MU;
 CT = CT';
 t2t = t2t';
 FR_half = modelParameter.FR_half;
-MDR = FR_half/2;
-PDR = FR_half*2;
+MDR = modelParameter.MDR;
+PDR = modelParameter.PDR;
 PTi = modelParameter.PTi;
 index_slow = modelParameter.index_slow;
 U_th = modelParameter.U_th;

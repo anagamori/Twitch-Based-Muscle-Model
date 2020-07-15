@@ -1,6 +1,6 @@
 %==========================================================================
 % modelComparison_SDN.m
-% Author: Akira Nagamori
+% Author: akiranagamori Nagamori
 % Last update: 6/27/19
 % Descriptions:
 %   This code is used to generate results_SDN.pdf
@@ -10,8 +10,8 @@ clear all
 clc
 
 %%
-code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
-figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
+figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 amp_vec = [0.025 0.05 0.1:0.1:1];
 mean_Force = zeros(10,length(amp_vec));
@@ -21,12 +21,12 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:4
+for i = 1:5
     if i == 1
         condition = 'Model_default_v2'; %_CTvsPTi';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model//' condition];
+        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model//' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -43,7 +43,7 @@ for i = 1:4
         condition = 'Model_PR_100'; %_CTvsPTi_PR_100';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -56,7 +56,7 @@ for i = 1:4
         condition = 'Model_Ur_50';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -67,11 +67,11 @@ for i = 1:4
         color_code =  [208 28 139]/255;
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
-    elseif i == 4
-        condition = 'onion_skin';
+         elseif i == 4
+        condition = 'model_N_400';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
+        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -80,6 +80,21 @@ for i = 1:4
         load('mean_pxx')
         cd(code_folder)
         color_code = [230 97 1]/255;
+        vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
+        vec2 = reshape(std_Force,[],1);
+    elseif i == 5
+        condition = 'onion_skin';
+        Fs = 2000;
+        time =0:1/Fs:15;
+        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
+        cd(data_folder)
+        load('mean_Force')
+        load('std_Force')
+        load('cov_Force')
+        load('cov_Force_dt')
+        load('mean_pxx')
+        cd(code_folder)
+       color_code = [100 100 100]/255;
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
     end
