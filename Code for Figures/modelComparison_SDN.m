@@ -10,8 +10,8 @@ clear all
 clc
 
 %%
-code_folder = '/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
-figure_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
+code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Code for Figures';
+figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 
 amp_vec = [0.025 0.05 0.1:0.1:1];
 mean_Force = zeros(10,length(amp_vec));
@@ -21,12 +21,12 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:5
+for i = 1:6
     if i == 1
         condition = 'Model_default_v2'; %_CTvsPTi';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model//' condition];
+        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model//' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -43,7 +43,7 @@ for i = 1:5
         condition = 'Model_PR_100'; %_CTvsPTi_PR_100';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
+        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -56,7 +56,7 @@ for i = 1:5
         condition = 'Model_Ur_50';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
+        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -68,10 +68,10 @@ for i = 1:5
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
          elseif i == 4
-        condition = 'model_N_400';
+        condition = 'model_N_100';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
+        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -86,7 +86,7 @@ for i = 1:5
         condition = 'onion_skin';
         Fs = 2000;
         time =0:1/Fs:15;
-        data_folder = ['/Users/akiranagamori/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
+        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/' condition];
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
@@ -94,7 +94,22 @@ for i = 1:5
         load('cov_Force_dt')
         load('mean_pxx')
         cd(code_folder)
-       color_code = [100 100 100]/255;
+        color_code = [100 100 100]/255;
+        vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
+        vec2 = reshape(std_Force,[],1);
+    elseif i == 6
+        condition = 'Model_default_v2';
+        Fs = 2000;
+        time =0:1/Fs:15;
+        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/noTendon/' condition];
+        cd(data_folder)
+        load('mean_Force')
+        load('std_Force')
+        load('cov_Force')
+        load('cov_Force_dt')
+        load('mean_pxx')
+        cd(code_folder)
+        color_code = [230 57 70]/255;
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
     end
@@ -104,7 +119,7 @@ for i = 1:5
     %plot([0 amp_vec],[0 mean(mean_Force)]./mean_mean_Force(end),'LineWidth',2,'Color',color_code)
     %plot([0 amp_vec]*100,[0 mean(mean_Force)],'LineWidth',2,'Color',color_code)
     %shadedErrorBar([0 amp_vec]*100,[0 mean(mean_Force./MVC.*100)],[0 std(mean_Force./MVC.*100)],'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code})
-    shadedErrorBar([0 amp_vec]*100,[0 mean(mean_Force)]./MVC*100,[0 std(mean_Force)],'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code})
+    shadedErrorBar([0 amp_vec]*100,[0 mean(mean_Force)],[0 std(mean_Force)],'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code})
     hold on
     
     figure(2)
@@ -180,7 +195,7 @@ ylabel('Force (% Maximum)','FontSize',14)
 set(gca,'TickDir','out');
 set(gca,'box','off')
 legend('Default','RP = 100','Ur = 0.5','N = 400','location','northwest')
-ylim([0 101])
+%ylim([0 101])
 % cd (figure_folder)
 % saveas(gcf,'activation2meanForce_FV_comparison','pdf')
 % cd (code_folder)
@@ -199,7 +214,7 @@ x = [0 amp_vec]*100;
 
 figure(2)
 xlabel('Mean Force (%)','FontSize',14)
-plot(x,x*a,'LineWidth',2,'Color','k')
+plot(x,x*0.02,'LineWidth',2,'Color','k')
 hold on 
 %plot(x,x*a_todorov,'--','LineWidth',2,'Color','k')
 xlabel('Mean Force (%)','FontSize',14)
