@@ -7,10 +7,11 @@
 %   individual motor units
 %   Used for c of Summary_Recruitment.pdf
 %==========================================================================
+close all
 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
-load('modelParameter_v2')
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
+cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
+load('modelParameter_onion_skin_v4')
+cd('/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
 
 %%
 N_MU = modelParameter.N_MU;
@@ -51,8 +52,9 @@ end
 %close all
 %index_plot = 1:1:300; %[1 50 100 150 200 250 300];
 
-index_plot_slow = [2 15 85 111 122];
-index_plot_fast = [160 180 190 197 200];
+index_plot_slow = index_saturation; %[1:106]; %[2 15 85 103 107 111 122];
+index_plot_fast = [];
+%index_plot_fast = [160 180 190 197 200];
 figure(1)
 plot(U_vec*100,DR_mat(index_plot_slow,:),'Color',[36 123 160]/255,'LineWidth',1)
 hold on 

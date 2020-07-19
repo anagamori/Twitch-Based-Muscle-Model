@@ -25,7 +25,7 @@ cd(code_folder)
 amp_vec = [0.025 0.05 0.1:0.1:1];
 %amp_vec = [0.106 0.29 0.62 0.78 0.93];
 trial_vec = [7 10];
-for j = 1:length(amp_vec)
+for j = 12 %7:length(amp_vec)
     j
 %      Fs = 20000;
 %         time = 0:1/Fs:15;
@@ -43,7 +43,7 @@ for j = 1:length(amp_vec)
     amp = amp_vec(j);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
-    for i = 7:10
+    for i = 1:3
         i
         tic
         output = MU_population_model_onion_skin(Fs,time,input,modelParameter,1);

@@ -21,7 +21,7 @@ pxx = zeros(10,201);
 mean_pxx = zeros(length(amp_vec),201);
 f = 0:0.5:100;
 
-for i = 1:6
+for i = 1:7
     if i == 1
         condition = 'Model_default_v2'; %_CTvsPTi';
         Fs = 2000;
@@ -51,7 +51,8 @@ for i = 1:6
         load('cov_Force_dt')
         load('mean_pxx')
         cd(code_folder)
-        color_code = [77 172 38]/255;
+        color_code = [255 186 8]/255;
+        %color_code = [77 172 38]/255;
     elseif i == 3
         condition = 'Model_Ur_50';
         Fs = 2000;
@@ -64,7 +65,8 @@ for i = 1:6
         load('cov_Force_dt')
         load('mean_pxx')
         cd(code_folder)
-        color_code =  [208 28 139]/255;
+        %color_code =  [208 28 139]/255;
+        color_code = [19 111 99]/255;
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
          elseif i == 4
@@ -112,6 +114,22 @@ for i = 1:6
         color_code = [230 57 70]/255;
         vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
         vec2 = reshape(std_Force,[],1);
+     elseif i == 7
+        condition = 'Model_onion_skin_v2';
+        Fs = 2000;
+        time =0:1/Fs:15;
+        data_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/noTendon/' condition];
+        cd(data_folder)
+        load('mean_Force')
+        load('std_Force')
+        load('cov_Force')
+        load('cov_Force_dt')
+        load('mean_pxx')
+        cd(code_folder)
+        color_code = [0 0 0]/255;
+        vec = [0.1*ones(10,1);0.2*ones(10,1);0.3*ones(10,1);0.4*ones(10,1);0.5*ones(10,1);0.6*ones(10,1);0.7*ones(10,1);0.8*ones(10,1);0.9*ones(10,1);ones(10,1)];
+        vec2 = reshape(std_Force,[],1);    
+    
     end
     mean_mean_Force = mean(mean_Force);
     MVC = mean_mean_Force(end);
@@ -214,7 +232,7 @@ x = [0 amp_vec]*100;
 
 figure(2)
 xlabel('Mean Force (%)','FontSize',14)
-plot(x,x*0.02,'LineWidth',2,'Color','k')
+plot(x,0.0234*x.^1.05,'LineWidth',2,'Color','k')
 hold on 
 %plot(x,x*a_todorov,'--','LineWidth',2,'Color','k')
 xlabel('Mean Force (%)','FontSize',14)
@@ -231,6 +249,7 @@ set(gca,'box','off')
 
 figure(3)
 %xlabel('Mean Force (%)','FontSize',14)
+plot([0 100],[0.0234*100 0.0234*100],'k')
 xlabel('Activation (%)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
 xlim([0 100])

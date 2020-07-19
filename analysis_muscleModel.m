@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-data_folder = '/Volumes/DATA2/PLOS_CB_Data/noTendon/Model_default_v2';
+data_folder = '/Volumes/DATA2/PLOS_CB_Data/noTendon/Model_onion_skin_v2';
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
 figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures';
 

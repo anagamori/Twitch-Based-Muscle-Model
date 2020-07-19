@@ -62,11 +62,18 @@ for i = 1:N_MU
     [~,loc] = min(abs(f_int-1.1));
     fusion_f(i) = fusion_int(loc);
     
+    
     Af_int = spline(Data{2,9},Data{2,10}*100,f_int);
     Af_f(i) = Af_int(loc);
     
     [~,loc_2] = min(abs(fusion_int-50));
     fusion_half(i) = f_int(loc_2);
+    
+    [~,loc_MDR] = min(abs(f_int-0.5));
+    AF_MDR(i) = Af_int(loc_MDR);
+    
+    [~,loc_PDR] = min(abs(f_int-2));
+    AF_PDR(i) = Af_int(loc_PDR);
 end
 
 figure(1)
