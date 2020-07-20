@@ -11,8 +11,8 @@ close all
 clear all
 clc
 
-code_folder = '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/';
-model_parameter_folder =  '/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
+code_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/';
+model_parameter_folder =  '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data';
 
 cd(model_parameter_folder)
 load('modelParameter_v2')
@@ -128,7 +128,7 @@ modelParameter.index_saturation(index_2) = [];
 
 %% Save model parameters
 cd(model_parameter_folder)
-save('modelParameter_onion_skin_N_100','modelParameter')
+save('modelParameter_onion_skin_N_100_Ur_50','modelParameter')
 cd(code_folder)
 
 %%
