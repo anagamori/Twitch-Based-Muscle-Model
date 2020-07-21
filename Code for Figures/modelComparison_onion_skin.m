@@ -30,6 +30,7 @@ for i = 1:5
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('std_Force_dt')
         load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
@@ -47,6 +48,7 @@ for i = 1:5
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('std_Force_dt')
         load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
@@ -61,6 +63,7 @@ for i = 1:5
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('std_Force_dt')
         load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
@@ -77,6 +80,7 @@ for i = 1:5
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('std_Force_dt')
         load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
@@ -92,6 +96,7 @@ for i = 1:5
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('std_Force_dt')
         load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
@@ -107,6 +112,7 @@ for i = 1:5
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('std_Force_dt')
         load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
@@ -122,6 +128,7 @@ for i = 1:5
         cd(data_folder)
         load('mean_Force')
         load('std_Force')
+        load('std_Force_dt')
         load('cov_Force')
         load('cov_Force_dt')
         load('mean_pxx')
@@ -143,7 +150,7 @@ for i = 1:5
     figure(2)
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec*100,mean(std_Force),std(std_Force),'LineWidth',2,'Color',color_code);
-    shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(std_Force_dt./MVC.*100),std(std_Force_dt./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     %shadedErrorBar(amp_vec*100,mean(std_Force./MVC.*100),std(std_Force./MVC.*100),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
@@ -152,7 +159,7 @@ for i = 1:5
     %errorbar(mean(mean_Force)./mean_mean_Force(end),mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
     %errorbar(amp_vec*100,mean(cov_Force),std(cov_Force),'LineWidth',2,'Color',color_code);
     %shadedErrorBar(amp_vec*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
-    shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(cov_Force),std(cov_Force),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+    shadedErrorBar(mean(mean_Force)./mean_mean_Force(end)*100,mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
     hold on
     
     %%
@@ -230,7 +237,7 @@ x = [0 amp_vec]*100;
 
 figure(2)
 xlabel('Mean Force (%)','FontSize',14)
-plot(x,0.0234*x.^1.05,'LineWidth',2,'Color','k')
+plot(x,0.0186*x.^1.05,'LineWidth',2,'Color','k')
 hold on 
 %plot(x,x*a_todorov,'--','LineWidth',2,'Color','k')
 xlabel('Mean Force (%)','FontSize',14)
@@ -247,7 +254,7 @@ set(gca,'box','off')
 
 % x = 1:1:100;
 % x = x.^0.1;
-y = 0.0234*x.^1.05./x*100;
+y = 0.0186*x.^1.05./x*100;
 figure(3)
 %xlabel('Mean Force (%)','FontSize',14)
 plot(x,y,'k')

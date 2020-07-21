@@ -10,7 +10,7 @@ clear all
 clc
 
 %%
-condition = 'Model_onion_skin_N_100_Ur_80';
+condition = 'Model_onion_skin_v4';
 data_folder = ['/Volumes/DATA2/PLOS_CB_Data/withTendon/' condition];
 data_folder_git = ['/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Data/New Model/withTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';
@@ -19,7 +19,7 @@ figure_folder = '/Users/akira/Documents/GitHub/Twitch-Based-Muscle-Model/Figures
 %%
 amp_vec = [0.025 0.05 0.1:0.1:1];
 
-nTrial = 2;
+nTrial = 10;
 Force_mat = zeros(nTrial,15*10000+1);
 mean_Force = zeros(nTrial,length(amp_vec));
 std_Force = zeros(nTrial,length(amp_vec));

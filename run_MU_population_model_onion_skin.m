@@ -43,7 +43,7 @@ for j = 1:length(amp_vec)
     amp = amp_vec(j);
     input = [zeros(1,1*Fs) amp/2*[0:1/Fs:2] amp*ones(1,length(time)-1*Fs-length(amp*[0:1/Fs:2]))];
     %%
-    for i = 2:6
+    for i = 7:10
         i
         tic
         output = MU_population_model(Fs,time,input,modelParameter,1);
