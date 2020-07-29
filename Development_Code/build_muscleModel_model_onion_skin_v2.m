@@ -42,10 +42,10 @@ modelParameter.Lmt = Lm_initial*cos(alpha)+Lt_initial; % intial musculotendon le
 [modelParameter.L_ce,modelParameter.L_se,modelParameter.Lmax] =  InitialLength_function(modelParameter);
 
 %% Motor unit parameters
-modelParameter.N_MU = 100; % number of motor units
+modelParameter.N_MU = 200; % number of motor units
 modelParameter.i_MU = 1:modelParameter.N_MU; % index for motor units
 modelParameter.i_MU = modelParameter.i_MU';
-index = 1:2:200;
+index = 1:1:200;
 %% Peak tetanic force
 RP_MU = 100; %range of peak tension across motor untis in unit of fold
 b_MU = log(RP_MU)/modelParameter.N_MU; %coefficient to establish a range of twich force values
@@ -127,9 +127,9 @@ modelParameter.index_saturation(index_2) = [];
 
 
 %% Save model parameters
-cd(model_parameter_folder)
-save('modelParameter_onion_skin_N_100_Ur_50','modelParameter')
-cd(code_folder)
+% cd(model_parameter_folder)
+% save('modelParameter_onion_skin_N_100_Ur_50','modelParameter')
+% cd(code_folder)
 
 %%
 function [Lce_initial,Lse_initial,Lmax] =  InitialLength_function(modeParameter)

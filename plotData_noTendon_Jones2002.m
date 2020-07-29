@@ -9,7 +9,7 @@ clear all
 clc
 
 %%
-condition = 'Model_onion_skin_N_100_Ur_80';
+condition = 'Model_default_v2';
 data_folder = ['/Volumes/DATA2/PLOS_CB_Data/noTendon/' condition];
 save_folder = ['/Users/akira/Documents/Github/Twitch-Based-Muscle-Model/Data/New Model/noTendon/' condition];
 code_folder = '/Users/akira/Documents/Github/Twitch-Based-Muscle-Model';

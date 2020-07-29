@@ -42,13 +42,15 @@ a =  0.0591; %mean(std_Force_dt(:,1))/mean(mean_Force_norm(:,1));
 a_todorov = 0.1289;
 x = [0 amp_vec]*100;
 
+y = 0.0186*x.^1.05./x*100;
 
 figure(1)
-shadedErrorBar(mean(mean_Force_norm),mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+shadedErrorBar(mean(mean_Force_norm),mean(cov_Force_dt),std(cov_Force_dt),'lineprops',{'color',color_code,'LineWidth',1,'markerfacecolor',color_code});
 hold on
 plot(force_vec,CoV_vec,'--k','LineWidth',2)
 plot(force_vec,CoV_vec,'o','LineWidth',2,'color','k')
-plot([x(1) x(end)],[a*100 a*100],'LineWidth',2,'Color',[77 172 38]/255)
+plot(x,y,'--k','LineWidth',1)
+%plot([x(1) x(end)],[a*100 a*100],'LineWidth',2,'Color',[77 172 38]/255)
 %plot([x(1) x(end)],[a_todorov*100 a_todorov*100],'LineWidth',2,'Color',[77 172 38]/255)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
 ylabel('CoV (%)','FontSize',14)
@@ -58,11 +60,11 @@ set(gca,'TickDir','out');
 set(gca,'box','off')
 
 figure(2)
-shadedErrorBar(mean(mean_Force_norm),mean(std_Force_dt),std(std_Force_dt),'lineprops',{'color',color_code,'LineWidth',2,'markerfacecolor',color_code});
+shadedErrorBar(mean(mean_Force_norm),mean(std_Force_dt),std(std_Force_dt),'lineprops',{'color',color_code,'LineWidth',1,'markerfacecolor',color_code});
 hold on
-plot(force_vec,std_vec,'--k','LineWidth',2)
-plot(force_vec,std_vec,'o','LineWidth',2,'color','k')
-plot(x,x*0.0591,'LineWidth',2,'Color',[77 172 38]/255)
+plot(force_vec,std_vec,'--k','LineWidth',1)
+plot(force_vec,std_vec,'o','LineWidth',1,'color','k')
+plot(x,0.0186*x.^1.05,'--','LineWidth',1,'Color','k')
 plot(x,x*a_todorov,'LineWidth',2,'Color',[208 28 139]/255)
 yticks(0:0.25:1.75)
 xlabel('Mean Force (%Maximum Force)','FontSize',14)
