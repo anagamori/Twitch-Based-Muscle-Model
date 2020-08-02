@@ -39,8 +39,9 @@ parameter_Matrix = modelParameter.parameterMatrix;
 %% Activation dynamics (Song et al., 2008)
 tau_1 = parameter_Matrix(:,7);
 tau_2 = parameter_Matrix(:,8);
-R_temp = 1-exp(-time./tau_1);
+R_temp_1 = 1-exp(-time./tau_1);
 R_temp_2 = exp(-time./tau_2);
+R_temp = R_temp_1.*R_temp_2;
 
 %% Initilization
 spike_time = zeros(N_MU,1);
@@ -122,10 +123,10 @@ for t = 1:length(time)
         
         for j = 1:length(index) % loop through motor units whose firing rate is greater than minimum firing rate defined by the user
             n = index(j);
-            spike_train_temp = zeros(1,length(t));
+            %spike_train_temp = zeros(1,length(t));
             if ~any(spike_train(n,:)) % when the motor unit fires for the first time
                 spike_train(n,t) = 1; % add a spike to the vector
-                spike_train_temp(t) = 1;
+                %spike_train_temp(t) = 1;
                 
                 % compute the spike time of the next spike
                 mu = 1/DR_MU(n); % interspike interval                  
@@ -136,12 +137,13 @@ for t = 1:length(time)
                 spike_time(n) = round(spike_time_temp) + t;
                 
                 % assign the value of R 
-                temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
-                R(n,:) = R(n,:) + temp(1:length(time));
+                R(n,t:end) = R(n,t:end) + R_temp(n,1:end-t+1);
+%                 temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
+%                 R(n,:) = R(n,:) + temp(1:length(time));
             else % when the motor unit have already fired at least once
                 if spike_time(n) == t % when the motor unit fires
                     spike_train(n,t) = 1;
-                    spike_train_temp(t) = 1;
+                    %spike_train_temp(t) = 1;
                     
                     % compute the spike time of the next spike
                     mu = 1/DR_MU(n); % interspike interval                  
@@ -152,11 +154,12 @@ for t = 1:length(time)
                     spike_time(n) = round(spike_time_temp) + t;
                     
                     % assign the value of R 
-                    temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
-                    R(n,:) = R(n,:) + temp(1:length(time));
+                    R(n,t:end) = R(n,t:end) + R_temp(n,1:end-t+1);
+%                     temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
+%                     R(n,:) = R(n,:) + temp(1:length(time));
                 elseif t > spike_time(n) + round(1/DR_MU(n)*Fs) % after the motor unit stops firing                   
                     spike_train(n,t) = 1;
-                    spike_train_temp(t) = 1;
+                    %spike_train_temp(t) = 1;
                     spike_time(n) = t;
                     
                     % compute the spike time of the next spike
@@ -168,8 +171,9 @@ for t = 1:length(time)
                     spike_time(n) = round(spike_time_temp) + t;
                     
                     % assign the value of R 
-                    temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
-                    R(n,:) = R(n,:) + temp(1:length(time));
+                    R(n,t:end) = R(n,t:end) + R_temp(n,1:end-t+1);
+%                     temp = conv(spike_train_temp,R_temp_2(n,:).*R_temp(n,:));
+%                     R(n,:) = R(n,:) + temp(1:length(time));
                 end
             end
         end
