@@ -10,12 +10,12 @@ close all
 clear all
 clc
 
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Development_Code/Data');
-load('modelParameter_onion_skin')
+cd('C:\Users\anaga\OneDrive\Documents\GitHub\Twitch-Based-Muscle-Model\Development_Code\Data');
+load('modelParameter_v3')
 load('CT')
 load('FR_half')
 load('t2t')
-cd('/Users/akiranagamori/Documents/GitHub/Twitch-Based-Muscle-Model/Code for Figures')
+cd('C:\Users\anaga\OneDrive\Documents\GitHub\Twitch-Based-Muscle-Model\Code for Figures')
 
 %%
 N_MU = modelParameter.N_MU;
